@@ -15,6 +15,20 @@ const minimatch = require('minimatch');
 const mkdirp = require('mkdirp');
 
 var paths = {
+	acf: 'acf/',
+	app: 'app/',
+	assets: 'assets/',
+	classes: 'classes/',
+	data: 'data/',
+	dist: 'dist/',
+	logs: 'logs/',
+	includes: 'includes/',
+	images: 'images/',
+	js: 'js/',
+	css: 'css/',
+	export: 'export/',
+	endpoint: 'Endpoint/',
+	classes: 'classes/*.php',
     assets: 'assets/',
     home: 'wc-bom.php',
     js: 'assets/',
