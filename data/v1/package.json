@@ -1,0 +1,51 @@
+{
+  "name": "woobom",
+  "version": "1.0.0",
+  "description": "=== WooCommerce Bill of Materials === Contributors: netraa414, amg26 Tags: woocommerce, woocommerce bill of materials, bill of materials, bom, woocommere bom, material tracking, woocommere material tracking, raw material tracking, woocommere raw material, woocommerce erp, erp, bom, woo bom, wc bom Donate link: http://andrewgunn.org/donate Requires at least: 3.0 Tested up to: 4.7.2 Stable tag: 1.0.0 License: GNU AGPLv3 License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html",
+  "main": "index.js",
+  "scripts": {
+    "refresh": "npm update && npm rebuild && npm start",
+    "start": "npm update && npm install && composer update && composer install",
+    "build": "gulp build",
+    "clean": "gulp clean",
+    "watch": "gulp serve",
+    "postinstall": "gulp clean"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://amg262@bitbucket.org/amg262/wc-bom.git"
+  },
+  "keywords": [
+    "Tags:",
+    "woocommerce",
+    "bill",
+    "of",
+    "materials"
+  ],
+  "author": "amg262",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://bitbucket.org/amg262/wc-bom/wiki/"
+  },
+  "homepage": "https://amg262@bitbucket.org/amg262/wc-bom.git",
+  "dependencies": {
+    "browser-sync": "^2.18.8",
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-clean": "^0.3.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-cssnano": "^2.1.2",
+    "gulp-file": "^0.3.0",
+    "gulp-imagemin": "^3.2.0",
+    "gulp-postcss": "^6.3.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^2.0.1",
+    "gulp-unzip": "^0.2.0",
+    "gulp-util": "^3.0.8",
+    "gulp-watch": "^4.3.11",
+    "gulp-zip": "^4.0.0",
+    "node-gyp": "^3.6.1",
+    "wpapi": "^1.0.2"
+  },
+  "devDependencies": {}
+}
