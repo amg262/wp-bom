@@ -8,7 +8,7 @@ import ReactDOM from 'react-dom';
 import Shortcode from './containers/Shortcode.jsx';
 
 document.addEventListener('DOMContentLoaded', function() {
-  const shortcode_containers = document.querySelectorAll('.wp-reactivate-shortcode');
+  const shortcode_containers = document.querySelectorAll('.wp-bom-shortcode');
 
   for (let i = 0; i < shortcode_containers.length; ++i) {
     const objectId = shortcode_containers[i].getAttribute('data-object-id');

@@ -8,7 +8,7 @@ import ReactDOM from 'react-dom';
 import Widget from './containers/Widget.jsx';
 
 document.addEventListener('DOMContentLoaded', function() {
-  const widget_containers = document.querySelectorAll('.wp-reactivate-widget');
+  const widget_containers = document.querySelectorAll('.wp-bom-widget');
 
   for (let i = 0; i < widget_containers.length; ++i) {
     const objectId = widget_containers[i].getAttribute('data-object-id');

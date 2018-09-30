@@ -1,5 +1,5 @@
 {
-  "name": "wp-reactivate",
+  "name": "wp-bom",
   "version": "1.0.0",
   "description": "React boilerplate for WordPress plugins",
   "main": "index.js",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gopangolin/wp-reactivate.git"
+    "url": "git+https://github.com/amg262/wp-bom.git"
   },
   "keywords": [
     "wordpress",
@@ -18,12 +18,12 @@
     "plugin",
     "webpack"
   ],
-  "author": "Pangolin",
+  "author": "amg262",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/gopangolin/wp-reactivate/issues"
+    "url": "https://github.com/amg262/wp-bom/issues"
   },
-  "homepage": "https://github.com/gopangolin/wp-reactivate#readme",
+  "homepage": "https://github.com/amg262/wp-bom#readme",
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "isomorphic-fetch": "^2.2.1",

@@ -1,20 +1,20 @@
 <?php
 /**
- * WP-Reactivate
+ * WP-Bom
  *
  *
- * @package   WP-Reactivate
- * @author    Pangolin
+ * @package   WP-Bom
+ * @author    amg262
  * @license   GPL-3.0
- * @link      https://gopangolin.com
- * @copyright 2017 Pangolin (Pty) Ltd
+ * @link      https://.com
+ * @copyright 2018 amg262 (Pty) Ltd
  *
  * @wordpress-plugin
- * Plugin Name:       WP-Reactivate
- * Plugin URI:        https://gopangolin.com
+ * Plugin Name:       WP-Bom
+ * Plugin URI:        https://.com
  * Description:       React boilerplate for WordPress plugins
  * Version:           1.0.0
- * Author:            pangolin
+ * Author:            amg262
  * Author URI:        https://gopangolin.com
  * Text Domain:       wp-bom
  * License:           GPL-3.0
@@ -23,7 +23,7 @@
  */
 
 
-namespace Netraa\WPBOM;
+namespace Netraa\WPB;
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
@@ -77,10 +77,10 @@ try {
  * @since 1.0.0
  */
 function init() {
-	$wpr = Plugin::get_instance();
-	$wpr_shortcode = Shortcode::get_instance();
-	$wpr_admin = Admin::get_instance();
-	$wpr_rest = Endpoint\Example::get_instance();
+	$wpb = Plugin::get_instance();
+	$wpb_shortcode = Shortcode::get_instance();
+	$wpb_admin = Admin::get_instance();
+	$wpb_rest = Endpoint\Example::get_instance();
 
 	require __DIR__.'/SettingsAPI.php';
 
@@ -89,7 +89,7 @@ function init() {
 	$set = new \Settings();
 
 }
-add_action( 'plugins_loaded', 'Netraa\\WPBOM\\init' );
+add_action( 'plugins_loaded', 'Netraa\\WPB\\init' );
 
 
 
@@ -101,11 +101,11 @@ add_action( 'plugins_loaded', 'Netraa\\WPBOM\\init' );
 function widget_init() {
 	return register_widget( new Widget );
 }
-add_action( 'widgets_init', 'Netraa\\WPBOM\\widget_init' );
+add_action( 'widgets_init', 'Netraa\\WPB\\widget_init' );
 
 /**
  * Register activation and deactivation hooks
  */
-register_activation_hook( __FILE__, array( 'Netraa\\WPBOM\\Plugin', 'activate' ) );
-register_deactivation_hook( __FILE__, array( 'Netraa\\WPBOM\\Plugin', 'deactivate' ) );
+register_activation_hook( __FILE__, array( 'Netraa\\WPB\\Plugin', 'activate' ) );
+register_deactivation_hook( __FILE__, array( 'Netraa\\WPB\\Plugin', 'deactivate' ) );
 

@@ -10,7 +10,7 @@
  * @copyright 2017 Pangolin (Pty) Ltd
  */
 
-namespace Pangolin\WPR;
+namespace Netraa\WPB;
 
 /**
  * @subpackage Admin
@@ -129,7 +129,7 @@ class Admin {
 
 			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'assets/js/admin.js', dirname( __FILE__ ) ), array( 'jquery' ), $this->version );
 
-			wp_localize_script( $this->plugin_slug . '-admin-script', 'wpr_object', array(
+			wp_localize_script( $this->plugin_slug . '-admin-script', 'wpb_object', array(
 				'api_nonce'   => wp_create_nonce( 'wp_rest' ),
 				'api_url'	  => rest_url( $this->plugin_slug . '/v1/' ),
 				)

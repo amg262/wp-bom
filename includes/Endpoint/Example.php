@@ -10,8 +10,8 @@
  * @copyright 2017 Pangolin (Pty) Ltd
  */
 
-namespace Pangolin\WPR\Endpoint;
-use Pangolin\WPR;
+namespace Netraa\WPB\Endpoint;
+use Netraa\WPB;
 
 /**
  * @subpackage REST_Controller
@@ -33,7 +33,7 @@ class Example {
 	 * @since     0.8.1
 	 */
 	private function __construct() {
-        $plugin = WPR\Plugin::get_instance();
+        $plugin = WPB\Plugin::get_instance();
 		$this->plugin_slug = $plugin->get_plugin_slug();
 	}
 
@@ -117,7 +117,7 @@ class Example {
      * @return WP_Error|WP_REST_Request
      */
     public function get_example( $request ) {
-        $example_option = get_option( 'wpr_example_setting' );
+        $example_option = get_option( 'wpb_example_setting' );
 
         // Don't return false if there is no option
         if ( ! $example_option ) {
@@ -140,7 +140,7 @@ class Example {
      * @return WP_Error|WP_REST_Request
      */
     public function update_example( $request ) {
-        $updated = update_option( 'wpr_example_setting', $request->get_param( 'example_setting' ) );
+        $updated = update_option( 'wpb_example_setting', $request->get_param( 'example_setting' ) );
 
         return new \WP_REST_Response( array(
             'success'   => $updated,
@@ -155,7 +155,7 @@ class Example {
      * @return WP_Error|WP_REST_Request
      */
     public function delete_example( $request ) {
-        $deleted = delete_option( 'wpr_example_setting' );
+        $deleted = delete_option( 'wpb_example_setting' );
 
         return new \WP_REST_Response( array(
             'success'   => $deleted,

@@ -10,7 +10,7 @@
  * @copyright 2017 Pangolin (Pty) Ltd
  */
 
-namespace Pangolin\WPR;
+namespace Netraa\WPB;
 
 /**
  * @subpackage Plugin
@@ -26,7 +26,7 @@ class Plugin {
 	 *
 	 * @var      string
 	 */
-	protected $plugin_slug = 'wp-reactivate';
+	protected $plugin_slug = 'wp-bom';
 
 	/**
 	 * Instance of this class.
@@ -43,7 +43,7 @@ class Plugin {
 	 * @since     1.0.0
 	 */
 	private function __construct() {
-		$this->plugin_version = WP_REACTIVATE_VERSION;
+		$this->plugin_version = WP_BOM_VERSION;
 	}
 
 	/**
@@ -74,7 +74,7 @@ class Plugin {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-		add_option( 'wpr_example_setting' );
+		add_option( 'wpb_example_setting' );
 	}
 
 	/**
