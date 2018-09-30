@@ -16,21 +16,21 @@
  * Version:           1.0.0
  * Author:            pangolin
  * Author URI:        https://gopangolin.com
- * Text Domain:       wp-reactivate
+ * Text Domain:       wp-bom
  * License:           GPL-3.0
  * License URI:       https://www.gnu.org/licenses/gpl-3.0.txt
  * Domain Path:       /languages
  */
 
 
-namespace Pangolin\WPR;
+namespace Netraa\WPBOM;
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define( 'WP_REACTIVATE_VERSION', '1.0.0' );
+define( 'WP_BOM_VERSION', '1.0.0' );
 /*
  * Autoloader
  *
@@ -89,7 +89,7 @@ function init() {
 	$set = new \Settings();
 
 }
-add_action( 'plugins_loaded', 'Pangolin\\WPR\\init' );
+add_action( 'plugins_loaded', 'Netraa\\WPBOM\\init' );
 
 
 
@@ -101,11 +101,11 @@ add_action( 'plugins_loaded', 'Pangolin\\WPR\\init' );
 function widget_init() {
 	return register_widget( new Widget );
 }
-add_action( 'widgets_init', 'Pangolin\\WPR\\widget_init' );
+add_action( 'widgets_init', 'Netraa\\WPBOM\\widget_init' );
 
 /**
  * Register activation and deactivation hooks
  */
-register_activation_hook( __FILE__, array( 'Pangolin\\WPR\\Plugin', 'activate' ) );
-register_deactivation_hook( __FILE__, array( 'Pangolin\\WPR\\Plugin', 'deactivate' ) );
+register_activation_hook( __FILE__, array( 'Netraa\\WPBOM\\Plugin', 'activate' ) );
+register_deactivation_hook( __FILE__, array( 'Netraa\\WPBOM\\Plugin', 'deactivate' ) );
 
