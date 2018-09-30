@@ -29,20 +29,20 @@ var paths = {
 	export: 'export/',
 	endpoint: 'Endpoint/',
 	classes: 'classes/*.php',
-    assets: 'assets/',
-    home: 'wc-bom.php',
-    js: 'assets/',
-    css: 'assets/',
-    img: 'assets/images/*',
-    dist: 'dist/',
-    logs: 'logs/',
-    data: 'assets/data/',
-    archive: 'assets/archive/',
-    dist_js: 'dist/',
-    dist_css: 'dist/',
-    dist_img: 'dist/images/',
-    includes: 'includes/*',
-    classes: 'classes/*.php',
+	assets: 'assets/',
+	home: 'wc-bom.php',
+	js: 'assets/',
+	css: 'assets/',
+	img: 'assets/images/*',
+	dist: 'dist/',
+	logs: 'logs/',
+	data: 'assets/data/',
+	archive: 'assets/archive/',
+	dist_js: 'dist/',
+	dist_css: 'dist/',
+	dist_img: 'dist/images/',
+	includes: 'includes/*',
+	classes: 'classes/*.php',
 	host: 'http://localhost/wordpress/wp-admin',
 	php: '*.php',
 	wpb: 'wp-bom.php',
@@ -51,16 +51,16 @@ var paths = {
 // Not all tasks need to use streams
 // A gulpfile is just another node program and you can use any package available on npm
 gulp.task('purge', function () {
-    gulp.src(paths.dist + '*').pipe(clean());
+	gulp.src(paths.dist + '*').pipe(clean());
 });
 
 // Copy all static images
 gulp.task('imagemin', function () {
-    gulp.src(paths.assets + paths.images).pipe(imagemin()).pipe(gulp.dest(paths.dist));
+	gulp.src(paths.dist + 'images/*').pipe(imagemin()).pipe(gulp.dest(paths.images));
 });
 
 gulp.task('cssnano', function () {
-    gulp.src(paths.assets + paths.css + '*.css').pipe(cssnano()).pipe(rename({suffix: '.min'})).pipe(gulp.dest(paths.dist));
+	gulp.src(paths.dist + '*.css').pipe(cssnano()).pipe(rename({suffix: '.min'})).pipe(gulp.dest(paths.dist + 'css/'));
 });
 //
 //gulp.task('scripts', function() {
@@ -74,7 +74,7 @@ gulp.task('cssnano', function () {
  */
 gulp.task('uglify', function () {
 
-    gulp.src(paths.assets '*.js').pipe(uglify()).pipe(rename({suffix: '.min'})).pipe(gulp.dest(paths.dist));
+	gulp.src(paths.dist + '*.js').pipe(uglify()).pipe(rename({suffix: '.min'})).pipe(gulp.dest(paths.dist + 'js/'));
 });
 //
 //gulp.task('zip', function() {
@@ -90,15 +90,15 @@ gulp.task('uglify', function () {
 // Static Server + watching scss/html files
 gulp.task('serve', function () {
 
-    browserSync.init({
-        proxy: paths.host
-    });
+	browserSync.init({
+		proxy: paths.host
+	});
 
 });
 
 // Rerun the task when a file changes
 gulp.task('watch', function () {
-    //gulp.watch(paths.scripts, ["scripts"]);
+	//gulp.watch(paths.scripts, ["scripts"]);
 	gulp.watch(paths.wpb).on('change', browserSync.reload);
 	gulp.watch(paths.includes + '*').on('change', browserSync.reload);
 	gulp.watch(paths.classes + '*').on('change', browserSync.reload);
@@ -108,6 +108,6 @@ gulp.task('watch', function () {
 
 
 gulp.task('clean', ['purge', 'imagemin', 'cssnano', 'uglify']);
-gulp.task('run', ['purge', 'imagemin', 'cssnano', 'uglify', 'serve', 'watch']);
+gulp.task('run', ['imagemin', 'cssnano', 'uglify', 'serve', 'watch']);
 gulp.task('live', ['serve', 'watch']);
 
