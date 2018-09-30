@@ -1,0 +1,10 @@
+{
+    "name": "mint/wp-bom",
+    "authors": [
+        {
+            "name": "Andrew Gunn",
+            "email": "andrewmgunn26@gmail.com"
+        }
+    ],
+    "require": {}
+}

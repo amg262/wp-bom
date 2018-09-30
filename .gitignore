@@ -4,3 +4,4 @@ $ cat .gitignore
 
 # exclude built js
 /assets/js/*
+/vendor/
