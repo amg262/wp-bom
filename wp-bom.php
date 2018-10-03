@@ -38,7 +38,7 @@ const WP_BOM_BUILD = 'dev';
 const WP_BOM_PROD  = false;
 const WP_BOM_DEV   = true;
 
-
+global $wp_bom_settings;
 /*
  * Autoloader
  *
@@ -102,21 +102,11 @@ function init() {
 
 //	require __DIR__ . '/dist/acf/acf.php';
 
-	$wpb_settings = new Settings();
+
+	$wpb_settings = Settings::get_instance();
 	require __DIR__ . '/wp-bom-core.php';
 	$core = WP_Bom::get_instance();
-	//$cor
 
-	$ah = get_option('wcb_settings');
-
-	if (md5($ah->password) == md5('asdfasdf')) {
-		echo '<h1>balls</h1>';
-	}
-
-	echo json_encode(get_option('wcb_settings'));
-	//require __DIR__ . '/Settings.php';
-
-	//$set = new \Settings();
 
 }
 

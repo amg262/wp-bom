@@ -19,18 +19,6 @@ class Auth {
 	protected static $instance = null;
 
 
-	private $key = [
-		'JWLjSLgQWae9nC40ba03',
-		'EJABkBerVznfSfADbQvj',
-		'BoJnxPvcWdOI9tZCLxZ3',
-		'lvce7bnWQK9USvHkTZPD',
-		'owQIF748mlJPBNoDN7jd',
-		'rRpSK1zFqjpHZ78Px0R2',
-		'7N5Arm5HQkrkgwQqVDdT',
-		'ErfLXa4h9wh0JKS2EXOy',
-		'2b02E2B8LFaGnnw0hZD6',
-		'8tW4TZXNcoVFo1Vhxa18',
-	];
 	private function __construct() {
 	}
 
