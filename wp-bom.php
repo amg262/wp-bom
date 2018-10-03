@@ -98,12 +98,9 @@ function init() {
 	$wpb_assembly  = Assembly::get_instance();
 	$wpb_product   = Product::get_instance();
 	$wpb_inventory = Inventory::get_instance();
-
-
 //	require __DIR__ . '/dist/acf/acf.php';
 
-
-	$wpb_settings = Settings::get_instance();
+	$wpb_settings = new Settings();
 	require __DIR__ . '/wp-bom-core.php';
 	$core = WP_Bom::get_instance();
 
