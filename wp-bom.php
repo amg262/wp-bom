@@ -107,6 +107,13 @@ function init() {
 	$core = WP_Bom::get_instance();
 	//$cor
 
+	$ah = get_option('wcb_settings');
+
+	if (md5($ah->password) == md5('asdfasdf')) {
+		echo '<h1>balls</h1>';
+	}
+
+	echo json_encode(get_option('wcb_settings'));
 	//require __DIR__ . '/Settings.php';
 
 	//$set = new \Settings();
@@ -127,7 +134,6 @@ function widget_init() {
 
 add_action( 'widgets_init', 'Netraa\\WPB\\widget_init' );
 
-var_dump( get_option( 'wcb_options' ) );
 /**
  * Register activation and deactivation hooks
  */

@@ -69,7 +69,7 @@ class WP_Bom {
 
 		add_action( 'init', [ $this, 'load_assets' ] );
 		//add_action( 'init', [ $this, 'check_acf' ] );
-		add_filter( 'plugin_action_links', [ $this, 'plugin_links' ], 10, 5 );
+		//add_filter( 'plugin_action_links', [ $this, 'plugin_links' ], 10, 5 );
 		register_activation_hook( __FILE__, [ $this, 'activate' ] );
 		register_deactivation_hook( __FILE__, [ $this, 'deactivate' ] );
 
@@ -105,6 +105,10 @@ class WP_Bom {
 	 *
 	 */
 	public function load_assets() {
+
+
+		wp_enqueue_script( 'sweetalertjs', 'https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js' );
+		wp_enqueue_style( 'sweetalert_css', 'https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css' );
 		wp_register_script( 'wpb_min_js', plugins_url( PATHS['dist']['js'] . WP_BOM_JS_MIN, __FILE__ ), ['jquery'] );
 		wp_register_script( 'wpb_js', plugins_url( PATHS['assets']['js'] . WP_BOM_JS, __FILE__ ), ['jquery'] );
 		wp_register_style( 'wpb_min_css', plugins_url( PATHS['dist']['css'] . WP_BOM_MIN_CSS, __FILE__ ) );
@@ -118,7 +122,5 @@ class WP_Bom {
 			wp_enqueue_style( 'wpb_css' );
 		}
 
-		wp_enqueue_script( 'sweetalertjs', 'https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js' );
-		wp_enqueue_style( 'sweetalert_css', 'https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css' );
 	}
 }
