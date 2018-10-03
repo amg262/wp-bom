@@ -1,3 +1,6 @@
+![alt text](https://github.com/amg262/wp-bom/blob/master/images/woobom500.png?raw=true "Logo")
+
+
 ![alt-text](https://cloud.githubusercontent.com/assets/1805604/26199709/55c91bda-3bcb-11e7-871e-94b7a022cfa9.jpg "WP Reactivate - WordPress React Boilerplate")
 # WP Reactivate
 WP Reactivate is a React boilerplate built specifically for WordPress, allowing you to quickly and easily integrate React into your WordPress plugins.
@@ -276,8 +279,3 @@ Anyone who would like to help us at this level would be granted a free license a
 be treated as our highest-priority users. Without you, we couldn’t deliver the best
 possible product and we promise to reward you and make it worth your while!
 
-![alt text](https://github.com/amg262/wp-bom/images/woobom500.png "Logo")
-
-![alt text][logo]
-[logo]: https://github.com/amg262/wp-bom/images/woobom500.png "WooBOM"
-      
