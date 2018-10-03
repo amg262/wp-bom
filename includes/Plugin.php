@@ -44,6 +44,7 @@ class Plugin {
 	 */
 	private function __construct() {
 		$this->plugin_version = WP_BOM_VERSION;
+		$this->upgrade_data();
 	}
 
 	/**
@@ -75,6 +76,7 @@ class Plugin {
 	 */
 	public static function activate() {
 		add_option( 'wpb_example_setting' );
+		add_option( 'wcb_options', [ 'init' => true, 'ver' => WCB_VER ] );
 	}
 
 	/**
@@ -85,6 +87,22 @@ class Plugin {
 	public static function deactivate() {
 	}
 
+	public function upgrade_data() {
+		global $wpdb;
+		$tbl = $wpdb->prefix . WP_BOM_TBL;
+		$sql = "CREATE TABLE IF NOT EXISTS $tbl (
+					id int(11) NOT NULL AUTO_INCREMENT,
+					post_id int(11),
+					type varchar(255),
+					data text ,
+					time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+					active tinyint(1) DEFAULT -1,
+					PRIMARY KEY  (id)
+				);";
+
+		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		dbDelta( $sql );
+	}
 
 	/**
 	 * Return an instance of this class.

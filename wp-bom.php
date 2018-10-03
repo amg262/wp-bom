@@ -31,6 +31,8 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 define( 'WP_BOM_VERSION', '1.0.0' );
+define('WP_BOM_TBL', 'wpb_bom');
+
 /*
  * Autoloader
  *
@@ -77,20 +79,30 @@ try {
  * @since 1.0.0
  */
 function init() {
-	$wpb = Plugin::get_instance();
+
+	$wpb           = Plugin::get_instance();
 	$wpb_shortcode = Shortcode::get_instance();
-	$wpb_admin = Admin::get_instance();
-	$wpb_rest = Endpoint\Example::get_instance();
+	$wpb_admin     = Admin::get_instance();
+	$wpb_rest      = Endpoint\Example::get_instance();
 
-	require __DIR__.'/SettingsAPI.php';
+	$wpb_part      = Part::get_instance();
+	$wpb_assembly  = Assembly::get_instance();
+	$wpb_product   = Product::get_instance();
+	$wpb_inventory = Inventory::get_instance();
 
-	require __DIR__ .'/Settings.php';
 
-	$set = new \Settings();
+	require __DIR__ . '/acf/acf.php';
+
+	require __DIR__ . '/includes/SettingsAPI.php';
+
+	$wpb_settings = new Settings();
+	//require __DIR__ . '/Settings.php';
+
+	//$set = new \Settings();
 
 }
-add_action( 'plugins_loaded', 'Netraa\\WPB\\init' );
 
+add_action( 'plugins_loaded', 'Netraa\\WPB\\init' );
 
 
 /**
@@ -101,11 +113,13 @@ add_action( 'plugins_loaded', 'Netraa\\WPB\\init' );
 function widget_init() {
 	return register_widget( new Widget );
 }
+
 add_action( 'widgets_init', 'Netraa\\WPB\\widget_init' );
 
+var_dump(get_option('wcb_options'));
 /**
  * Register activation and deactivation hooks
  */
-register_activation_hook( __FILE__, array( 'Netraa\\WPB\\Plugin', 'activate' ) );
-register_deactivation_hook( __FILE__, array( 'Netraa\\WPB\\Plugin', 'deactivate' ) );
+register_activation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'activate' ] );
+register_deactivation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'deactivate' ] );
 
