@@ -70,9 +70,9 @@ class Admin {
 	 * @since     1.0.0
 	 */
 	private function __construct() {
-		$plugin = Plugin::get_instance();
+		$plugin            = Plugin::get_instance();
 		$this->plugin_slug = $plugin->get_plugin_slug();
-		$this->version = $plugin->get_plugin_version();
+		$this->version     = $plugin->get_plugin_version();
 
 		$this->plugin_basename = plugin_basename( plugin_dir_path( realpath( dirname( __FILE__ ) ) ) . $this->plugin_slug . '.php' );
 	}
@@ -81,18 +81,20 @@ class Admin {
 	/**
 	 * Handle WP actions and filters.
 	 *
-	 * @since 	1.0.0
+	 * @since    1.0.0
 	 */
 	private function do_hooks() {
 		// Load admin style sheet and JavaScript.
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_styles' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_scripts' ] );
 
 		// Add the options page and menu item.
-		add_action( 'admin_menu', array( $this, 'add_plugin_admin_menu' ) );
+		add_action( 'admin_menu', [ $this, 'add_plugin_admin_menu' ] );
 
 		// Add plugin action link point to settings page
-		add_filter( 'plugin_action_links_' . $this->plugin_basename, array( $this, 'add_action_links' ) );
+		add_filter( 'plugin_action_links_' . $this->plugin_basename, [ $this, 'plugin_links' ] );
+		//add_filter( 'plugin_action_links', [ $this, 'plugin_links' ], 10, 5 );
+
 	}
 
 	/**
@@ -108,7 +110,7 @@ class Admin {
 		}
 		$screen = get_current_screen();
 		if ( $this->plugin_screen_hook_suffix == $screen->id ) {
-			wp_enqueue_style( $this->plugin_slug . '-style', plugins_url( 'assets/css/admin.css', dirname( __FILE__ ) ), array(), $this->version );
+			wp_enqueue_style( $this->plugin_slug . '-style', plugins_url( 'assets/css/admin.css', dirname( __FILE__ ) ), [], $this->version );
 		}
 	}
 
@@ -127,12 +129,12 @@ class Admin {
 		$screen = get_current_screen();
 		if ( $this->plugin_screen_hook_suffix == $screen->id ) {
 
-			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'assets/js/admin.js', dirname( __FILE__ ) ), array( 'jquery' ), $this->version );
+			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'assets/js/admin.js', dirname( __FILE__ ) ), [ 'jquery' ], $this->version );
 
-			wp_localize_script( $this->plugin_slug . '-admin-script', 'wpb_object', array(
-				'api_nonce'   => wp_create_nonce( 'wp_rest' ),
-				'api_url'	  => rest_url( $this->plugin_slug . '/v1/' ),
-				)
+			wp_localize_script( $this->plugin_slug . '-admin-script', 'wpb_object', [
+					'api_nonce' => wp_create_nonce( 'wp_rest' ),
+					'api_url'   => rest_url( $this->plugin_slug . '/v1/' ),
+				]
 			);
 		}
 	}
@@ -151,7 +153,7 @@ class Admin {
 			__( 'WP Reactivate', $this->plugin_slug ),
 			'manage_options',
 			$this->plugin_slug,
-			array( $this, 'display_plugin_admin_page' )
+			[ $this, 'display_plugin_admin_page' ]
 		);
 	}
 
@@ -161,7 +163,8 @@ class Admin {
 	 * @since    1.0.0
 	 */
 	public function display_plugin_admin_page() {
-		?><div id="wp-reactivate-admin"></div><?php
+		?>
+        <div id="wp-reactivate-admin"></div><?php
 	}
 
 	/**
@@ -171,10 +174,31 @@ class Admin {
 	 */
 	public function add_action_links( $links ) {
 		return array_merge(
-			array(
+			[
 				'settings' => '<a href="' . admin_url( 'options-general.php?page=' . $this->plugin_slug ) . '">' . __( 'Settings', $this->plugin_slug ) . '</a>',
-			),
+			],
 			$links
 		);
 	}
+
+	/**
+	 * @param $actions
+	 * @param $plugin_file
+	 *
+	 * @return array
+	 */
+	public function plugin_links( $links ) {
+
+		$settings = [
+			'settings' => '<a href="' . admin_url( 'options-general.php?page=' . $this->plugin_slug ) . '">' . __( 'Settings', $this->plugin_slug ) . '</a>',
+			'parts'    => '<a href="edit.php?post_type=part">' . __( 'Parts', 'wp-bom' ) . '</a>',
+			'assembly' => '<a href="edit.php?post_type=assembly">' . __( 'Assembly', 'wp-bom' ) . '</a>',
+			'options'  => '<a href="admin.php?page=wp-bom-settings">' . __( 'Options', 'wp-bom' ) . '</a>',
+		];
+		$actions  = array_merge( $settings, $links );
+
+		return $actions;
+	}
+
+
 }

@@ -56,7 +56,7 @@ gulp.task('purge', function () {
 
 // Copy all static images
 gulp.task('imagemin', function () {
-	gulp.src(paths.dist + 'images/*').pipe(imagemin()).pipe(gulp.dest(paths.images));
+	gulp.src(paths.assets + 'images/*').pipe(imagemin()).pipe(gulp.dest(paths.images));
 });
 
 gulp.task('cssnano', function () {

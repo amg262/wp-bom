@@ -33,6 +33,8 @@ if ( ! defined( 'WPINC' ) ) {
 define( 'WP_BOM_VERSION', '1.0.0' );
 define('WP_BOM_TBL', 'wpb_bom');
 
+
+
 /*
  * Autoloader
  *
@@ -80,6 +82,9 @@ try {
  */
 function init() {
 
+
+	require __DIR__.'/dist/acfload.php';
+
 	$wpb           = Plugin::get_instance();
 	$wpb_shortcode = Shortcode::get_instance();
 	$wpb_admin     = Admin::get_instance();
@@ -91,11 +96,13 @@ function init() {
 	$wpb_inventory = Inventory::get_instance();
 
 
-	require __DIR__ . '/acf/acf.php';
-
-	require __DIR__ . '/includes/SettingsAPI.php';
+//	require __DIR__ . '/dist/acf/acf.php';
 
 	$wpb_settings = new Settings();
+	require __DIR__.'/wp-bom-core.php';
+	$core = WP_Bom::get_instance();
+	//$cor
+
 	//require __DIR__ . '/Settings.php';
 
 	//$set = new \Settings();

@@ -41,6 +41,9 @@ class Part {
 
 	}
 
+	/**
+	 *
+	 */
 	public function check_field_groups() {
 
 		$args = [
@@ -62,6 +65,9 @@ class Part {
 
 	}
 
+	/**
+	 *
+	 */
 	public function add_all_groups() {
 		if ( function_exists( 'acf_add_local_field_group' ) ) {
 			$this->add_part_group();
@@ -71,6 +77,9 @@ class Part {
 	}
 
 
+	/**
+	 *
+	 */
 	public function register_part() {
 
 		$labels = [
@@ -113,6 +122,9 @@ class Part {
 	}
 
 
+	/**
+	 *
+	 */
 	public function register_part_cat() {
 
 		$labels = [
@@ -140,6 +152,9 @@ class Part {
 
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function add_part_group() {
 		if ( function_exists( 'acf_add_local_field_group' ) ) {
 			acf_add_local_field_group( [

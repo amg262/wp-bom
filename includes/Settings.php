@@ -9,6 +9,7 @@
 namespace Netraa\WPB;
 
 use WP_Post;
+use Netraa\WPB\SettingsAPI;
 
 class Settings {
 
@@ -16,7 +17,7 @@ class Settings {
 
 	function __construct() {
 
-		$this->settings_api = new SettingsAPI;
+		$this->settings_api = new \Netraa\WPB\SettingsAPI();
 
 		add_action( 'admin_init', [ $this, 'admin_init' ] );
 		add_action( 'admin_menu', [ $this, 'admin_menu' ] );
@@ -37,7 +38,7 @@ class Settings {
 	function admin_menu() {
 
 		echo '';
-		add_options_page( 'Settings API', 'Settings API', 'manage_options', 'settings_api_test', [
+		add_options_page( 'Settings API', 'Settings API', 'manage_options', 'wp-bom-settings', [
 			$this,
 			'plugin_page',
 		] );

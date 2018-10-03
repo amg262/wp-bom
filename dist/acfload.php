@@ -7,22 +7,12 @@
  */
 
 
-
-
-// Checks to see if the acf pro plugin is activated  */
-if ( ! is_plugin_active( 'advanced-custom-fields-pro/acf.php' ) ) {
-//  /* load the plugin and anything else you want to do */
-}
-//
-///* Checks to see if the acf plugin is activated  */
-if ( ! is_plugin_active( 'advanced-custom-fields/acf.php' ) ) {
-
-}
+namespace Netraa\WPB;
 /** Start: Detect ACF Pro plugin. Include if not present. */
 if ( ! class_exists( 'acf' ) ) { // if ACF Pro plugin does not currently exist
 	/** Start: Customize ACF path */
-	add_filter( 'acf/settings/path', 'cysp_acf_settings_path' );
-	function cysp_acf_settings_path( $path ) {
+	add_filter( 'acf/settings/path', 'Netraa\\WPB\\wpb_acf_settings_path' );
+	function wpb_acf_settings_path( $path ) {
 
 		$path = plugin_dir_path( __FILE__ ) . 'acf/';
 
@@ -31,8 +21,8 @@ if ( ! class_exists( 'acf' ) ) { // if ACF Pro plugin does not currently exist
 
 	/** End: Customize ACF path */
 	/** Start: Customize ACF dir */
-	add_filter( 'acf/settings/dir', 'cysp_acf_settings_dir' );
-	function cysp_acf_settings_dir( $path ) {
+	add_filter( 'acf/settings/dir', 'Netraa\\WPB\\wpb_acf_settings_dir' );
+	function wpb_acf_settings_dir( $path ) {
 
 		$dir = plugin_dir_url( __FILE__ ) . 'acf/';
 
@@ -47,8 +37,8 @@ if ( ! class_exists( 'acf' ) ) { // if ACF Pro plugin does not currently exist
 	include_once( plugin_dir_path( __FILE__ ) . 'acf/acf.php' );
 	/** End: Include ACF */
 	/** Start: Create JSON save point */
-	add_filter( 'acf/settings/save_json', 'cysp_acf_json_save_point' );
-	function cysp_acf_json_save_point( $path ) {
+	add_filter( 'acf/settings/save_json', 'Netraa\\WPB\\wpb_acf_json_save_point' );
+	function wpb_acf_json_save_point( $path ) {
 
 		$path = plugin_dir_path( __FILE__ ) . 'acf-json/';
 
@@ -57,11 +47,11 @@ if ( ! class_exists( 'acf' ) ) { // if ACF Pro plugin does not currently exist
 
 	/** End: Create JSON save point */
 	/** Start: Create JSON load point */
-	add_filter( 'acf/settings/load_json', 'cysp_acf_json_load_point' );
+	add_filter( 'acf/settings/load_json', 'Netraa\\WPB\\wpb_acf_json_load_point' );
 	/** End: Create JSON load point */
 	/** Start: Stop ACF upgrade notifications */
-	add_filter( 'site_transient_update_plugins', 'cysp_stop_acf_update_notifications', 11 );
-	function cysp_stop_acf_update_notifications( $value ) {
+	add_filter( 'site_transient_update_plugins', 'Netraa\\WPB\\wpb_stop_acf_update_notifications', 11 );
+	function wpb_stop_acf_update_notifications( $value ) {
 
 		unset( $value->response[ plugin_dir_path( __FILE__ ) . 'acf/acf.php' ] );
 
@@ -70,14 +60,15 @@ if ( ! class_exists( 'acf' ) ) { // if ACF Pro plugin does not currently exist
 	/** End: Stop ACF upgrade notifications */
 } else { // else ACF Pro plugin does exist
 	/** Start: Create JSON load point */
-	add_filter( 'acf/settings/load_json', 'cysp_acf_json_load_point' );
+	add_filter( 'acf/settings/load_json', 'Netraa\\WPB\\wpb_acf_json_load_point' );
 	/** End: Create JSON load point */
 } // end-if ACF Pro plugin does not currently exist
 /** End: Detect ACF Pro plugin. Include if not present. */
 /** Start: Function to create JSON load point */
-function cysp_acf_json_load_point( $paths ) {
+function wpb_acf_json_load_point( $paths ) {
 
 	$paths[] = plugin_dir_path( __FILE__ ) . 'acf-json-load';
 
 	return $paths;
 }
+

@@ -1,1 +1,0 @@
-wc-bill-materials

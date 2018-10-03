@@ -44,7 +44,6 @@ class Plugin {
 	 */
 	private function __construct() {
 		$this->plugin_version = WP_BOM_VERSION;
-		$this->upgrade_data();
 	}
 
 	/**
@@ -74,9 +73,12 @@ class Plugin {
 	 *
 	 * @since    1.0.0
 	 */
-	public static function activate() {
+	public function activate() {
 		add_option( 'wpb_example_setting' );
 		add_option( 'wcb_options', [ 'init' => true, 'ver' => WCB_VER ] );
+		flush_rewrite_rules();
+
+		$this->upgrade_data();
 	}
 
 	/**
@@ -84,7 +86,9 @@ class Plugin {
 	 *
 	 * @since    1.0.0
 	 */
-	public static function deactivate() {
+	public function deactivate() {
+		flush_rewrite_rules();
+
 	}
 
 	public function upgrade_data() {
