@@ -216,3 +216,68 @@ Building a WordPress plugin with React - [Part 1](https://gopangolin.com/buildin
 
 ## Credits
 *Made by [Pangolin](https://gopangolin.com)*
+
+
+## WooCommerce Bill of Materials
+
+##WooCommerce Bill of Materials with WooBOM™
+
+
+WooCommerce Bill of Materials designed for Manufacturing
+Creating a Bill of Materials (BOM) is a very valuable asset for any company that
+uses raw materials and parts to manufacture products. Any business using
+WooCommerce have had no way to add inventory and material usage tracking, until
+now.
+
+WooBOM™ is the first plugin that takes a step towards achieving Material
+Requirements Planning (MRP) to create a way to easily and automatically track
+inventory and materials used to make their products. Unlike many other software
+solutions on the market, WooBOM is user friendly, easy to use, customizable, and
+lightweight.
+
+##Modular and Multilevel in nature
+Many companies have unique processes and do things their own way. There is no
+one-size-fits-all solution for MRP and BOM solutions, and we know that from
+experience. WooBOM lets you customize certain aspects to be flexible and allow you
+to have your own unique way to create a Bill of Materials. This allows you to create
+your own indented BOM that records the raw materials, sub-components,
+components, parts, sub-assemblies, assemblies and their quantities used to create
+the products that are used in their online WooCommerce store.
+Our abstraction of the way materials come in and leave the door lets you have full
+flexibility of things like shipping/receiving, vendors, customers, purchase orders
+(PO), blanket orders, requisitions, work orders, material location, and items that
+are defective, broken, reworked, resold, missing, or whatever the case may be. We
+also allow the specific details of materials to be customized like if their use in the
+assembly process is measured in dimensions, rather than just quantity and weight.
+##Engineering Change Notices
+
+Tracking all the information lays the framework for adding even more value to your
+production process. Creating a modular BOM will allow you take utilize the
+Engineering Change Notice (ECN) feature that will allow you to enter when a
+material, component, part, or assembly has changed in someway that effects a
+item assembly or status. This can streamline communication so that a product or
+assembly isn’t continually made the old way it was before the change, providing a
+valuable and timesaving to centralize this information.
+Desktop App and Coming features
+Currently in the latter stages of development are native features for importing,
+exporting and custom, detailed reports that are exportable and beautiful. There is
+also a cross-platform desktop application were developing for Mac, Windows, Linux
+to use the REST API so all your data is available and updateable from a lightweight
+desktop app.
+Beta release is coming soon
+
+
+In order to produce something distributable we need to test and evaluate how our
+platform works when its actually used by a business. This means we are proceeding
+with caution for releasing this product because we know how crucial eCommerce is
+to your business and we don’t take that lightly. With a little time and maturity, this
+can be achieved and it’s not too far away.
+Anyone who would like to help us at this level would be granted a free license and
+be treated as our highest-priority users. Without you, we couldn’t deliver the best
+possible product and we promise to reward you and make it worth your while!
+
+![alt text](https://github.com/amg262/wp-bom/images/woobom500.png "Logo")
+
+![alt text][logo]
+[logo]: https://github.com/amg262/wp-bom/images/woobom500.png "WooBOM"
+      
