@@ -14,7 +14,43 @@
 namespace Netraa\WPB;
 
 
+const WP_BOM_JS      = 'wp-bom.js';
+const WP_BOM_JS_MIN  = 'wp-bom.min.js';
+const WP_BOM_CSS     = 'wp-bom.css';
+const WP_BOM_MIN_CSS = 'wp-bom.min.css';
+const PATHS          = [
+	'dir'         => __DIR__,
+	'wp-bom'      => '/wp-bom.php',
+	'assets'      => [
+		'assets' => '/assets/',
+		'css'    => '/assets/css/',
+		'js'     => '/assets/js/',
+		'images' => '/assets/images/',
+	],
+	'app'         => __DIR__ . '/app/',
+	'acf'         => __DIR__ . '/acf/',
+	'acfphp'      => __DIR__ . '/acf/acf.php',
+	'data'        => __DIR__ . '/data/',
+	'dist'        => [
+		'dist'   => '/dist/',
+		'css'    => '/dist/css/',
+		'js'     => '/dist/js/',
+		'images' => '/dist/images/',
+	],
+	'includes'    => __DIR__ . '/includes/',
+	'test'        => __DIR__ . '/test/',
+	'logs'        => __DIR__ . '/logs/',
+	'wpb-core'    => __DIR__ . '/wp-bom-core.php',
+	'gulp'        => __DIR__ . '/gulpfile.js',
+	'stylesheets' => [ 'admin.css', 'shortcode.css', 'widget.css', 'wp-bom.css' ],
+	'scripts'     => [ 'admin', 'shortcode', 'widget', 'wp-bom' ],
+
+];
+const DIST_JS        = __DIR__ . '/dist/';
+
+
 class WP_Bom {
+
 
 	protected static $instance = null;
 
@@ -49,7 +85,6 @@ class WP_Bom {
 	}
 
 
-
 	/**
 	 *
 	 */
@@ -70,46 +105,20 @@ class WP_Bom {
 	 *
 	 */
 	public function load_assets() {
+		wp_register_script( 'wpb_min_js', plugins_url( PATHS['dist']['js'] . WP_BOM_JS_MIN, __FILE__ ), ['jquery'] );
+		wp_register_script( 'wpb_js', plugins_url( PATHS['assets']['js'] . WP_BOM_JS, __FILE__ ), ['jquery'] );
+		wp_register_style( 'wpb_min_css', plugins_url( PATHS['dist']['css'] . WP_BOM_MIN_CSS, __FILE__ ) );
+		wp_register_style( 'wpb_css', plugins_url( PATHS['assets']['css'] . WP_BOM_CSS, __FILE__ ) );
 
-		wp_register_script( 'bom_adm_js', plugins_url( 'assets/wc-bom.js', __FILE__ ), [ 'jquery' ] );
-
-		wp_enqueue_script( 'bom_adm_js' );
+		if (WP_BOM_PROD === true) {
+			wp_enqueue_script( 'wpb_min_js' );
+			wp_enqueue_style( 'wpb_min_css' );
+		} else {
+			wp_enqueue_script( 'wpb_js' );
+			wp_enqueue_style( 'wpb_css' );
+		}
 
 		wp_enqueue_script( 'sweetalertjs', 'https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js' );
 		wp_enqueue_style( 'sweetalert_css', 'https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css' );
-
-		wp_register_script( 'chosen_js', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.7.0/chosen.jquery.min.js', [ 'jquery' ] );
-		wp_register_style( 'chosen_css', 'https://cdnjs.cloudflare.com/ajax/libs/chosen/1.7.0/chosen.min.css' );
-		//wp_enqueue_script( 'bom_adm_js' );
-		wp_enqueue_script( 'chosen_js' );
-		wp_enqueue_style( 'chosen_css' );
-		//wp_enqueue_style( 'bom_css' );
-	}
-
-	/**
-	 * @param $actions
-	 * @param $plugin_file
-	 *
-	 * @return array
-	 */
-	public function plugin_links( $actions, $plugin_file ) {
-
-		static $plugin;
-
-		if ( $plugin === null ) {
-			$plugin = plugin_basename( __FILE__ );
-		}
-		if ( $plugin === $plugin_file ) {
-			$settings = [
-				//edit.php?post_type=part
-				'parts'    => '<a href="edit.php?post_type=part">' . __( 'Parts', 'wc-bom' ) . '</a>',
-				'assembly' => '<a href="edit.php?post_type=assembly">' . __( 'Assembly', 'wc-bom' ) . '</a>',
-
-				'settings' => '<a href="admin.php?page=wc-bill-materials">' . __( 'Settings', 'wc-bom' ) . '</a>',
-			];
-			$actions  = array_merge( $settings, $actions );
-		}
-
-		return $actions;
 	}
 }

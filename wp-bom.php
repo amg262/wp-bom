@@ -31,8 +31,12 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 define( 'WP_BOM_VERSION', '1.0.0' );
-define('WP_BOM_TBL', 'wpb_bom');
+define( 'WP_BOM_TBL', 'wpb_bom' );
+define( 'WP_BOM_BUILD', 'prod' );
 
+const WP_BOM_BUILD = 'dev';
+const WP_BOM_PROD  = false;
+const WP_BOM_DEV   = true;
 
 
 /*
@@ -83,7 +87,7 @@ try {
 function init() {
 
 
-	require __DIR__.'/dist/acfload.php';
+	require __DIR__ . '/dist/acfload.php';
 
 	$wpb           = Plugin::get_instance();
 	$wpb_shortcode = Shortcode::get_instance();
@@ -99,7 +103,7 @@ function init() {
 //	require __DIR__ . '/dist/acf/acf.php';
 
 	$wpb_settings = new Settings();
-	require __DIR__.'/wp-bom-core.php';
+	require __DIR__ . '/wp-bom-core.php';
 	$core = WP_Bom::get_instance();
 	//$cor
 
@@ -123,7 +127,7 @@ function widget_init() {
 
 add_action( 'widgets_init', 'Netraa\\WPB\\widget_init' );
 
-var_dump(get_option('wcb_options'));
+var_dump( get_option( 'wcb_options' ) );
 /**
  * Register activation and deactivation hooks
  */

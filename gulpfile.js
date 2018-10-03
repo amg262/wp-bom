@@ -51,16 +51,17 @@ var paths = {
 // Not all tasks need to use streams
 // A gulpfile is just another node program and you can use any package available on npm
 gulp.task('purge', function () {
-	gulp.src(paths.dist + '*').pipe(clean());
+	gulp.src(paths.dist + 'js/*').pipe(clean());
+	gulp.src(paths.dist + 'css/*').pipe(clean());
 });
 
 // Copy all static images
 gulp.task('imagemin', function () {
-	gulp.src(paths.assets + 'images/*').pipe(imagemin()).pipe(gulp.dest(paths.images));
+	gulp.src(paths.images).pipe(imagemin()).pipe(gulp.dest(paths.dist + 'images'));
 });
 
 gulp.task('cssnano', function () {
-	gulp.src(paths.dist + '*.css').pipe(cssnano()).pipe(rename({suffix: '.min'})).pipe(gulp.dest(paths.dist + 'css/'));
+	gulp.src(paths.assets + 'css/*').pipe(cssnano()).pipe(rename({suffix: '.min'})).pipe(gulp.dest(paths.dist + 'css/'));
 });
 //
 //gulp.task('scripts', function() {
@@ -74,7 +75,7 @@ gulp.task('cssnano', function () {
  */
 gulp.task('uglify', function () {
 
-	gulp.src(paths.dist + '*.js').pipe(uglify()).pipe(rename({suffix: '.min'})).pipe(gulp.dest(paths.dist + 'js/'));
+	gulp.src(paths.assets + 'js/*.js').pipe(uglify()).pipe(rename({suffix: '.min'})).pipe(gulp.dest(paths.dist + 'js/'));
 });
 //
 //gulp.task('zip', function() {
@@ -108,6 +109,6 @@ gulp.task('watch', function () {
 
 
 gulp.task('clean', ['purge', 'imagemin', 'cssnano', 'uglify']);
-gulp.task('run', ['imagemin', 'cssnano', 'uglify', 'serve', 'watch']);
+gulp.task('run', ['purge', 'imagemin', 'cssnano', 'uglify', 'serve', 'watch']);
 gulp.task('live', ['serve', 'watch']);
 
