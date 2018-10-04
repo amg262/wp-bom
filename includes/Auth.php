@@ -16,24 +16,31 @@ namespace Netraa\WPB;
 
 class Auth {
 
-	protected static $instance = null;
+//	protected static $instance = null;
 
+	private $is_auth = false;
 
-	private function __construct() {
+	public function __construct() {
 	}
 
 	protected function init() {
 
 	}
+//
+//	public static function get_instance() {
+//
+//		if ( static::$instance === null ) {
+//			static::$instance = new static;
+//		}
+//
+//		return static::$instance;
+//	}
 
-	public static function get_instance() {
-
-		if ( static::$instance === null ) {
-			static::$instance = new static;
+	public function parse_key($key) {
+		if ($key === 'boobs') {
+			$this->is_auth = true;
 		}
-
-		return static::$instance;
+		return $this->is_auth;
 	}
-
 
 }

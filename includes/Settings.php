@@ -36,6 +36,7 @@ class Settings {
 	}
 
 	function admin_menu() {
+		add_submenu_page('wp-bom','Settings API','Settings API','manage_options','wp-bom-settingssss',[$this,'plugin_page']);
 
 		echo '';
 		add_options_page( 'Settings API', 'Settings API', 'manage_options', 'wp-bom-settings', [
@@ -94,7 +95,7 @@ class Settings {
 		$settings_fields = [
 			'wcb_settings' => [
 				[
-					'name'              => 'text_val',
+					'name'              => 'key',
 					'label'             => __( 'Text Input', 'wedevs' ),
 					'desc'              => __( 'Text input description', 'wedevs' ),
 					'type'              => 'text',

@@ -39,6 +39,20 @@ const WP_BOM_PROD  = false;
 const WP_BOM_DEV   = true;
 
 global $wp_bom_settings;
+
+function auth() {
+	require __DIR__ . '/includes/Auth.php';
+
+	$opts = get_option( 'wcb_settings' );
+
+	echo json_encode( $opts );
+	if ( $opts['key'] === 'balls' ) {
+		return true;
+	}
+
+	return false;
+}
+
 /*
  * Autoloader
  *
@@ -87,6 +101,7 @@ try {
 function init() {
 
 
+	//if ( auth() === true ) {
 	require __DIR__ . '/dist/acfload.php';
 
 	$wpb           = Plugin::get_instance();
@@ -98,13 +113,15 @@ function init() {
 	$wpb_assembly  = Assembly::get_instance();
 	$wpb_product   = Product::get_instance();
 	$wpb_inventory = Inventory::get_instance();
-//	require __DIR__ . '/dist/acf/acf.php';
 
 	$wpb_settings = new Settings();
+//	require __DIR__ . '/dist/acf/acf.php';
+
 	require __DIR__ . '/wp-bom-core.php';
 	$core = WP_Bom::get_instance();
 
 
+	//}
 }
 
 add_action( 'plugins_loaded', 'Netraa\\WPB\\init' );
