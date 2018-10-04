@@ -12,6 +12,8 @@
 
 namespace Netraa\WPB;
 
+use WP_User;
+
 /**
  * @subpackage Admin
  */
@@ -198,6 +200,7 @@ class Admin {
 	public function settings_info() { ?>
         <div id="plugin-info-header" class="plugin-info header">
             <div class="plugin-info content">
+                <h2>WP Bom</h2>
             </div>
         </div>
 	<?php }
@@ -207,32 +210,67 @@ class Admin {
 		$wcb_options = get_option( 'wcb_options' ); ?>
         <table class="form-table">
             <tbody>
-            <tr><?php $label = 't';
-				$key         = 't';
-				$id          = 't'; ?>
+            <tr><?php $label = 'Sdf';
+				$key         = $this->format_key( $label );
+				$id          = $key; ?>
 
                 <th scope="row"><label for="<?php _e( $id ); ?>"><?php _e( $label ); ?></label></th>
                 <td><input type="checkbox" id="<?php _e( $id ); ?>"
                            title="<?php _e( $id ); ?>"
                            class="wcb_cb"
-
                            name="wcb_options[<?php _e( $key ); ?>]"
                            value="1"<?php checked( 1, $wcb_options[ $key ], true ); ?> /></td>
             </tr>
 
-            <tr><?php $label = 'text';
-				$key         = 'text';
-				$id          = 'text'; ?>
+            <tr><?php $label = 'Email';
+				$key         = $this->format_key( $label );
+				$id          = $key; ?>
+
                 <th scope="row"><label for="<?php _e( $id ); ?>"><?php _e( $label ); ?></label></th>
                 <td>
                     <input type="text"
                            title="<?php _e( $id ); ?>"
                            id="<?php _e( $id ); ?>"
+                           placeholder="<?php if ( ! isset( $wcb_options[ $key ] ) ) {
+						       $user = new WP_User( get_current_user_id() );
+						       echo $user->user_email;
+					       } else {
+						       echo $wcb_options[ $key ];
+					       } ?>"
+                           name="wcb_options[<?php _e( $key ); ?>]"
+                           value="<?php echo $wcb_options[ $key ]; ?>"/>
+                </td>
+            </tr>
+
+            <tr><?php $label = 'Key';
+	            $key         = $this->format_key( $label );
+	            $id          = $key; ?>
+
+                <th scope="row"><label for="<?php _e( $id ); ?>"><?php _e( $label ); ?></label></th>
+                <td>
+                    <input type="password"
+                           title="<?php _e( $id ); ?>"
+                           id="<?php _e( $id ); ?>"
+                           placeholder="<?php if ( ! isset( $wcb_options[ $key ] ) ) {
+			                   $user = new WP_User( get_current_user_id() );
+			                   echo $user->user_email;
+		                   } else {
+			                   echo $wcb_options[ $key ];
+		                   } ?>"
                            name="wcb_options[<?php _e( $key ); ?>]"
                            value="<?php echo $wcb_options[ $key ]; ?>"/>
                 </td>
             </tr>
             <tr>
+                <?php
+
+                echo '<h1>'.$wcb_options['key'].'</h1>';
+                echo '<h1>'.md5($wcb_options['key']).'</h1>';
+                echo '<h1>'.$wcb_options['key'].'</h1>';
+
+
+                ?>
+
                 <th>
                     <span id="wpb_admin_ajax" name="wpb_admin_ajax" class="button-primary">Button</span>
                     <span id="wpb_ajax_io" name="wpb_ajax_io">Heyo</span>
@@ -273,6 +311,10 @@ class Admin {
 
 		$new_input = [];
 
+
+		if (isset($input['key'])) {
+		    echo '<h1>'.$input['key'].'</h1>';
+        }
 
 		return $input;
 

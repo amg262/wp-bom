@@ -43,10 +43,10 @@ global $wp_bom_settings;
 function auth() {
 	require __DIR__ . '/includes/Auth.php';
 
-	$opts = get_option( 'wcb_settings' );
+	$opts = get_option( 'wcb_options' );
 
 	echo json_encode( $opts );
-	if ( $opts['key'] === 'balls' ) {
+	if ( $opts['key'] === 'odie' ) {
 		return true;
 	}
 
@@ -101,7 +101,7 @@ try {
 function init() {
 
 
-	//if ( auth() === true ) {
+	if ( auth() === true ) {
 	require __DIR__ . '/dist/acfload.php';
 
 	$wpb           = Plugin::get_instance();
@@ -121,7 +121,7 @@ function init() {
 	$core = WP_Bom::get_instance();
 
 
-	//}
+	}
 }
 
 add_action( 'plugins_loaded', 'Netraa\\WPB\\init' );
