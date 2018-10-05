@@ -1,23 +1,16 @@
 <?php
 /**
- * WP-Reactivate
- *
- *
- * @package   WP-Reactivate
- * @author    Pangolin
- * @license   GPL-3.0
- * @link      https://gopangolin.com
- * @copyright 2017 Pangolin (Pty) Ltd
+ * Copyright (c) 2018. | WP Bill of Materials
+ * andrewmgunn26@gmail.com | https://github.com/amg262/wp-bom
  */
-
-namespace Netraa\WPB;
-
-use WP_Post;
 
 /**
- * @subpackage Plugin
+ * Created by PhpStorm.
+ * User: mint
+ * Date: 10/5/18
+ * Time: 5:02 PM
  */
-class Part {
+abstract class Material {
 
 
 	/**
@@ -102,7 +95,7 @@ class Part {
 			'show_in_menu'        => true,
 			//'show_in_menu_string' => 'wc-bom-admin',
 			'exclude_from_search' => false,
-			'capability_type'     => 'post',
+			'capability_type'     => 'product',
 			'map_meta_cap'        => true,
 			'hierarchical'        => true,
 			'query_var'           => true,
@@ -182,6 +175,22 @@ class Part {
 
 
 	}
+
+	public function register_taxonomy() {
+
+	}
+
+
+	public function register_post_type() {
+
+	}
+
+
+
+	public function add_acf_field_group() {
+
+	}
+
 	/**
 	 * @return bool
 	 */
@@ -363,6 +372,37 @@ class Part {
 	}
 
 
+	public function register( $labels, $args, $type = 'post') {
+
+
+		$label_default = [
+			'type'   => 'post',
+			'before' => "<p>",
+			'after'  => "</p> \n",
+			'echo'   => true,
+			'obj'    => [
+				'part' => '',
+			],
+		];
+
+		$labels = wp_parse_args( $labels, $label_default );
+
+		$default = [
+			'type'   => 'post',
+			'before' => "<p>",
+			'after'  => "</p> \n",
+			'echo'   => true,
+			'obj'    => [
+				'part' => '',
+			],
+		];
+
+		$args = wp_parse_args( $args, $default );
+
+
+
+	}
+
 	/**
 	 * Return an instance of this class.
 	 *
@@ -379,4 +419,6 @@ class Part {
 
 		return self::$instance;
 	}
+
+
 }

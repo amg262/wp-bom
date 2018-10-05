@@ -38,6 +38,8 @@ class Assembly {
 		add_action( 'init', [ $this, 'register_assembly' ] );
 		//add_action( 'init', [ $this, 'register_assembly_cat' ] );
 		add_action( 'init', [ $this, 'add_assembly_group' ] );
+		add_action( 'save_post', 'save_book_meta', 10, 3 );
+
 
 	}
 
@@ -60,6 +62,41 @@ class Assembly {
 
 		}
 
+	}
+	/**
+	 * Save post metadata when a post is saved.
+	 *
+	 * @param int $post_id The post ID.
+	 * @param post $post The post object.
+	 * @param bool $update Whether this is an existing post being updated or not.
+	 */
+	function check_item_type( $post_id, $post, $update ) {
+
+		/*
+		 * In production code, $slug should be set only once in the plugin,
+		 * preferably as a class property, rather than in each function that needs it.
+		 */
+		$post_type = get_post_type($post_id);
+
+		// If this isn't a 'book' post, don't update it.
+		if ( "assembly" !== $post_type ) return;
+
+		// - Update the post's metadata.
+
+		if ( isset( $_POST['book_author'] ) ) {
+			update_post_meta( $post_id, 'book_author', sanitize_text_field( $_POST['book_author'] ) );
+		}
+
+		if ( isset( $_POST['publisher'] ) ) {
+			update_post_meta( $post_id, 'publisher', sanitize_text_field( $_POST['publisher'] ) );
+		}
+
+		// Checkboxes are present if checked, absent if not.
+		if ( isset( $_POST['inprint'] ) ) {
+			update_post_meta( $post_id, 'inprint', TRUE );
+		} else {
+			update_post_meta( $post_id, 'inprint', FALSE );
+		}
 	}
 
 

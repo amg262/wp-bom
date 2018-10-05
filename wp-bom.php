@@ -101,7 +101,6 @@ try {
 function init() {
 
 
-	if ( auth() === true ) {
 	require __DIR__ . '/dist/acfload.php';
 
 	$wpb           = Plugin::get_instance();
@@ -121,7 +120,6 @@ function init() {
 	$core = WP_Bom::get_instance();
 
 
-	}
 }
 
 add_action( 'plugins_loaded', 'Netraa\\WPB\\init' );

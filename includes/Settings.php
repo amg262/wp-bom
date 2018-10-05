@@ -9,7 +9,6 @@
 namespace Netraa\WPB;
 
 use WP_Post;
-use Netraa\WPB\SettingsAPI;
 
 class Settings {
 
@@ -36,7 +35,10 @@ class Settings {
 	}
 
 	function admin_menu() {
-		add_submenu_page('wp-bom','Settings API','Settings API','manage_options','wp-bom-settingssss',[$this,'plugin_page']);
+		add_submenu_page( 'wp-bom', 'Settings API', 'Settings API', 'manage_options', 'wp-bom-settingssss', [
+			$this,
+			'plugin_page',
+		] );
 
 		echo '';
 		add_options_page( 'Settings API', 'Settings API', 'manage_options', 'wp-bom-settings', [
@@ -49,16 +51,24 @@ class Settings {
 
 		$sections = [
 			[
-				'id'    => 'wcb_settings',
-				'title' => __( 'Basic Settings', 'wedevs' ),
+				'id'    => 'wpb_settings',
+				'title' => __( 'Configure Modules', 'wedevs' ),
 			],
 			[
-				'id'    => 'wcb_advanced',
+				'id'    => 'wpb_advanced',
 				'title' => __( 'Advanced Settings', 'wedevs' ),
 			],
 			[
-				'id'    => 'wcb_others',
+				'id'    => 'wpb_others',
 				'title' => __( 'Other Settings', 'wpuf' ),
+			],
+			[
+				'id'    => 'wpb_io',
+				'title' => __( 'Import / Export', 'wpuf' ),
+			],
+			[
+				'id'    => 'wpb_support',
+				'title' => __( 'Support', 'wpuf' ),
 			],
 		];
 
@@ -93,7 +103,7 @@ class Settings {
 
 
 		$settings_fields = [
-			'wcb_settings' => [
+			'wpb_settings' => [
 				[
 					'name'              => 'key',
 					'label'             => __( 'Text Input', 'wedevs' ),
@@ -134,14 +144,27 @@ class Settings {
 				],
 				[
 					'name'    => 'multicheck',
-					'label'   => __( 'Multile checkbox', 'wedevs' ),
+					'label'   => __( 'Post Types', 'wedevs' ),
 					'desc'    => __( 'Multi checkbox description', 'wedevs' ),
 					'type'    => 'multicheck',
 					'options' => [
-						'one'   => 'One',
-						'two'   => 'Two',
-						'three' => 'Three',
-						'four'  => 'Four',
+						'Part'        => 'Part',
+						'Assembly'    => 'Assembly',
+						'Requisition' => 'Requisition',
+						'BOM'         => 'BOM',
+					],
+				],
+				[
+					'name'    => 'multicheck2',
+					'label'   => __( 'Taxonomy', 'wedevs' ),
+					'desc'    => __( 'Multi checkbox description', 'wedevs' ),
+					'type'    => 'multicheck',
+					'options' => [
+						'Part Category' => 'Part Category',
+						'Part Tag'      => 'Part Tag',
+						'Vendor'        => 'Vendor',
+						'Req Type'      => 'Req Type',
+						'Req Category'  => 'Req Category',
 					],
 				],
 				[
@@ -152,8 +175,8 @@ class Settings {
 					'default' => 'no',
 					'options' => [
 						//json_encode( $arr )
-						//'yes' => 'Yes',
-						//'no'  => 'No',
+						'yes' => 'Yes',
+						'no'  => 'No',
 					],
 				],
 				[
@@ -174,7 +197,7 @@ class Settings {
 					],
 				],
 			],
-			'wcb_advanced' => [
+			'wpb_advanced' => [
 				[
 					'name'    => 'color',
 					'label'   => __( 'Color', 'wedevs' ),
@@ -234,7 +257,7 @@ class Settings {
 					'default' => '',
 				],
 			],
-			'wcb_others'   => [
+			'wpb_others'   => [
 				[
 					'name'    => 'text',
 					'label'   => __( 'Text Input', 'wedevs' ),
@@ -301,6 +324,104 @@ class Settings {
 					'default' => '',
 				],
 			],
+			'wpb_io'       => [
+
+				[
+					'name'  => 'textarea',
+					'label' => __( 'Textarea Input', 'wedevs' ),
+					'desc'  => __( 'Textarea description', 'wedevs' ),
+					'type'  => 'textarea',
+				],
+				[
+					'name'  => 'checkbox',
+					'label' => __( 'Checkbox', 'wedevs' ),
+					'desc'  => __( 'Checkbox Label', 'wedevs' ),
+					'type'  => 'checkbox',
+				],
+				[
+					'name'    => 'file',
+					'label'   => __( 'File', 'wedevs' ),
+					'desc'    => __( 'File description', 'wedevs' ),
+					'type'    => 'file',
+					'default' => '',
+					'options' => [
+						'button_label' => 'Choose Image',
+					],
+				],
+				[
+					'name'    => 'file',
+					'label'   => __( 'File', 'wedevs' ),
+					'desc'    => __( 'File description', 'wedevs' ),
+					'type'    => 'file',
+					'default' => '',
+					'options' => [
+						'button_label' => 'Choose Image',
+					],
+				],
+				[
+					'name'    => 'multicheck',
+					'label'   => __( 'Multile checkbox', 'wedevs' ),
+					'desc'    => __( 'Multi checkbox description', 'wedevs' ),
+					'type'    => 'multicheck',
+					'options' => [
+						'one'   => 'One',
+						'two'   => 'Two',
+						'three' => 'Three',
+						'four'  => 'Four',
+					],
+				],
+				[
+					'name'    => 'selectbox',
+					'label'   => __( 'A Dropdown', 'wedevs' ),
+					'desc'    => __( 'Dropdown description', 'wedevs' ),
+					'type'    => 'select',
+					'default' => 'no',
+					'options' => [
+						//json_encode( $arr )
+						'yes' => 'Yes',
+						'no'  => 'No',
+					],
+				],
+			],
+			'wpb_support'  => [
+				[
+					'name'    => 'text',
+					'label'   => __( 'Text Input', 'wedevs' ),
+					'desc'    => __( 'Text input description', 'wedevs' ),
+					'type'    => 'text',
+					'default' => '',
+					//'sanitize_callback' => 'intval',
+				],
+				[
+					'name'    => 'multicheck',
+					'label'   => __( 'Multile checkbox', 'wedevs' ),
+					'desc'    => __( 'Multi checkbox description', 'wedevs' ),
+					'type'    => 'multicheck',
+					'options' => [
+						'one'   => 'One',
+						'two'   => 'Two',
+						'three' => 'Three',
+						'four'  => 'Four',
+					],
+				],
+				[
+					'name'    => 'wysiwyg',
+					'label'   => __( 'Advanced Editor', 'wedevs' ),
+					'desc'    => __( 'WP_Editor description', 'wedevs' ),
+					'type'    => 'wysiwyg',
+					'default' => '',
+				],
+
+				[
+					'name'    => 'file',
+					'label'   => __( 'File', 'wedevs' ),
+					'desc'    => __( 'File description', 'wedevs' ),
+					'type'    => 'file',
+					'default' => '',
+				],
+
+			],
+
 		];
 
 		return $settings_fields;
