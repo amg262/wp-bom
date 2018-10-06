@@ -5,6 +5,3 @@ $ cat .gitignore
 # exclude built js
 /assets/js/*
 /vendor/
-/data/v1/*
-/data/v2/*
-/data/wc-bom/*
