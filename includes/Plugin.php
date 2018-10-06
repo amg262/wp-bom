@@ -74,11 +74,7 @@ class Plugin {
 	 * @since    1.0.0
 	 */
 	public function activate() {
-		add_option( 'wpb_example_setting' );
-		add_option( 'wcb_options', [ 'init' => true, 'ver' => WCB_VER ] );
 		flush_rewrite_rules();
-
-		$this->upgrade_data();
 	}
 
 	/**
@@ -106,6 +102,96 @@ class Plugin {
 
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 		dbDelta( $sql );
+	}
+
+	/**
+	 *
+	 */
+	public function create_options() {
+		//			'wp_bom_data' => [ 'init' => true, 'ver' => $this->plugin_version ],
+		if ( ! add_option( 'wp_bom', [ 'init' => true, 'ver' => WP_BOM_VERSION ] ) ) {
+
+		}
+		if ( ! add_option( 'wp_bom_data', [ 'init' => true, 'ver' => WP_BOM_VERSION ] ) ) {
+		}
+
+		return true;
+	}
+
+
+	public function delete_options() {
+		$sections = [
+			'wpb_settings',
+			'wpb_advanced',
+			'wpb_others',
+			'wpb_io',
+			'wpb_support',
+			'wp_bom',
+			'wp_bom_data',
+		];
+
+		foreach ( $sections as $val ) {
+			delete_option( $val );
+
+		}
+	}
+
+	public function delete_posts() {
+
+		$i = 0;
+		$j = 0;
+
+		$types = [ 'page' ];
+		foreach ( $types as $type ) {
+
+			$args        = [
+				'posts_per_page'   => - 1,
+				'post_type'        => $type,
+				//'post_status'      => 'publish',
+				'suppress_filters' => true,
+			];
+			$posts_array = get_posts( $args );
+
+			foreach ( $posts_array as $post ) {
+
+				if ( $post->post_title === 'CRA App Page' ) {
+					wp_delete_post( $post->ID );
+					$i ++;
+				}
+			}
+		}
+
+		return $i;
+	}
+
+	/**
+	 *
+	 */
+	public function install_data() {
+		global $wpdb;
+
+		$table_name = $wpdb->prefix . WCB_TBL;
+
+		$wpdb->insert( $table_name, [
+			'post_id' => 3,
+			'type'    => 'part',
+			'data'    => 'yo',
+			'time'    => current_time( 'mysql' ),
+			'active'  => - 1,
+		] );
+	}
+
+
+	/**
+	 *
+	 */
+	public function delete_db() {
+		global $wpdb;
+
+		$table_name = $wpdb->prefix . WCB_TBL;
+
+		//$q = "SELECT * FROM " . $table_name . " WHERE id > 0  ;";
+		$wpdb->query( "DROP TABLE IF EXISTS $table_name ;" );
 	}
 
 	/**

@@ -14,7 +14,7 @@
 namespace Netraa\WPB;
 
 
-class Calculator {
+abstract class Module {
 
 	protected static $instance = null;
 

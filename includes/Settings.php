@@ -49,6 +49,7 @@ class Settings {
 
 	function get_settings_sections() {
 
+
 		$sections = [
 			[
 				'id'    => 'wpb_settings',

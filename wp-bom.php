@@ -33,25 +33,15 @@ if ( ! defined( 'WPINC' ) ) {
 define( 'WP_BOM_VERSION', '1.0.0' );
 define( 'WP_BOM_TBL', 'wpb_bom' );
 define( 'WP_BOM_BUILD', 'prod' );
+define( 'WCB_TBL', 'wp_bom_data' );
+define( 'WCB_VER', '1' );
 
 const WP_BOM_BUILD = 'dev';
 const WP_BOM_PROD  = false;
 const WP_BOM_DEV   = true;
 
-global $wp_bom_settings;
+global $wp_bom_data;
 
-function auth() {
-	require __DIR__ . '/includes/Auth.php';
-
-	$opts = get_option( 'wcb_options' );
-
-	echo json_encode( $opts );
-	if ( $opts['key'] === 'odie' ) {
-		return true;
-	}
-
-	return false;
-}
 
 /*
  * Autoloader
@@ -104,17 +94,12 @@ function init() {
 	require __DIR__ . '/dist/acfload.php';
 
 	$wpb           = Plugin::get_instance();
+	$post          = Post::get_instance();
 	$wpb_shortcode = Shortcode::get_instance();
 	$wpb_admin     = Admin::get_instance();
 	$wpb_rest      = Endpoint\Example::get_instance();
 
-	$wpb_part      = Part::get_instance();
-	$wpb_assembly  = Assembly::get_instance();
-	$wpb_product   = Product::get_instance();
-	$wpb_inventory = Inventory::get_instance();
-
 	$wpb_settings = new Settings();
-//	require __DIR__ . '/dist/acf/acf.php';
 
 	require __DIR__ . '/wp-bom-core.php';
 	$core = WP_Bom::get_instance();
@@ -140,5 +125,8 @@ add_action( 'widgets_init', 'Netraa\\WPB\\widget_init' );
  * Register activation and deactivation hooks
  */
 register_activation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'activate' ] );
+register_activation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'upgrade_data' ] );
+register_activation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'create_options' ] );
 register_deactivation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'deactivate' ] );
+//register_deactivation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'delete_posts' ] );
 

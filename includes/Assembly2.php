@@ -42,8 +42,8 @@ class Assembly2 {
 			while ( have_rows( 'assembly_items', $id ) ) : the_row();
 
 				$item = get_sub_field( 'item' );
-				$qty = get_sub_field( 'quantity' );
-				$is  = get_sub_field( 'part_or_sub_assembly' );
+				$qty  = get_sub_field( 'quantity' );
+				$is   = get_sub_field( 'part_or_sub_assembly' );
 
 
 			endwhile;
