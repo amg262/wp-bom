@@ -91,7 +91,7 @@ try {
 function init() {
 
 
-	require __DIR__ . '/dist/acfload.php';
+	require __DIR__ . '/includes/acfload.php';
 
 	$wpb           = Plugin::get_instance();
 	$post          = Post::get_instance();

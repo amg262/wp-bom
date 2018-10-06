@@ -19,31 +19,24 @@ var paths = {
 	app: 'app/',
 	assets: 'assets/',
 	classes: 'classes/',
-	data: 'data/',
+	data: 'assets/data/',
 	dist: 'dist/',
 	logs: 'logs/',
 	includes: 'includes/',
-	images: 'images/',
-	js: 'js/',
-	css: 'css/',
+	images: 'assets/images/*.png',
+	js: 'assets/js/*.js',
+	css: 'assets/css/*',
+	min_js: 'dist/js/*',
+	min_css: 'dist/css/*',
+	min_img: 'dist/img/',
 	export: 'export/',
 	endpoint: 'Endpoint/',
-	classes: 'classes/*.php',
-	assets: 'assets/',
-	home: 'wc-bom.php',
-	js: 'assets/',
-	css: 'assets/',
 	img: 'assets/images/*',
-	dist: 'dist/',
-	logs: 'logs/',
-	data: 'assets/data/',
 	archive: 'assets/archive/',
 	dist_js: 'dist/',
 	dist_css: 'dist/',
 	dist_img: 'dist/images/',
-	includes: 'includes/*',
-	classes: 'classes/*.php',
-	host: 'http://localhost/wordpress/wp-admin',
+	host: 'http://localhost/wp/wp-admin',
 	php: '*.php',
 	wpb: 'wp-bom.php',
 };
@@ -57,16 +50,16 @@ gulp.task('purge', function () {
 
 // Copy all static images
 gulp.task('imagemin', function () {
-	gulp.src(paths.images).pipe(imagemin()).pipe(gulp.dest(paths.dist + 'images'));
+	gulp.src(paths.images).pipe(imagemin()).pipe(gulp.dest(paths.min_img));
 });
 
 gulp.task('cssnano', function () {
-	gulp.src(paths.assets + 'css/*').pipe(cssnano()).pipe(rename({suffix: '.min'})).pipe(gulp.dest(paths.dist + 'css/'));
+	gulp.src(paths.css).pipe(cssnano()).pipe(rename({suffix: '.min'})).pipe(gulp.dest('dist/css'));
 });
-//
-//gulp.task('scripts', function() {
-//  return gulp.src(paths.data).pipe(concat('*')).pipe(gulp.dest('archive'));
-//});
+
+gulp.task('scripts', function () {
+	return gulp.src(paths.data).pipe(concat('*')).pipe(gulp.dest('archive'));
+});
 
 /**
  * Minify compiled JavaScript.
@@ -75,18 +68,16 @@ gulp.task('cssnano', function () {
  */
 gulp.task('uglify', function () {
 
-	gulp.src(paths.assets + 'js/*.js').pipe(uglify()).pipe(rename({suffix: '.min'})).pipe(gulp.dest(paths.dist + 'js/'));
+	gulp.src(paths.js).pipe(uglify()).pipe(rename({suffix: '.min'})).pipe(gulp.dest('dist/js'));
 });
-//
-//gulp.task('zip', function() {
-//  gulp.src('assets/data/*').
-//      pipe(zip('archive.zip')).
-//      pipe(gulp.dest('assets/'));
-//});
 
-//gulp.task('unzip', function() {
-//  gulp.src('archive/*').pipe(unzip()).pipe(gulp.dest('dist'));
-//});
+gulp.task('zip', function () {
+	gulp.src(paths.data).pipe(zip('archive.zip')).pipe(gulp.dest(paths.dist));
+});
+
+gulp.task('unzip', function () {
+	gulp.src('archive/*').pipe(unzip()).pipe(gulp.dest('dist'));
+});
 
 // Static Server + watching scss/html files
 gulp.task('serve', function () {
@@ -109,6 +100,6 @@ gulp.task('watch', function () {
 
 
 gulp.task('clean', ['purge', 'imagemin', 'cssnano', 'uglify']);
-gulp.task('run', ['purge', 'imagemin', 'cssnano', 'uglify', 'serve', 'watch']);
+gulp.task('run', ['purge', 'imagemin', 'cssnano', 'uglify', 'zip', 'scripts', 'serve', 'watch']);
 gulp.task('live', ['serve', 'watch']);
 

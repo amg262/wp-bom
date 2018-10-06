@@ -8,8 +8,10 @@
     "build": "webpack --progress --colors --watch",
     "prod": "NODE_ENV=production webpack --progress --colors -p --config webpack.config.js",
     "clean": "gulp clean",
-    "watch": "gulp live",
-    "exe": "gulp run",
+    "watch": "gulp run",
+    "purge": "gulp purge",
+    "zip": "gulp zip",
+    "min": "gulp min",
     "postinstall": "gulp run"
   },
   "repository": {
