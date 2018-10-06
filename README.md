@@ -1,4 +1,4 @@
-![alt text](https://github.com/amg262/wp-bom/blob/master/images/woobom500.png?raw=true "Logo")
+![alt text](https://github.com/amg262/wp-bom/blob/master/dist/img/woobom500.png?raw=true "Logo")
 
 
 ![alt-text](https://cloud.githubusercontent.com/assets/1805604/26199709/55c91bda-3bcb-11e7-871e-94b7a022cfa9.jpg "WP Reactivate - WordPress React Boilerplate")
