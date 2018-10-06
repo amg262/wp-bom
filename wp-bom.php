@@ -104,6 +104,9 @@ function init() {
 	require __DIR__ . '/wp-bom-core.php';
 	$core = WP_Bom::get_instance();
 
+	$module = new Module();
+
+
 
 }
 
