@@ -98,13 +98,6 @@ class Post {
 			//setup_postdata( $post->ID );
 
 
-			$arr = [
-				'ID'           => $post->ID,
-				'post_title'   => 'You are gay',
-				'post_content' => 'You are gay',
-				'post_excerpt' => 'You are gay',
-			];
-
 			//wp_update_post( $arr );
 			//return $post;
 		}

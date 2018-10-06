@@ -8,7 +8,12 @@
 jQuery(document).ready(function ($) {
 
 	$('.chosen-select').chosen();
+	//$('#wpb_item_list')
+	$('#wpb_item_type > select').on('change', function () {
 
+		swal('hey');
+
+	});
 	var tour = new Tour({
 		steps: [
 			{
