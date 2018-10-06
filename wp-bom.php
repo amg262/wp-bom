@@ -36,9 +36,22 @@ define( 'WP_BOM_BUILD', 'prod' );
 define( 'WCB_TBL', 'wp_bom_data' );
 define( 'WCB_VER', '1' );
 
-const WP_BOM_BUILD = 'dev';
-const WP_BOM_PROD  = false;
-const WP_BOM_DEV   = true;
+
+const WP_BOM_BUILD = 'build';
+const WP_BOM_PROD  = 'prod';
+
+const WP_BOM = WP_BOM_BUILD;
+
+
+const WP_BOM_JS            = '/assets/js/wp-bom.js';
+const WP_BOM_MIN_JS        = '/dist/js/wp-bom.min.js';
+const WP_BOM_ADMIN_JS      = '/assets/js/wp-bom-admin.js';
+const WP_BOM_ADMIN_MIN_JS  = '/dist/js/wp-bom-admin.min.js';
+const WP_BOM_CSS           = '/assets/css/wp-bom.css';
+const WP_BOM_MIN_CSS       = '/dist/css/wp-bom.min.css';
+const WP_BOM_ADMIN_CSS     = '/assets/css/wp-bom-admin.css';
+const WP_BOM_ADMIN_MIN_CSS = '/dist/css/wp-bom-admin.min.css';
+
 
 global $wp_bom_data;
 
@@ -80,7 +93,8 @@ try {
 			require $file;
 		}
 	} );
-} catch ( \Exception $e ) {
+} catch
+( \Exception $e ) {
 }
 
 /**
@@ -101,11 +115,7 @@ function init() {
 
 	$wpb_settings = new Settings();
 
-	require __DIR__ . '/wp-bom-core.php';
-	$core = WP_Bom::get_instance();
-
-	$module = new Module();
-
+//	$module = new Module();
 
 
 }
@@ -123,6 +133,46 @@ function widget_init() {
 }
 
 add_action( 'widgets_init', 'Netraa\\WPB\\widget_init' );
+function load_assets() {
+	wp_enqueue_script( 'sweetalertjs', 'https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js' );
+	wp_enqueue_style( 'sweetalert_css', 'https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css' );
+	wp_register_script( 'wp_bom_js', plugins_url( WP_BOM_JS, __FILE__ ), [ 'jquery' ] );
+	wp_register_script( 'wp_bom_min_js', plugins_url( WP_BOM_MIN_JS, __FILE__ ), [ 'jquery' ] );
+	wp_register_style( 'wp_bom_css', plugins_url( WP_BOM_CSS, __FILE__ ) );
+	wp_register_style( 'wp_bom_min_css', plugins_url( WP_BOM_MIN_CSS, __FILE__ ) );
+
+
+	if ( WP_BOM === WP_BOM_PROD ) {
+		wp_enqueue_script( 'wp_bom_js' );
+		wp_enqueue_style( 'wp_bom_css' );
+
+
+	} else {
+		wp_enqueue_script( 'wp_bom_min_js' );
+		wp_enqueue_style( 'wp_bom_min_css' );
+	}
+}
+
+add_action( 'init', 'Netraa\\WPB\\load_assets' );
+add_action( 'init', 'Netraa\\WPB\\load_admin_assets' );
+
+
+function load_admin_assets() {
+	wp_register_script( 'wp_bom_admin_js', plugins_url( WP_BOM_ADMIN_JS, __FILE__ ), [ 'jquery' ] );
+	wp_register_script( 'wp_bom_admin_min_js', plugins_url( WP_BOM_ADMIN_MIN_JS, __FILE__ ), [ 'jquery' ] );
+	wp_register_style( 'wp_bom_admin_css', plugins_url( WP_BOM_ADMIN_CSS, __FILE__ ) );
+	wp_register_style( 'wp_bom_admin_min_css', plugins_url( WP_BOM_ADMIN_MIN_CSS, __FILE__ ) );
+
+
+	if ( WP_BOM === WP_BOM_PROD ) {
+		wp_enqueue_script( 'wp_bom_admin_js' );
+		wp_enqueue_style( 'wp_bom_admin_css' );
+
+	} else {
+		wp_enqueue_script( 'wp_bom_admin_min_js' );
+		wp_enqueue_style( 'wp_bom_admin_min_css' );
+	}
+}
 
 /**
  * Register activation and deactivation hooks
@@ -132,4 +182,5 @@ register_activation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'upgrade_data' ] );
 register_activation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'create_options' ] );
 register_deactivation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'deactivate' ] );
 //register_deactivation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'delete_posts' ] );
+
 
