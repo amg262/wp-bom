@@ -72,9 +72,7 @@
     "gulp-watch": "^4.3.11",
     "gulp-zip": "^4.0.0",
     "node-gyp": "^3.6.1",
-    "react": "^16.5.2",
-    "sweetalert": "^2.1.0",
-    "wpapi": "^1.0.2"
+    "wpapi": "^1.0.2",
   },
   "devDependencies": {
 //    "babel-core": "^6.26.0",
