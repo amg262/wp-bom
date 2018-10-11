@@ -97,6 +97,7 @@ class Admin {
 		// Add plugin action link point to settings page
 		add_filter( 'plugin_action_links_' . $this->plugin_basename, [ $this, 'plugin_links' ] );
 		//add_filter( 'plugin_action_links', [ $this, 'plugin_links' ], 10, 5 );
+		add_action( 'admin_enqueue_scripts', [ $this, 'wco_admin' ] );
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'wco_admin' ] );
 		add_action( 'wp_ajax_wco_ajax', [ $this, 'wco_ajax' ] );
@@ -133,11 +134,22 @@ class Admin {
 		if ( ! isset( $this->plugin_screen_hook_suffix ) ) {
 			return;
 		}
+		$ajax_object = [
+			'ajax_url' => admin_url( 'admin-ajax.php' ),
+			'nonce'    => wp_create_nonce( 'wp_bom_admin' ),
+			'product'  => get_option( 'wcb_options' ),
+			'action'   => [ $this, 'wco_ajax' ], //'options'  => 'wc_bom_option[opt]',
+		];
+
 
 		$screen = get_current_screen();
 		if ( $this->plugin_screen_hook_suffix == $screen->id ) {
 
 			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'assets/js/admin.js', dirname( __FILE__ ) ), [ 'jquery' ], $this->version );
+			wp_enqueue_script( $this->plugin_slug . '-admin-js', plugins_url( 'assets/js/wp-bom-admin.js', dirname( __FILE__ ) ), [ 'jquery' ], $this->version );
+
+
+			wp_localize_script( $this->plugin_slug . '-admin-js', 'wp_bom_admin', $ajax_object );
 
 			wp_localize_script( $this->plugin_slug . '-admin-script', 'wpb_object', [
 					'api_nonce' => wp_create_nonce( 'wp_rest' ),
@@ -207,7 +219,9 @@ class Admin {
 
 
 	public function settings_callback() {
-		$wcb_options = get_option( 'wcb_options' ); ?>
+		$wcb_options = get_option( 'wcb_options' );
+
+		?>
         <table class="form-table">
             <tbody>
             <tr><?php $label = 'Sdf';
@@ -243,8 +257,8 @@ class Admin {
             </tr>
 
             <tr><?php $label = 'Key';
-	            $key         = $this->format_key( $label );
-	            $id          = $key; ?>
+				$key         = $this->format_key( $label );
+				$id          = $key; ?>
 
                 <th scope="row"><label for="<?php _e( $id ); ?>"><?php _e( $label ); ?></label></th>
                 <td>
@@ -252,24 +266,24 @@ class Admin {
                            title="<?php _e( $id ); ?>"
                            id="<?php _e( $id ); ?>"
                            placeholder="<?php if ( ! isset( $wcb_options[ $key ] ) ) {
-			                   $user = new WP_User( get_current_user_id() );
-			                   echo $user->user_email;
-		                   } else {
-			                   echo $wcb_options[ $key ];
-		                   } ?>"
+						       $user = new WP_User( get_current_user_id() );
+						       echo $user->user_email;
+					       } else {
+						       echo $wcb_options[ $key ];
+					       } ?>"
                            name="wcb_options[<?php _e( $key ); ?>]"
                            value="<?php echo $wcb_options[ $key ]; ?>"/>
                 </td>
             </tr>
             <tr>
-                <?php
+				<?php
 
-                echo '<h1>'.$wcb_options['key'].'</h1>';
-                echo '<h1>'.md5($wcb_options['key']).'</h1>';
-                echo '<h1>'.$wcb_options['key'].'</h1>';
+				echo '<h1>' . $wcb_options['key'] . '</h1>';
+				echo '<h1>' . md5( $wcb_options['key'] ) . '</h1>';
+				echo '<h1>' . $wcb_options['key'] . '</h1>';
 
 
-                ?>
+				?>
 
                 <th>
                     <span id="wpb_admin_ajax" name="wpb_admin_ajax" class="button-primary">Button</span>
@@ -312,9 +326,9 @@ class Admin {
 		$new_input = [];
 
 
-		if (isset($input['key'])) {
-		    echo '<h1>'.$input['key'].'</h1>';
-        }
+		if ( isset( $input['key'] ) ) {
+			echo '<h1>' . $input['key'] . '</h1>';
+		}
 
 		return $input;
 
@@ -387,13 +401,18 @@ class Admin {
 		$opts = get_option( 'wcb_options' );
 		//$ajax_data = $this->get_data( 'product' );
 
+
 		$ajax_object = [
 			'ajax_url' => admin_url( 'admin-ajax.php' ),
-			'nonce'    => wp_create_nonce( 'ajax_nonce' ),
-			'product'  => $opts['init'],
+			'nonce'    => wp_create_nonce( 'wp_bom_admin' ),
+			'product'  => get_option( 'wcb_options' ),
 			'action'   => [ $this, 'wco_ajax' ], //'options'  => 'wc_bom_option[opt]',
 		];
-		wp_localize_script( 'wpb_js', 'ajax_object', $ajax_object );
+
+		wp_enqueue_script( $this->plugin_slug . '-admin-js', plugins_url( 'assets/js/wp-bom-admin.js', dirname( __FILE__ ) ), [ 'jquery' ], $this->version );
+
+
+		wp_localize_script( $this->plugin_slug . '-admin-js', 'wp_bom_admin', $ajax_object );
 	}
 
 	/**

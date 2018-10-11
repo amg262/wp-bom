@@ -49,7 +49,6 @@ var paths = {
 	backups: 'assets/backups/',
 	dist_data: 'dist/data/',
 	archive: 'dist/data/archive.zip',
-
 	exports: 'assets/export/',
 	endpoint: 'includes/Endpoint/',
 	img: 'assets/images/*',

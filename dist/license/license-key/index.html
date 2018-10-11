@@ -1,0 +1,57 @@
+<html>
+<head>
+<title>Demo for License Key Class by Abhishek Shukla</title>
+</head>
+<body style="background-color:#F0F0F0">
+<h1>Online Demo for Calendar Class by Abhishek Shukla</h1>
+<p> The important features of License Key Management Class are as following.</p>
+<ul> 
+<li>The class generates random license keys for given parameters</li>
+<li>License Keys can be generated in bulk for redestribution.</li>
+<li>Lenght and format of Keys can be specified.</li>
+<li>The key can be validated passing the same parameters 
+as specified while generating it.</li>
+<li>The license keys can be generated passing name as parameter.  
+These license keys will vaildate only on passing appropriate name with 
+which they are generated.</li>
+<li>Similerly the license keys can be generated to work only for a particular 
+software by passing software name as parameter.</li>
+<li>License Keys for a particualr name can be generated
+ to work only for a particular by joining the name and software name string 
+ and then passing combined name as parameter.</li>
+
+
+
+</ul>
+<ol>
+<li><a href="test.php" target="_blank">License Serial Generation</a></li>
+<li><a href="test-two.php" target="_blank">Validation for character variation</a></li>
+<li><a href="test-three.php" target="_blank">Validation of particular keys</a></li>
+</ol>
+
+<h3>Possible Customisations</h3>
+<pre>	var $keylen= 16;// recommended lengths 8,10,12,14,16,20
+	var $basechar='23456789ABCDEFGHJKLMNPQRSTUVWXYZ';//32 symbols
+	var $formatstr= '4444'; //characters in each segment, max 5 segments
+	var $isvalid="YES"; //returns this value for valid keys
+	var $invalid="NO"; //returns this value for invalid keys
+	var $software="";//name of software for which key is to be generated
+</pre>
+<b>Usage</b><br/><pre>	include("license_key.class.php");
+	$pass=new license_key();
+	
+	//Generating new key of length 12 for software 'test'
+	$pass->keylen=12;
+	$pass->formatstr='3333';
+	$pass->software='test';
+	$newkey= $pass->codeGenerate($name);
+	
+	//Validating testkey of length 8 for software 'test1'
+	$pass->keylen=8;
+	$pass->software='test1';
+	$validate= $pass->codeValidate($testkey,$name);
+</pre>
+
+
+</body>
+</html>

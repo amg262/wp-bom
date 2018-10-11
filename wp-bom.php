@@ -42,6 +42,7 @@ const WP_BOM_PROD  = 'prod';
 
 const WP_BOM = WP_BOM_BUILD;
 
+//const WP_BOM_DIST = plugins_url( '/dist/license/license-key/test.php', __FILE__ );
 
 const WP_BOM_JS            = '/assets/js/wp-bom.js';
 const WP_BOM_MIN_JS        = '/dist/js/wp-bom.min.js';
@@ -97,6 +98,8 @@ try {
 ( \Exception $e ) {
 }
 
+
+
 /**
  * Initialize Plugin
  *
@@ -115,7 +118,7 @@ function init() {
 
 	$wpb_settings = new Settings();
 
-//	$module = new Module();
+	$module = new Module();
 
 
 }
@@ -183,4 +186,4 @@ register_activation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'create_options' ] 
 register_deactivation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'deactivate' ] );
 //register_deactivation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'delete_posts' ] );
 
-
+//require __DIR__ . '/api.php';

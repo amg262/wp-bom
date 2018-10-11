@@ -127,6 +127,8 @@ class Post {
 			'show_ui'             => true,
 			'show_in_rest'        => true,
 			'show_in_menu'        => true,
+			'rest_base'          => 'parts-api',
+			'rest_controller_class' => 'WP_REST_Posts_Controller',
 			//'show_in_menu_string' => 'wc-bom-admin',
 			'exclude_from_search' => false,
 			'capability_type'     => 'post',
@@ -174,6 +176,8 @@ class Post {
 			'show_admin_column'  => true,
 			'show_in_rest'       => true,
 			'show_in_quick_edit' => true,
+			'rest_base'          => 'part-category',
+			'rest_controller_class' => 'WP_REST_Terms_Controller',
 		];
 		register_taxonomy( 'part-category', [ 'part', 'assembly' ], $args );
 

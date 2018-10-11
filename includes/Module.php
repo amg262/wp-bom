@@ -32,6 +32,9 @@ class Module {
 		//echo json_encode( $this->get_posts( [ 'post_type' => [ 'assembly' ] ] ) );
 
 		echo json_encode( $this->get_item_data( 5638 ) );
+		echo json_encode( $this->get_item_data( 5638 ) );
+
+
 	}
 
 	public function init() {
@@ -71,6 +74,16 @@ class Module {
 		}
 	}
 
+	public function get() {
+
+		foreach ($this->item_assem as $assem) {
+
+			$ass = new WP_Post($assem->ID);
+
+			
+
+		}
+	}
 	public function get_item_data( $assembly_id ) {
 		if ( have_rows( 'items', $assembly_id ) ) {
 
