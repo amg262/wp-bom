@@ -12,8 +12,6 @@
 
 namespace Netraa\WPB;
 
-use WP_Post;
-
 /**
  * @subpackage Plugin
  */
@@ -119,24 +117,24 @@ class Post {
 		];
 
 		$args = [
-			'label'               => __( 'Parts', 'wc-bom' ),
-			'labels'              => $labels,
+			'label'                 => __( 'Parts', 'wc-bom' ),
+			'labels'                => $labels,
 			//'description'         => 'Materials post type that will be combined to make subassemblies and assemblies portion of BOM.',
-			'public'              => true,
-			'publicly_queryable'  => true,
-			'show_ui'             => true,
-			'show_in_rest'        => true,
-			'show_in_menu'        => true,
-			'rest_base'          => 'parts-api',
+			'public'                => true,
+			'publicly_queryable'    => true,
+			'show_ui'               => true,
+			'show_in_rest'          => true,
+			'show_in_menu'          => true,
+			'rest_base'             => 'parts-api',
 			'rest_controller_class' => 'WP_REST_Posts_Controller',
 			//'show_in_menu_string' => 'wc-bom-admin',
-			'exclude_from_search' => false,
-			'capability_type'     => 'post',
-			'map_meta_cap'        => true,
-			'hierarchical'        => true,
-			'query_var'           => true,
-			'menu_icon'           => 'dashicons-hammer',
-			'supports'            => [
+			'exclude_from_search'   => false,
+			'capability_type'       => 'post',
+			'map_meta_cap'          => true,
+			'hierarchical'          => true,
+			'query_var'             => true,
+			'menu_icon'             => 'dashicons-hammer',
+			'supports'              => [
 				'title',
 				//'editor',
 				'thumbnail',
@@ -158,28 +156,28 @@ class Post {
 	public function register_part_cat() {
 
 		$labels = [
-			'name'          => __( 'Part Categories', 'wc-bom' ),
-			'singular_name' => __( 'Part Category', 'wc-bom' ),
+			'name'          => __( 'Item Category', 'wc-bom' ),
+			'singular_name' => __( 'Item Category', 'wc-bom' ),
 			'menu_name'     => __( 'Categories', 'wc-bom' ),
 		];
 
 		$args = [
-			'label'              => __( 'Part Categories', 'wc-bom' ),
-			'labels'             => $labels,
-			'public'             => true,
-			'hierarchical'       => true,
+			'label'                 => __( 'Item Category', 'wc-bom' ),
+			'labels'                => $labels,
+			'public'                => true,
+			'hierarchical'          => true,
 			//'label' => 'Inventory Types',
-			'show_ui'            => true,
-			'show_in_menu'       => true,
-			'show_in_nav_menus'  => true,
-			'query_var'          => true,
-			'show_admin_column'  => true,
-			'show_in_rest'       => true,
-			'show_in_quick_edit' => true,
-			'rest_base'          => 'part-category',
+			'show_ui'               => true,
+			'show_in_menu'          => true,
+			'show_in_nav_menus'     => true,
+			'query_var'             => true,
+			'show_admin_column'     => true,
+			'show_in_rest'          => true,
+			'show_in_quick_edit'    => true,
+			'rest_base'             => 'item-category',
 			'rest_controller_class' => 'WP_REST_Terms_Controller',
 		];
-		register_taxonomy( 'part-category', [ 'part', 'assembly' ], $args );
+		register_taxonomy( 'item-category', [ 'part', 'assembly','requisition' ], $args );
 
 
 	}
@@ -209,7 +207,7 @@ class Post {
 			'show_in_rest'       => true,
 			'show_in_quick_edit' => true,
 		];
-		register_taxonomy( 'vendor', [ 'part', 'assembly' ], $args );
+		register_taxonomy( 'vendor', [ 'part', 'assembly', 'requisition' ], $args );
 
 
 	}
@@ -260,13 +258,13 @@ class Post {
 	public function register_assembly_cat() {
 
 		$labels = [
-			'name'          => __( 'Assembly Categories', 'wp-bom' ),
-			'singular_name' => __( 'Assembly Category', 'wp-bom' ),
-			'menu_name'     => __( 'Categories', 'wp-bom' ),
+			'name'          => __( 'Requisition Type', 'wp-bom' ),
+			'singular_name' => __( 'Requisition Type', 'wp-bom' ),
+			'menu_name'     => __( 'Req Type', 'wp-bom' ),
 		];
 
 		$args = [
-			'label'              => __( 'Assembly Categories', 'wp-bom' ),
+			'label'              => __( 'Req Type', 'wp-bom' ),
 			'labels'             => $labels,
 			'public'             => true,
 			'hierarchical'       => true,
@@ -279,9 +277,109 @@ class Post {
 			'show_in_rest'       => true,
 			'show_in_quick_edit' => true,
 		];
-		register_taxonomy( 'assembly-category', [ 'assembly' ], $args );
+		register_taxonomy( 'requisition-type', [ 'part', 'assembly', 'requisition' ], $args );
 
 
+	}
+
+
+	public function register_requisition() {
+
+		/**
+		 * Post Type: Requisitions.
+		 */
+
+		$labels = [
+			"name"          => __( "Requisitions", "storefront" ),
+			"singular_name" => __( "Requisition", "storefront" ),
+		];
+
+		$args = [
+			"label"               => __( "Requisitions", "storefront" ),
+			"labels"              => $labels,
+			"description"         => "",
+			"public"              => true,
+			"publicly_queryable"  => true,
+			"show_ui"             => true,
+			"show_in_rest"        => true,
+			"rest_base"           => "req",
+			"has_archive"         => true,
+			"show_in_menu"        => true,
+			"show_in_nav_menus"   => true,
+			"exclude_from_search" => false,
+			"capability_type"     => "post",
+			"map_meta_cap"        => true,
+			"hierarchical"        => true,
+			"rewrite"             => [ "slug" => "req", "with_front" => true ],
+			"query_var"           => true,
+			"menu_icon"           => "dashicons-migrate",
+			"supports"            => [ "title", "editor", "thumbnail", "excerpt", "post-formats" ],
+			"taxonomies"          => [ "item-category", "requisition-type", "vendor" ],
+		];
+
+		register_post_type( "requisition", $args );
+	}
+
+	function register_requisition_type() {
+
+		/**
+		 * Taxonomy: Requisition Types.
+		 */
+
+		$labels = [
+			"name"          => __( "Requisition Type", "storefront" ),
+			"singular_name" => __( "Requisition Type", "storefront" ),
+			"menu_name"     => __( "Req Type", "storefront" ),
+		];
+
+		$args = [
+			"label"              => __( "Requisition Types", "storefront" ),
+			"labels"             => $labels,
+			"public"             => true,
+			"hierarchical"       => true,
+			"label"              => "Requisition Type",
+			"show_ui"            => true,
+			"show_in_menu"       => true,
+			"show_in_nav_menus"  => true,
+			"query_var"          => true,
+			"rewrite"            => [ 'slug' => 'req-type', 'with_front' => true, 'hierarchical' => true, ],
+			"show_admin_column"  => true,
+			"show_in_rest"       => true,
+			"rest_base"          => "req-type",
+			"show_in_quick_edit" => true,
+		];
+		register_taxonomy( "requisition-type", [ "requisition" ], $args );
+	}
+
+	function register_item_tag() {
+
+		/**
+		 * Taxonomy: Item Tags.
+		 */
+
+		$labels = [
+			"name"          => __( "Item Tags", "storefront" ),
+			"singular_name" => __( "Item Tag", "storefront" ),
+			"menu_name"     => __( "Tags", "storefront" ),
+		];
+
+		$args = [
+			"label"              => __( "Item Tags", "storefront" ),
+			"labels"             => $labels,
+			"public"             => true,
+			"hierarchical"       => false,
+			"label"              => "Item Tags",
+			"show_ui"            => true,
+			"show_in_menu"       => true,
+			"show_in_nav_menus"  => true,
+			"query_var"          => true,
+			"rewrite"            => [ 'slug' => 'item_tag', 'with_front' => true, 'hierarchical' => true, ],
+			"show_admin_column"  => true,
+			"show_in_rest"       => true,
+			"rest_base"          => "item-tag",
+			"show_in_quick_edit" => true,
+		];
+		register_taxonomy( "item_tag", [ "product", "part", "assembly", "requisition" ], $args );
 	}
 
 
@@ -289,6 +387,8 @@ class Post {
 
 		$this->register_part();
 		$this->register_assembly();
+		$this->register_requisition();
+
 	}
 
 
@@ -300,6 +400,8 @@ class Post {
 		$this->register_part_cat();
 		$this->register_assembly_cat();
 		$this->register_vendor();
+		$this->register_requisition_type();
+		$this->register_item_tag();
 
 
 	}

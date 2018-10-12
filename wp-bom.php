@@ -99,7 +99,6 @@ try {
 }
 
 
-
 /**
  * Initialize Plugin
  *
@@ -120,6 +119,10 @@ function init() {
 
 	$module = new Module();
 
+	$a = new BOM( 5640 );
+	echo json_encode( $a->get_ai() );
+	echo json_encode( $a->get_asi() );
+//	var_dump( $a->get_comp() );
 
 }
 

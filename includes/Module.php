@@ -30,9 +30,9 @@ class Module {
 	public function __construct() {
 
 		//echo json_encode( $this->get_posts( [ 'post_type' => [ 'assembly' ] ] ) );
-
-		echo json_encode( $this->get_item_data( 5638 ) );
-		echo json_encode( $this->get_item_data( 5638 ) );
+//
+//		echo json_encode( $this->get_item_data( 5638 ) );
+//		echo json_encode( $this->get_item_data( 5638 ) );
 
 
 	}
