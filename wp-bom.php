@@ -108,20 +108,28 @@ function init() {
 
 
 	require __DIR__ . '/includes/acfload.php';
-
 	$wpb           = Plugin::get_instance();
-	$post          = Post::get_instance();
-	$wpb_shortcode = Shortcode::get_instance();
 	$wpb_admin     = Admin::get_instance();
-	$wpb_rest      = Endpoint\Example::get_instance();
 
-	$wpb_settings = new Settings();
+	if (file_exists(__DIR__.'/app.key')) {
+		$post          = Post::get_instance();
+		$wpb_shortcode = Shortcode::get_instance();
+		$wpb_rest      = Endpoint\Example::get_instance();
 
-	$module = new Module();
+		$wpb_settings = new Settings();
 
-	$a = new BOM( 5640 );
-	echo json_encode( $a->get_ai() );
-	echo json_encode( $a->get_asi() );
+		$module = new Module();
+
+		$a   = new BOM( 5640 );
+		$one = $a->get_ai();
+		$two = $a->get_comp( $one );
+
+		var_dump( $one );
+		var_dump( $two );
+	} else {
+		echo '<h1>ENTER YO KEY BRUH</h1>';
+	}
+	//echo json_encode( $a->get_asi() );
 //	var_dump( $a->get_comp() );
 
 }

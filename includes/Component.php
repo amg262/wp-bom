@@ -167,20 +167,64 @@ class Component {
 	}
 
 	/**
-	 * @param array $cf_assem_subitems
-	 *
-	 * @return Component
 	 */
-	public function setCfAssemSubitems( array $cf_assem_subitems ): Component {
-		$this->cf_assem_subitems = $cf_assem_subitems;
+	public function setCfAssemSubitems( $id ) {
 
-		return $this;
+
+		$post = get_post( $id );
+
+		if ( have_rows( 'items', $post->ID ) ) {
+
+			$i = 0;
+			$j = 0;
+
+			while ( have_rows( 'items', $post->ID ) ) : the_row();
+				$i ++;
+
+				$type     = get_sub_field( 'type' );
+				$level    = get_sub_field( 'level' );
+				$quantity = get_sub_field( 'quantity' );
+				$item     = get_sub_field( 'item' );
+
+				$obj = get_post( $item );
+
+				$args = [ 'id' => $obj->ID, 'title' => $obj->post_title, 'q' => $quantity, 'i' => $item ];
+
+				if ( strtolower( $type ) !== strtolower( $obj->post_type ) ) {
+					update_sub_field( 'type', $obj->post_type );
+				}
+
+				if ( $post->post_type === 'assembly' && $obj->post_type === 'assembly' ) {
+					$this->cf_assem_subitems[] = $args;
+					$var2                      = $obj;
+					//$this->cf_assem_items[]    = $args;
+
+				}
+
+
+				if ( $obj->post_type === 'part' ) {
+					$var[]                  = $obj;
+					$this->cf_assem_parts[] = $obj;
+
+				}
+
+
+//$pos = get_post( $ass );
+
+			endwhile;
+
+
+		}
+
+
+		return $var;
 	}
 
 	/**
 	 * @return array
 	 */
-	public function getCfAssemParts(): array {
+	public
+	function getCfAssemParts(): array {
 		return $this->cf_assem_parts;
 	}
 
@@ -189,7 +233,10 @@ class Component {
 	 *
 	 * @return Component
 	 */
-	public function setCfAssemParts( array $cf_assem_parts ): Component {
+	public
+	function setCfAssemParts(
+		array $cf_assem_parts
+	): Component {
 		$this->cf_assem_parts = $cf_assem_parts;
 
 		return $this;
@@ -198,19 +245,23 @@ class Component {
 	/**
 	 * @return array
 	 */
-	public function getCfAssemItems(): array {
+	public
+	function getCfAssemItems(): array {
 		return $this->cf_assem_items;
 	}
 
 
-	public function setCfAssemItems( $post_id ) {
+	public
+	function setCfAssemItems(
+		$post_id
+	) {
 
 
 		if ( have_rows( 'items', $post_id ) ) {
 
 			$i                 = 0;
 			$j                 = 0;
-			$this->parent_post = get_post( $post_id );
+			$parent_post = get_post( $post_id );
 
 			while ( have_rows( 'items', $post_id ) ) : the_row();
 				$i ++;
@@ -222,15 +273,18 @@ class Component {
 
 				$obj = get_post( $item );
 
-				$args = [ $obj->post_title, $level, $quantity, $type, $item ];
+				$args = [ 'id' => $obj->ID, 'title' => $obj->post_title, 'q' => $quantity, 'i' => $item ];
 
 				if ( strtolower( $type ) !== strtolower( $obj->post_type ) ) {
 					update_sub_field( 'type', $obj->post_type );
 				}
 
-				if ( $this->parent_post->post_type === 'assembly' && $obj->post_type === 'assembly' ) {
+				if ( $parent_post->post_type === 'assembly' && $obj->post_type === 'assembly' ) {
 					$this->cf_assem_subitems[] = $args;
 					$this->cf_assem_items[]    = $args;
+
+					$add = $this->setCfAssemSubitems( $obj );
+					$this->cf_assem_parts[] = $add;
 
 				}
 
@@ -246,14 +300,17 @@ class Component {
 
 			endwhile;
 
-			return $this->cf_assem_items;
+			return $this->cf_assem_parts;
 
 		}
 
 		return false;
 	}
 
-	public function get_item_data( $assembly_id ) {
+	public
+	function get_item_data(
+		$assembly_id
+	) {
 		if ( have_rows( 'items', $assembly_id ) ) {
 
 			$i = 0;
@@ -315,12 +372,14 @@ class Component {
 	/**
 	 * @return mixed
 	 */
-	public function getAcfField() {
+	public
+	function getAcfField() {
 		return $this->acf_field;
 
 	}
 
-	public function build_object() {
+	public
+	function build_object() {
 
 	}
 
@@ -329,7 +388,10 @@ class Component {
 	 *
 	 * @return
 	 */
-	public function setAcfField( $key, $post_ID ) {
+	public
+	function setAcfField(
+		$key, $post_ID
+	) {
 		$this->acf_field = get_field( $key, $post_ID );
 
 		return $this->acf_field;
@@ -338,7 +400,8 @@ class Component {
 	/**
 	 * @return mixed
 	 */
-	public function getMetaKey() {
+	public
+	function getMetaKey() {
 		return $this->key;
 
 	}
@@ -349,7 +412,10 @@ class Component {
 	 *
 	 * @return mixed
 	 */
-	public function setMetaKey( $key ) {
+	public
+	function setMetaKey(
+		$key
+	) {
 		$this->key = $key;
 
 		return $this->key;
@@ -359,7 +425,8 @@ class Component {
 	/**
 	 * @return mixed
 	 */
-	public function getAssemblyId() {
+	public
+	function getAssemblyId() {
 		return $this->assembly_id;
 	}
 
@@ -368,7 +435,10 @@ class Component {
 	 *
 	 * @return Component
 	 */
-	public function setAssemblyId( $assembly_id ) {
+	public
+	function setAssemblyId(
+		$assembly_id
+	) {
 		$this->assembly_id = $assembly_id;
 
 		return $this;
@@ -377,7 +447,8 @@ class Component {
 	/**
 	 * @return mixed
 	 */
-	public function getPostType() {
+	public
+	function getPostType() {
 		return $this->post_type;
 	}
 
@@ -386,7 +457,10 @@ class Component {
 	 *
 	 * @return Component
 	 */
-	public function setPostType( $post_type ) {
+	public
+	function setPostType(
+		$post_type
+	) {
 		$this->post_type = $post_type;
 
 		return $this;
@@ -395,7 +469,8 @@ class Component {
 	/**
 	 * @return mixed
 	 */
-	public function getPartNo() {
+	public
+	function getPartNo() {
 		return $this->part_no;
 	}
 
@@ -404,7 +479,10 @@ class Component {
 	 *
 	 * @return Component
 	 */
-	public function setPartNo( $part_no ) {
+	public
+	function setPartNo(
+		$part_no
+	) {
 		$this->part_no = $part_no;
 
 		return $this;
@@ -413,7 +491,8 @@ class Component {
 	/**
 	 * @return mixed
 	 */
-	public function getCost() {
+	public
+	function getCost() {
 		return $this->cost;
 	}
 
@@ -422,7 +501,10 @@ class Component {
 	 *
 	 * @return Component
 	 */
-	public function setCost( $cost ) {
+	public
+	function setCost(
+		$cost
+	) {
 		$this->cost = $cost;
 
 		return $this;
@@ -431,7 +513,8 @@ class Component {
 	/**
 	 * @return mixed
 	 */
-	public function getPost() {
+	public
+	function getPost() {
 		return;
 	}
 
@@ -440,7 +523,10 @@ class Component {
 	 *
 	 * @return Component
 	 */
-	public function setPost( $post_id ) {
+	public
+	function setPost(
+		$post_id
+	) {
 		$this->post = get_post( $post_id );
 
 		return $this->post;
@@ -449,7 +535,8 @@ class Component {
 	/**
 	 * @return mixed
 	 */
-	public function getPostId() {
+	public
+	function getPostId() {
 		return $this->post_id;
 	}
 
@@ -458,7 +545,10 @@ class Component {
 	 *
 	 * @return Component
 	 */
-	public function setPostId( $post_id ) {
+	public
+	function setPostId(
+		$post_id
+	) {
 		$this->post_id = $post_id;
 
 		return $this;
@@ -467,7 +557,8 @@ class Component {
 	/**
 	 * @return mixed
 	 */
-	public function getPartName() {
+	public
+	function getPartName() {
 		return $this->part_name;
 	}
 
@@ -476,7 +567,10 @@ class Component {
 	 *
 	 * @return Component
 	 */
-	public function setPartName( $part_name ) {
+	public
+	function setPartName(
+		$part_name
+	) {
 		$this->part_name = $part_name;
 
 		return $this;
@@ -485,7 +579,8 @@ class Component {
 	/**
 	 * @return mixed
 	 */
-	public function getVendor() {
+	public
+	function getVendor() {
 		return $this->vendor;
 	}
 
@@ -494,7 +589,10 @@ class Component {
 	 *
 	 * @return Component
 	 */
-	public function setVendor( \WP_Taxonomy $vendor ) {
+	public
+	function setVendor(
+		\WP_Taxonomy $vendor
+	) {
 		$this->vendor = $vendor;
 
 		return $this;
@@ -503,7 +601,8 @@ class Component {
 	/**
 	 * @return array
 	 */
-	public function getCats(): array {
+	public
+	function getCats(): array {
 		return $this->cats;
 	}
 
@@ -512,7 +611,10 @@ class Component {
 	 *
 	 * @return Component
 	 */
-	public function setCats( array $cats ): Component {
+	public
+	function setCats(
+		array $cats
+	): Component {
 		$this->cats = $cats;
 
 		return $this;
@@ -521,7 +623,8 @@ class Component {
 	/**
 	 * @return array
 	 */
-	public function getTags(): array {
+	public
+	function getTags(): array {
 		return $this->tags;
 	}
 
@@ -530,7 +633,10 @@ class Component {
 	 *
 	 * @return Component
 	 */
-	public function setTags( array $tags ): Component {
+	public
+	function setTags(
+		array $tags
+	): Component {
 		$this->tags = $tags;
 
 		return $this;
@@ -539,7 +645,8 @@ class Component {
 	/**
 	 * @return mixed
 	 */
-	public function getSku() {
+	public
+	function getSku() {
 		return $this->sku;
 	}
 
@@ -548,7 +655,10 @@ class Component {
 	 *
 	 * @return Component
 	 */
-	public function setSku( $sku ) {
+	public
+	function setSku(
+		$sku
+	) {
 		$this->sku = $sku;
 
 		return $this;
@@ -557,7 +667,8 @@ class Component {
 	/**
 	 * @return mixed
 	 */
-	public function getWeight() {
+	public
+	function getWeight() {
 		return $this->weight;
 	}
 
@@ -566,7 +677,10 @@ class Component {
 	 *
 	 * @return Component
 	 */
-	public function setWeight( $weight ) {
+	public
+	function setWeight(
+		$weight
+	) {
 		$this->weight = $weight;
 
 		return $this;
@@ -575,7 +689,8 @@ class Component {
 	/**
 	 * @return mixed
 	 */
-	public function getDimensions() {
+	public
+	function getDimensions() {
 		return $this->dimensions;
 	}
 
@@ -584,7 +699,10 @@ class Component {
 	 *
 	 * @return Component
 	 */
-	public function setDimensions( $dimensions ) {
+	public
+	function setDimensions(
+		$dimensions
+	) {
 		$this->dimensions = $dimensions;
 
 		return $this;
@@ -593,7 +711,8 @@ class Component {
 	/**
 	 * @return mixed
 	 */
-	public function getImage() {
+	public
+	function getImage() {
 		return $this->image;
 	}
 
@@ -602,7 +721,10 @@ class Component {
 	 *
 	 * @return Component
 	 */
-	public function setImage( $image ) {
+	public
+	function setImage(
+		$image
+	) {
 		$this->image = $image;
 
 		return $this;
@@ -611,7 +733,8 @@ class Component {
 	/**
 	 * @return mixed
 	 */
-	public function getDescription() {
+	public
+	function getDescription() {
 		return $this->description;
 	}
 
@@ -620,7 +743,10 @@ class Component {
 	 *
 	 * @return Component
 	 */
-	public function setDescription( $description ) {
+	public
+	function setDescription(
+		$description
+	) {
 		$this->description = $description;
 
 		return $this;
@@ -629,7 +755,8 @@ class Component {
 	/**
 	 * @return mixed
 	 */
-	public function getPoNum() {
+	public
+	function getPoNum() {
 		return $this->po_num;
 	}
 
@@ -638,7 +765,10 @@ class Component {
 	 *
 	 * @return Component
 	 */
-	public function setPoNum( $po_num ) {
+	public
+	function setPoNum(
+		$po_num
+	) {
 		$this->po_num = $po_num;
 
 		return $this;
@@ -647,7 +777,8 @@ class Component {
 	/**
 	 * @return mixed
 	 */
-	public function getDate() {
+	public
+	function getDate() {
 		return $this->date;
 	}
 
@@ -656,7 +787,10 @@ class Component {
 	 *
 	 * @return Component
 	 */
-	public function setDate( $date ) {
+	public
+	function setDate(
+		$date
+	) {
 		$this->date = $date;
 
 		return $this;
@@ -665,7 +799,8 @@ class Component {
 	/**
 	 * @return array
 	 */
-	public function getItems(): array {
+	public
+	function getItems(): array {
 		return $this->items;
 	}
 
@@ -674,7 +809,10 @@ class Component {
 	 *
 	 * @return Component
 	 */
-	public function setItems( array $items ): Component {
+	public
+	function setItems(
+		array $items
+	): Component {
 		$this->items = $items;
 
 		return $this;
@@ -683,7 +821,8 @@ class Component {
 	/**
 	 * @return array
 	 */
-	public function getSubItems(): array {
+	public
+	function getSubItems(): array {
 		return $this->sub_items;
 	}
 
@@ -692,7 +831,10 @@ class Component {
 	 *
 	 * @return Component
 	 */
-	public function setSubItems( array $sub_items ): Component {
+	public
+	function setSubItems(
+		array $sub_items
+	): Component {
 		$this->sub_items = $sub_items;
 
 		return $this;
@@ -701,7 +843,8 @@ class Component {
 	/**
 	 * @return array
 	 */
-	public function getPartItems(): array {
+	public
+	function getPartItems(): array {
 		return $this->part_items;
 	}
 
@@ -710,7 +853,10 @@ class Component {
 	 *
 	 * @return Component
 	 */
-	public function setPartItems( array $part_items ): Component {
+	public
+	function setPartItems(
+		array $part_items
+	): Component {
 		$this->part_items = $part_items;
 
 		return $this;

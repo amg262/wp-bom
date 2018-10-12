@@ -32,8 +32,12 @@ class BOM {
 		return $this->bom->getCfAssemItems();
 	}
 
-	public function get_comp() {
-		return $this->bom;
+	public function get_comp($var) {
+		$co = [];
+		foreach ($var as $v ) {
+			$co[]=$this->bom->setCfAssemItems($v['id']);
+		}
+		return $co;
 	}
 
 	public function create_assembly_bom( $id ) {
