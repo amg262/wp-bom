@@ -124,8 +124,8 @@ function init() {
 		$one = $a->get_ai();
 		$two = $a->get_comp( $one );
 
-		var_dump( $one );
-		var_dump( $two );
+		//var_dump( $one );
+		//var_dump( $two );
 	} else {
 		echo '<h1>ENTER YO KEY BRUH</h1>';
 	}
