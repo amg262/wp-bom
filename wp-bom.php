@@ -116,16 +116,48 @@ function init() {
 
 		$wpb_settings = new Settings();
 
-		$module = new Module();
+		$module      = new Module();
+		$args        = [
+			'posts_per_page' => - 1,
+			'post_type'      => 'assembly',
+		];
+		$posts_array = get_posts( $args );
 
-		$a    = new BOM( 5640 );
-		$one  = $a->get_ai();
-		$oene = $a->get_asi();
-		$two  = $a->get_comp( $one );
+
+		//$a    = new BOM( 5640 );
+		$i = 0;
+		foreach ( $posts_array as $obj ) {
+
+			$post  = new \WP_Post( $obj );
+			$comp  = new Component( $post->ID );
+			$items = $comp->setItems( $post->ID );
+			$parts = $comp->getItemsPart();
+			$sub   = $comp->getItemsAssembly();
+			$i ++;
+		}
+
+//		$post  = new \WP_Post( $obj );
+		$comp  = new Component( 5640 );
+		$items = $comp->setItems( 5640 );
+		$parts = $comp->getItemsPart();
+		$sub   = $comp->getItemsAssembly();
 
 
-		file_put_contents( __DIR__ . '/data.json', json_encode( $one ) );
-		file_put_contents( __DIR__ . '/data2.json', json_encode( $oene ) );
+
+		echo json_encode( $sub );
+//		$one  = $a->get_ai();
+//		$sub  = $a->get_asi();
+//		$part = $a->get_asp();
+		//	$two  = $a->get_comp( $one );
+
+		echo $i;
+//		echo json_encode( $items );
+
+//		echo json_encode( $sub );
+//		echo json_encode( $sub );
+//
+//		file_put_contents( __DIR__ . '/data.json', json_encode( $one ) );
+//		file_put_contents( __DIR__ . '/data2.json', json_encode( $oene ) );
 		//var_dump( $one );
 		//var_dump( $two );
 	} else {

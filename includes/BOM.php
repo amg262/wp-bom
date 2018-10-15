@@ -24,7 +24,9 @@ class BOM {
 
 
 	}
-
+	public function get_asp() {
+		return $this->bom->getCfAssemParts();
+	}
 	public function get_asi() {
 		return $this->bom->getCfAssemSubItems();
 	}
