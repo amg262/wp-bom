@@ -1,15 +1,25 @@
 [
   {
-    "id": 5637,
+    "ID": 5634,
+    "title": "P0383 XT",
+    "qty": "1.0",
+    "level": "1",
+    "type": "part"
+  }
+]
+
+[
+  {
+    "ID": 5637,
     "title": "AD4343",
     "qty": "3",
     "level": "1",
     "type": "assembly"
   },
   {
-    "id": 5638,
-    "title": "AD4343 XT",
-    "qty": "6",
+    "ID": 5639,
+    "title": "S5454",
+    "qty": "1.0",
     "level": "1",
     "type": "assembly"
   }

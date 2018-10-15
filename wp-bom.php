@@ -116,8 +116,8 @@ function init() {
 
 		$wpb_settings = new Settings();
 
-		$module      = new Module();
-		$args        = [
+		$module = new Module();
+		$args = [
 			'posts_per_page' => - 1,
 			'post_type'      => 'assembly',
 		];
@@ -131,20 +131,40 @@ function init() {
 			$post  = new \WP_Post( $obj );
 			$comp  = new Component( $post->ID );
 			$items = $comp->setItems( $post->ID );
-			$parts = $comp->getItemsPart();
+			$parts = $comp->getItemsPart( $post->ID );
 			$sub   = $comp->getItemsAssembly();
 			$i ++;
 		}
 
 //		$post  = new \WP_Post( $obj );
-		$comp  = new Component( 5640 );
-		$items = $comp->setItems( 5640 );
-		$parts = $comp->getItemsPart();
-		$sub   = $comp->getItemsAssembly();
+		$comp2 = new Component( 5640 );
+		$p2s   = $comp2->getPartList();
+		$sub2s = $comp2->getSubList();
 
 
+		foreach ( $sub2s as $ah ) {
 
-		echo json_encode( $sub );
+			//echo $ah['ID'];
+			$bah = new Component( $ah['ID'] );
+
+			$sid = $bah->getSubList();
+
+			foreach ($sid as $s) {
+				$bah2 = new Component( $ah['ID'] );
+
+				$sidd = $bah2->getSubList();
+				$var[] = $bah2->getPartList();
+
+			}
+			$var[] = $bah->getPartList();
+
+		}
+
+		echo json_encode($var);
+	//	echo json_encode( $p2s );
+		echo '<br>';
+		//echo json_encode( $sub2s );
+		//echo json_encode( $sub );
 //		$one  = $a->get_ai();
 //		$sub  = $a->get_asi();
 //		$part = $a->get_asp();

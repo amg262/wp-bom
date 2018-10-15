@@ -125,11 +125,14 @@ class Component {
 	private $cf_req_items = [];
 
 
+	private $part_list;
+	private $sub_list;
 	private $item_parent;
 	private $items;
 	private $items_part;
 	private $items_assembly;
 
+	private $assembly;
 	private $assembly_part_list;
 	private $assembly_item_list;
 	private $assembly_sub_list;
@@ -139,29 +142,31 @@ class Component {
 	private $item_qty;
 	private $item_post = [];
 
+
 	/**
 	 * Component constructor.
 	 */
 	public function __construct( $post_id ) {
 
-		$this->post_id  = $post_id;
-		$this->meta_key = $this->setPost( $this->getPostId() );
+		$this->post_id = $post_id;
+		$this->setPost( $this->getPostId() );
+		$this->setItems( $this->getPostId() );
 	}
 
 	/**
 	 * @return mixed
 	 */
-	public function getItemParent() {
-		return $this->item_parent;
+	public function getAssemblyId() {
+		return $this->assembly_id;
 	}
 
 	/**
-	 * @param mixed $item_parent
+	 * @param mixed $assembly_id
 	 *
 	 * @return Component
 	 */
-	public function setItemParent( $item_parent ) {
-		$this->item_parent = $item_parent;
+	public function setAssemblyId( $assembly_id ) {
+		$this->assembly_id = $assembly_id;
 
 		return $this;
 	}
@@ -169,262 +174,17 @@ class Component {
 	/**
 	 * @return mixed
 	 */
-	public function getItems() {
-		return $this->items;
+	public function getPostType() {
+		return $this->post_type;
 	}
 
 	/**
-	 * @param mixed $items
+	 * @param mixed $post_type
 	 *
 	 * @return Component
 	 */
-	public function setItems( $post_id ) {
-
-		if ( have_rows( 'items', $post_id ) ) {
-
-			$i = 0;
-			$j = 0;
-
-			$this->setItemParent( get_post( $post_id ) );
-
-			while ( have_rows( 'items', $post_id ) ) : the_row();
-				$i ++;
-
-				$type     = get_sub_field( 'type' );
-				$level    = get_sub_field( 'level' );
-				$quantity = get_sub_field( 'quantity' );
-				$item     = get_sub_field( 'item' );
-
-				$obj       = get_post( $item );
-				$item_type = $obj->post_type;
-
-				$args = [
-					'id'    => $obj->ID,
-					'title' => $obj->post_title,
-					'qty'   => $quantity,
-					'level' => $level,
-					'type'  => $type,
-				];
-
-
-				if ( $item_type === 'assembly' ) {
-					$sel = [
-						'label' => 'assembly',
-						'value' => 'assembly',
-					];
-				} elseif ( $item_type === 'part' ) {
-					$sel = [
-						'label' => 'part',
-						'value' => 'part',
-					];
-				}
-
-				update_field( 'object_list', $args, $post_id );
-				update_field( 'object_list', $args, $post_id );
-				update_sub_field( 'type', $sel['value'], $obj->ID );
-
-				if ( $item_type === 'part' ) {
-
-					$this->cf_assem_items[] = $args;
-					$this->cf_assem_parts[] = $args;
-
-
-				} elseif ( $item_type === 'assembly' ) {
-					$this->cf_assem_items[]    = $args;
-					$this->cf_assem_subitems[] = $args;
-				}
-
-				//				if ( strtolower( $type ) !== strtolower( $obj->post_type ) ) {
-				//					update_sub_field( 'type', $obj->post_type );
-				//				}
-
-
-//				if ( $item_type === 'assembly' ) {
-//
-//					$this->setCfAssemSubitems( $obj->ID );
-//				}
-//
-//				if ( $parent_post->post_type === 'assembly' && $obj->post_type === 'assembly' ) {
-//					$this->cf_assem_subitems[] = $args;
-//					$this->cf_assem_items[]    = $args;
-//
-//					$add                    = $this->setCfAssemSubitems( $obj->ID );
-//					$this->cf_assem_parts[] = $add;
-//
-//				}
-//
-//
-//				if ( $obj->post_type === 'part' ) {
-//					$this->cf_assem_parts[] = $args;
-//					$this->cf_assem_items[] = $args;
-//
-//				}
-				$this->cf_assem_items[] = $args;
-
-
-				//$pos = get_post( $ass );
-
-			endwhile;
-
-			$this->setItemsPart( [ 'id' => $post_id, [ $this->cf_assem_parts ] ] );
-			$this->setItemsAssembly( [ 'id' => $post_id, [ $this->cf_assem_subitems ] ] );
-			update_field( 'object_list', $args, $post_id );
-			update_field( 'part_list', $this->cf_assem_parts, $post_id );
-			update_field( 'sub_assembly_list', $this->cf_assem_subitems, $post_id );
-
-			return $this->cf_assem_parts;
-
-		}
-
-		return false;
-		$this->items = $items;
-
-		return $this;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getItemsPart() {
-		return $this->items_part;
-	}
-
-	/**
-	 * @param mixed $items_part
-	 *
-	 * @return Component
-	 */
-	public function setItemsPart( $items_part ) {
-		$this->items_part = $items_part;
-
-		return $this;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getItemsAssembly() {
-		return $this->items_assembly;
-	}
-
-	/**
-	 * @param mixed $items_assembly
-	 *
-	 * @return Component
-	 */
-	public function setItemsAssembly( $items_assembly ) {
-		$this->items_assembly = $items_assembly;
-
-		return $this;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getAssemblyPartList() {
-		return $this->assembly_part_list;
-	}
-
-	/**
-	 * @param mixed $assembly_part_list
-	 *
-	 * @return Component
-	 */
-	public function setAssemblyPartList( $assembly_part_list ) {
-
-		if ( have_rows( 'items', $post_id ) ) {
-
-			$i           = 0;
-			$j           = 0;
-			$parent_post = get_post( $post_id );
-
-			while ( have_rows( 'items', $post_id ) ) : the_row();
-				$i ++;
-
-				$type     = get_sub_field( 'type' );
-				$level    = get_sub_field( 'level' );
-				$quantity = get_sub_field( 'quantity' );
-				$item     = get_sub_field( 'item' );
-
-				$obj       = get_post( $item );
-				$item_type = $obj->post_type;
-
-				$args = [
-					'id'    => $obj->ID,
-					'title' => $obj->post_title,
-					'q'     => $quantity,
-					't'     => $type,
-					'i'     => $item_type,
-				];
-
-
-				if ( $item_type === 'assembly' ) {
-					$sel = [
-						'label' => 'assembly',
-						'value' => 'assembly',
-					];
-				} elseif ( $item_type === 'part' ) {
-					$sel = [
-						'label' => 'part',
-						'value' => 'part',
-					];
-				}
-
-				update_field( 'object_list', $args, $post_id );
-				update_field( 'object_list', $args, $post_id );
-				update_sub_field( 'type', $sel, $obj->ID );
-
-				if ( $item_type === 'part' ) {
-					$this->cf_assem_items[] = $args;
-					$this->cf_assem_parts[] = $args;
-
-				} elseif ( $item_type === 'assembly' ) {
-					$this->cf_assem_items[]    = $args;
-					$this->cf_assem_subitems[] = $args;
-				}
-
-				//				if ( strtolower( $type ) !== strtolower( $obj->post_type ) ) {
-				//					update_sub_field( 'type', $obj->post_type );
-				//				}
-
-
-//				if ( $item_type === 'assembly' ) {
-//
-//					$this->setCfAssemSubitems( $obj->ID );
-//				}
-//
-//				if ( $parent_post->post_type === 'assembly' && $obj->post_type === 'assembly' ) {
-//					$this->cf_assem_subitems[] = $args;
-//					$this->cf_assem_items[]    = $args;
-//
-//					$add                    = $this->setCfAssemSubitems( $obj->ID );
-//					$this->cf_assem_parts[] = $add;
-//
-//				}
-//
-//
-//				if ( $obj->post_type === 'part' ) {
-//					$this->cf_assem_parts[] = $args;
-//					$this->cf_assem_items[] = $args;
-//
-//				}
-				$this->cf_assem_items[] = $args;
-
-
-				//$pos = get_post( $ass );
-
-			endwhile;
-			update_field( 'object_list', $args, $post_id );
-			update_field( 'part_list', $this->cf_assem_parts, $post_id );
-			update_field( 'sub_assembly_list', $this->cf_assem_subitems, $post_id );
-
-			return $this->cf_assem_parts;
-
-		}
-
-		return false;
-
-		$this->assembly_part_list = $assembly_part_list;
+	public function setPostType( $post_type ) {
+		$this->post_type = $post_type;
 
 		return $this;
 	}
@@ -464,6 +224,209 @@ class Component {
 
 		return $this;
 	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getItemParent() {
+		return $this->item_parent;
+	}
+
+	/**
+	 * @param mixed $item_parent
+	 *
+	 * @return Component
+	 */
+	public function setItemParent( $item_parent ) {
+		$this->item_parent = $item_parent;
+
+		return $this;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getItems() {
+		return $this->items;
+	}
+
+	/**
+	 * @param mixed $items
+	 *
+	 * @return Component
+	 */
+	public function setItems( $post_id = 0 ) {
+
+		if ( $post_id === 0 ) {
+			$post_id = $this->getPostId();
+		}
+		if ( have_rows( 'items', $post_id ) ) {
+
+			$i = 0;
+			$j = 0;
+
+			$this->setItemParent( get_post( $post_id ) );
+
+			while ( have_rows( 'items', $post_id ) ) : the_row();
+				$i ++;
+
+				$type     = get_sub_field( 'type' );
+				$level    = get_sub_field( 'level' );
+				$quantity = get_sub_field( 'quantity' );
+				$item     = get_sub_field( 'item' );
+
+				$obj       = get_post( $item );
+				$item_type = $obj->post_type;
+
+				$args = [
+					'id'    => $obj->ID,
+					'title' => $obj->post_title,
+					'qty'   => $quantity,
+					'level' => $level,
+					'type'  => $type,
+				];
+
+
+				if ( $item_type === 'assembly' ) {
+					$sel = [
+						'label' => 'assembly',
+						'value' => 'assembly',
+					];
+				} elseif ( $item_type === 'part' ) {
+					$sel = [
+						'label' => 'part',
+						'value' => 'part',
+					];
+				}
+
+				update_sub_field( 'type', $sel['value'], $obj->ID );
+
+				if ( $item_type === 'part' ) {
+
+					$this->cf_assem_items[] = $args;
+					$this->cf_assem_parts[] = [
+						'ID'    => $obj->ID,
+						'title' => $obj->post_title,
+						'qty'   => $quantity,
+						'level' => $level,
+						'type'  => get_sub_field( 'type', $obj->ID ),
+					];
+
+
+				} elseif ( $item_type === 'assembly' ) {
+					$this->cf_assem_items[]    = $args;
+					$this->cf_assem_subitems[] = [
+						'ID'    => $obj->ID,
+						'title' => $obj->post_title,
+						'qty'   => $quantity,
+						'level' => $level,
+						'type'  => get_sub_field( 'type', $obj->ID ),
+					];
+				}
+
+				//				if ( strtolower( $type ) !== strtolower( $obj->post_type ) ) {
+				//					update_sub_field( 'type', $obj->post_type );
+				//				}
+
+
+//				if ( $item_type === 'assembly' ) {
+//
+//					$this->setCfAssemSubitems( $obj->ID );
+//				}
+//
+//				if ( $parent_post->post_type === 'assembly' && $obj->post_type === 'assembly' ) {
+//					$this->cf_assem_subitems[] = $args;
+//					$this->cf_assem_items[]    = $args;
+//
+//					$add                    = $this->setCfAssemSubitems( $obj->ID );
+//					$this->cf_assem_parts[] = $add;
+//
+//				}
+//
+//
+//				if ( $obj->post_type === 'part' ) {
+//					$this->cf_assem_parts[] = $args;
+//					$this->cf_assem_items[] = $args;
+//
+//				}
+				$this->cf_assem_items[] = $args;
+
+
+				//$pos = get_post( $ass );
+
+			endwhile;
+
+			$this->setItemsPart( $post_id, [ $this->cf_assem_parts ] );
+			$this->setItemsAssembly( $post_id, [ $this->cf_assem_subitems ] );
+			update_field( 'object_list', $args, $post_id );
+
+
+		}
+
+
+		return $this->items;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getItemsPart( $id ) {
+		$val = get_field( 'part_list', $id );
+
+		return $val;
+	}
+
+	/**
+	 * @param mixed $items_part
+	 *
+	 * @return Component
+	 */
+	public function setItemsPart( $post_id, $items_part ) {
+
+		$this->items_part = $items_part;
+		update_field( 'part_list', $this->cf_assem_parts, $post_id );
+
+		return $this;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getItemsAssembly() {
+		return $this->items_assembly;
+	}
+
+	/**
+	 * @param mixed $items_assembly
+	 *
+	 * @return Component
+	 */
+	public function setItemsAssembly( $post_id, $items_assembly ) {
+
+		$this->items_assembly = $items_assembly;
+		update_field( 'sub_assembly_list', $this->cf_assem_subitems, $post_id );
+
+		return $this;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getAssemblyPartList() {
+		return $this->assembly_part_list;
+	}
+
+	/**
+	 * @param mixed $assembly_part_list
+	 *
+	 * @return Component
+	 */
+	public function setAssemblyPartList( $assembly_part_list ) {
+
+
+		return $this;
+	}
+
 
 	/**
 	 * @return mixed
@@ -649,66 +612,6 @@ class Component {
 		return false;
 	}
 
-	public function get_item_data(
-		$assembly_id
-	) {
-
-		if ( have_rows( 'items', $assembly_id ) ) {
-
-			$i = 0;
-			$j = 0;
-			while ( have_rows( 'items', $assembly_id ) ) : the_row();
-				$i ++;
-
-				$type     = get_sub_field( 'type' );
-				$level    = get_sub_field( 'level' );
-				$quantity = get_sub_field( 'quantity' );
-				$item     = get_sub_field( 'item' );
-
-
-				$sub_item = new \WP_Post( $item );
-
-				if ( strtolower( $type ) !== strtolower( $sub_item->post_type ) ) {
-					update_sub_field( 'type', $sub_item->post_type );
-				}
-
-
-				//$this->handle_type( $assembly_id, $sub_item->post_type );
-
-				$this->item_parts[] = [
-					'id'    => $sub_item,
-					'qty'   => $quantity,
-					'level' => $level,
-					'type'  => get_sub_field( 'type' ),
-				];
-
-				if ( $sub_item->post_type === 'assembly' ) {
-					$this->item_assem[] = [
-						'id'    => $sub_item,
-						'qty'   => $quantity,
-						'level' => $level,
-						'type'  => get_sub_field( 'type' ),
-					];
-
-				} elseif ( $sub_item->post_type === 'part' ) {
-					$this->item_parts[] = [
-						'id'    => $sub_item,
-						'qty'   => $quantity,
-						'level' => $level,
-						'type'  => get_sub_field( 'type' ),
-					];
-				}
-
-
-				//$pos = get_post( $ass );
-
-			endwhile;
-
-			echo $i . $j;
-
-			return [ 'ASSEM' => $this->item_assem ];
-		}
-	}
 
 	/**
 	 * @return mixed
@@ -733,52 +636,20 @@ class Component {
 		return $this->acf_field;
 	}
 
-	public function build_object() {
-
-	}
-
 	/**
 	 * @return mixed
 	 */
-	public function getMetaKey() {
-
-		return $this->key;
-
+	public function getPartList() {
+		return $this->part_list;
 	}
 
 	/**
-	 * @param $key
-	 *
-	 * @return mixed
-	 */
-	public function setMetaKey(
-		$key
-	) {
-
-		$this->key = $key;
-
-		return $this->key;
-
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getAssemblyId() {
-
-		return $this->assembly_id;
-	}
-
-	/**
-	 * @param mixed $assembly_id
+	 * @param mixed $part_list
 	 *
 	 * @return Component
 	 */
-	public function setAssemblyId(
-		$assembly_id
-	) {
-
-		$this->assembly_id = $assembly_id;
+	public function setPartList( $part_list ) {
+		$this->part_list = $part_list;
 
 		return $this;
 	}
@@ -786,73 +657,28 @@ class Component {
 	/**
 	 * @return mixed
 	 */
-	public function getPostType() {
-
-		return $this->post_type;
+	public function getSubList() {
+		return $this->sub_list;
 	}
 
 	/**
-	 * @param mixed $post_type
+	 * @param mixed $sub_list
 	 *
 	 * @return Component
 	 */
-	public function setPostType(
-		$post_type
-	) {
-
-		$this->post_type = $post_type;
+	public function setSubList( $sub_list ) {
+		$this->sub_list = $sub_list;
 
 		return $this;
 	}
 
-	/**
-	 * @return mixed
-	 */
-	public function getPartNo() {
-
-		return $this->part_no;
-	}
-
-	/**
-	 * @param mixed $part_no
-	 *
-	 * @return Component
-	 */
-	public function setPartNo(
-		$part_no
-	) {
-
-		$this->part_no = $part_no;
-
-		return $this;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getCost() {
-
-		return $this->cost;
-	}
-
-	/**
-	 * @param mixed $cost
-	 *
-	 * @return Component
-	 */
-	public function setCost( $cost ) {
-
-		$this->cost = $cost;
-
-		return $this;
-	}
 
 	/**
 	 * @return mixed
 	 */
 	public function getPost() {
 
-		return;
+		return $this->post;
 	}
 
 	/**
@@ -861,289 +687,13 @@ class Component {
 	 * @return Component
 	 */
 	public function setPost( $post_id ) {
-
-		$this->post = get_post( $post_id );
+		$this->post_id   = $post_id;
+		$this->post      = get_post( $post_id );
+		$this->post_type = $this->post->post_type;
+		$this->part_list = get_field( 'part_list', $this->post_id );
+		$this->sub_list  = get_field( 'sub_assembly_list', $this->post_id );
 
 		return $this->post;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getPartName() {
-
-		return $this->part_name;
-	}
-
-	/**
-	 * @param mixed $part_name
-	 *
-	 * @return Component
-	 */
-	public function setPartName( $part_name ) {
-
-		$this->part_name = $part_name;
-
-		return $this;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getVendor() {
-
-		return $this->vendor;
-	}
-
-	/**
-	 * @param mixed $vendor
-	 *
-	 * @return Component
-	 */
-	public function setVendor( \WP_Taxonomy $vendor ) {
-
-		$this->vendor = $vendor;
-
-		return $this;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getCats() {
-
-		return $this->cats;
-	}
-
-	/**
-	 * @param array $cats
-	 *
-	 * @return Component
-	 */
-	public function setCats(
-		array $cats
-	): Component {
-
-		$this->cats = $cats;
-
-		return $this;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getTags(): array {
-
-		return $this->tags;
-	}
-
-	/**
-	 * @param array $tags
-	 *
-	 * @return Component
-	 */
-	public function setTags(
-		array $tags
-	): Component {
-
-		$this->tags = $tags;
-
-		return $this;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getSku() {
-
-		return $this->sku;
-	}
-
-	/**
-	 * @param mixed $sku
-	 *
-	 * @return Component
-	 */
-	public function setSku(
-		$sku
-	) {
-
-		$this->sku = $sku;
-
-		return $this;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getWeight() {
-
-		return $this->weight;
-	}
-
-	/**
-	 * @param mixed $weight
-	 *
-	 * @return Component
-	 */
-	public function setWeight(
-		$weight
-	) {
-
-		$this->weight = $weight;
-
-		return $this;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getDimensions() {
-
-		return $this->dimensions;
-	}
-
-	/**
-	 * @param mixed $dimensions
-	 *
-	 * @return Component
-	 */
-	public function setDimensions(
-		$dimensions
-	) {
-
-		$this->dimensions = $dimensions;
-
-		return $this;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getImage() {
-
-		return $this->image;
-	}
-
-	/**
-	 * @param mixed $image
-	 *
-	 * @return Component
-	 */
-	public function setImage(
-		$image
-	) {
-
-		$this->image = $image;
-
-		return $this;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getDescription() {
-
-		return $this->description;
-	}
-
-	/**
-	 * @param mixed $description
-	 *
-	 * @return Component
-	 */
-	public function setDescription(
-		$description
-	) {
-
-		$this->description = $description;
-
-		return $this;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getPoNum() {
-
-		return $this->po_num;
-	}
-
-	/**
-	 * @param mixed $po_num
-	 *
-	 * @return Component
-	 */
-	public function setPoNum(
-		$po_num
-	) {
-
-		$this->po_num = $po_num;
-
-		return $this;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getDate() {
-
-		return $this->date;
-	}
-
-	/**
-	 * @param mixed $date
-	 *
-	 * @return Component
-	 */
-	public function setDate(
-		$date
-	) {
-
-		$this->date = $date;
-
-		return $this;
-	}
-
-
-	/**
-	 * @return array
-	 */
-	public function getSubItems() {
-
-		return $this->sub_items;
-	}
-
-	/**
-	 * @param array $sub_items
-	 *
-	 * @return Component
-	 */
-	public function setSubItems( array $sub_items ) {
-
-		$this->sub_items = $sub_items;
-
-		return $this;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getPartItems() {
-
-		return $this->part_items;
-	}
-
-	/**
-	 * @param array $part_items
-	 *
-	 * @return Component
-	 */
-	public function setPartItems( array $part_items ) {
-
-		$this->part_items = $part_items;
-
-		return $this;
 	}
 
 
