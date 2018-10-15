@@ -94,8 +94,7 @@ try {
 			require $file;
 		}
 	} );
-} catch
-( \Exception $e ) {
+} catch ( \Exception $e ) {
 }
 
 
@@ -106,12 +105,11 @@ try {
  */
 function init() {
 
-
 	require __DIR__ . '/includes/acfload.php';
-	$wpb           = Plugin::get_instance();
-	$wpb_admin     = Admin::get_instance();
+	$wpb       = Plugin::get_instance();
+	$wpb_admin = Admin::get_instance();
 
-	if (file_exists(__DIR__.'/app.key')) {
+	if ( file_exists( __DIR__ . '/app.key' ) ) {
 		$post          = Post::get_instance();
 		$wpb_shortcode = Shortcode::get_instance();
 		$wpb_rest      = Endpoint\Example::get_instance();
@@ -120,17 +118,21 @@ function init() {
 
 		$module = new Module();
 
-		$a   = new BOM( 5640 );
-		$one = $a->get_ai();
-		$two = $a->get_comp( $one );
+		$a    = new BOM( 5640 );
+		$one  = $a->get_ai();
+		$oene = $a->get_asi();
+		$two  = $a->get_comp( $one );
 
+
+		file_put_contents( __DIR__ . '/data.json', json_encode( $one ) );
+		file_put_contents( __DIR__ . '/data2.json', json_encode( $oene ) );
 		//var_dump( $one );
 		//var_dump( $two );
 	} else {
 		echo '<h1>ENTER YO KEY BRUH</h1>';
 	}
 	//echo json_encode( $a->get_asi() );
-//	var_dump( $a->get_comp() );
+	//	var_dump( $a->get_comp() );
 
 }
 
@@ -143,11 +145,13 @@ add_action( 'plugins_loaded', 'Netraa\\WPB\\init' );
  * @since 1.0.0
  */
 function widget_init() {
+
 	return register_widget( new Widget );
 }
 
 add_action( 'widgets_init', 'Netraa\\WPB\\widget_init' );
 function load_assets() {
+
 	wp_enqueue_script( 'sweetalertjs', 'https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js' );
 	wp_enqueue_style( 'sweetalert_css', 'https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css' );
 	wp_register_script( 'wp_bom_js', plugins_url( WP_BOM_JS, __FILE__ ), [ 'jquery' ] );
@@ -160,7 +164,6 @@ function load_assets() {
 		wp_enqueue_script( 'wp_bom_js' );
 		wp_enqueue_style( 'wp_bom_css' );
 
-
 	} else {
 		wp_enqueue_script( 'wp_bom_min_js' );
 		wp_enqueue_style( 'wp_bom_min_css' );
@@ -172,6 +175,7 @@ add_action( 'init', 'Netraa\\WPB\\load_admin_assets' );
 
 
 function load_admin_assets() {
+
 	wp_register_script( 'wp_bom_admin_js', plugins_url( WP_BOM_ADMIN_JS, __FILE__ ), [ 'jquery' ] );
 	wp_register_script( 'wp_bom_admin_min_js', plugins_url( WP_BOM_ADMIN_MIN_JS, __FILE__ ), [ 'jquery' ] );
 	wp_register_style( 'wp_bom_admin_css', plugins_url( WP_BOM_ADMIN_CSS, __FILE__ ) );
