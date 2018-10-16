@@ -8,10 +8,16 @@
 
 use Netraa\WPB\Component;
 
-class ItemObject extends \Netraa\WPB\Component {
+class ItemObject {
 
 
 
+
+	private $item;
+
+	private $type;
+	private $level;
+	private $quantity;
 
 
 

@@ -5,12 +5,9 @@
  * Date: 10/16/18
  * Time: 1:19 PM
  */
-
 namespace Netraa\WPB;
 
-use Netraa\WPB\PostObject;
-
-class PartObject extends PostObject {
+abstract class PostObject {
 
 
 	/**
@@ -63,18 +60,15 @@ class PartObject extends PostObject {
 	private $value;
 
 
-
 	private $meta;
 
 
-	/**
-	 * PartObject constructor.
-	 */
+	private $post_type;
+
 	public function __construct() {
-		$post = PostObject::__construct();
 
+		$this->value = 'hey';
 	}
-
 
 	/**
 	 * @return mixed
@@ -89,7 +83,10 @@ class PartObject extends PostObject {
 		return $this->post_id;
 	}
 
+
 	public function getMeta() {
+
+
 		return $this->meta;
 	}
 
@@ -97,6 +94,27 @@ class PartObject extends PostObject {
 		$this->meta = get_field( $key, $post_id );
 
 		return $this->meta;
+	}
+
+
+	public function updateMeta( $key, $value, $post_id ) {
+		$this->meta = update_field( $key, $value, $post_id );
+
+		return $this->meta;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getPostType() {
+		return $this->post_type;
+	}
+
+
+	public function setPostType( $post_type ) {
+		$this->post_type = $post_type;
+
+		return $this->post_type;
 	}
 
 	/**

@@ -13,7 +13,7 @@ namespace Netraa\WPB;
  *
  * @package Netraa\WPB
  */
-class Component {
+class Component implements INT_Component {
 
 
 	/**
@@ -165,7 +165,7 @@ class Component {
 	/**
 	 * @param mixed $post_id
 	 *
-	 * @return Component
+	 * @return INT_Component
 	 */
 	public function setPostId(
 		$post_id
@@ -186,7 +186,7 @@ class Component {
 	/**
 	 * @param mixed $assembly_id
 	 *
-	 * @return Component
+	 * @return INT_Component
 	 */
 	public function setAssemblyId( $assembly_id ) {
 		$this->assembly_id = $assembly_id;
@@ -204,7 +204,7 @@ class Component {
 	/**
 	 * @param mixed $post_type
 	 *
-	 * @return Component
+	 * @return INT_Component
 	 */
 	public function setPostType( $post_type ) {
 		$this->post_type = $post_type;
@@ -222,7 +222,7 @@ class Component {
 	/**
 	 * @param mixed $assembly_item_list
 	 *
-	 * @return Component
+	 * @return INT_Component
 	 */
 	public function setAssemblyItemList( $post_id = 0, $index = 0 ) {
 
@@ -242,7 +242,7 @@ class Component {
 				$obj       = get_post( $item );
 				$item_type = $obj->post_type;
 
-				$sub = $this->setSub( $obj->ID );
+			//	$sub = $this->setSub( $obj->ID );
 				if ( is_array( $sub ) ) {
 					$j = count( $sub );
 				} else {
@@ -339,7 +339,7 @@ class Component {
 	/**
 	 * @param mixed $assembly_sub_list
 	 *
-	 * @return Component
+	 * @return INT_Component
 	 */
 	public function setAssemblySubList( $assembly_sub_list ) {
 		$this->assembly_sub_list = $assembly_sub_list;
@@ -357,7 +357,7 @@ class Component {
 	/**
 	 * @param mixed $item_parent
 	 *
-	 * @return Component
+	 * @return INT_Component
 	 */
 	public function setItemParent( $item_parent ) {
 		$this->item_parent = $item_parent;
@@ -375,7 +375,7 @@ class Component {
 	/**
 	 * @param mixed $items
 	 *
-	 * @return Component
+	 * @return INT_Component
 	 */
 	public function setItems( $post_id = 0 ) {
 
@@ -501,7 +501,7 @@ class Component {
 	/**
 	 * @param mixed $items_part
 	 *
-	 * @return Component
+	 * @return INT_Component
 	 */
 	public function setItemsPart( $post_id, $items_part ) {
 
@@ -521,7 +521,7 @@ class Component {
 	/**
 	 * @param mixed $items_assembly
 	 *
-	 * @return Component
+	 * @return INT_Component
 	 */
 	public function setItemsAssembly( $post_id, $items_assembly ) {
 
@@ -541,7 +541,7 @@ class Component {
 	/**
 	 * @param mixed $assembly_part_list
 	 *
-	 * @return Component
+	 * @return INT_Component
 	 */
 	public function setAssemblyPartList( $assembly_part_list ) {
 
@@ -560,7 +560,7 @@ class Component {
 	/**
 	 * @param array $cf_items
 	 *
-	 * @return Component
+	 * @return INT_Component
 	 */
 	public function setCfItems( array $cf_items ) {
 
@@ -597,7 +597,7 @@ class Component {
 	/**
 	 * @param array $cf_assem_parts
 	 *
-	 * @return Component
+	 * @return INT_Component
 	 */
 	public function setCfAssemParts( array $cf_assem_parts ) {
 
@@ -745,7 +745,7 @@ class Component {
 	/**
 	 * @param mixed $part_list
 	 *
-	 * @return Component
+	 * @return INT_Component
 	 */
 	public function setPartList( $part_list ) {
 		$this->part_list = $part_list;
@@ -763,7 +763,7 @@ class Component {
 	/**
 	 * @param mixed $sub_list
 	 *
-	 * @return Component
+	 * @return INT_Component
 	 */
 	public function setSubList( $sub_list ) {
 		$this->sub_list = $sub_list;
@@ -783,7 +783,7 @@ class Component {
 	/**
 	 * @param mixed $post_id
 	 *
-	 * @return Component
+	 * @return INT_Component
 	 */
 	public function setPost( $post_id ) {
 		$this->post_id   = $post_id;
