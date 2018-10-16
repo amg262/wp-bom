@@ -119,6 +119,8 @@ function init() {
 		$module = new Module();
 
 
+		run_assem();
+
 	} else {
 		echo '<h1>ENTER YO KEY BRUH</h1>';
 	}
@@ -148,33 +150,52 @@ function run_assem() {
 	}
 
 //		$post  = new \WP_Post( $obj );
-	$comp2 = new Component( 5640 );
+	$comp2 = new Component( 5638 );
 	$p2s   = $comp2->getPartList();
 	$sub2s = $comp2->getSubList();
+	$list  = $comp2->setAssemblyItemList();
+//
+//	foreach ( $list as $item ) {
+//
+//		//	echo $item[1];
+//
+//		//$list2[] = $comp2->setAssemblyItemList( $item[1] );
+//
+//
+//	}
 
 
-	foreach ( $sub2s as $ah ) {
+	file_put_contents( __DIR__ . '/data.json', json_encode( $list ) );
 
-		//echo $ah['ID'];
-		$bah = new Component( $ah['ID'] );
-
-		$sid = $bah->getSubList();
-
-		foreach ( $sid as $s ) {
-			$bah2 = new Component( $ah['ID'] );
-
-			$sidd  = $bah2->getSubList();
-			$var[] = $bah2->getPartList();
-
-		}
-		$var[] = $bah->getPartList();
-
-	}
-
-	echo json_encode( $var );
-	//	echo json_encode( $p2s );
+	echo json_encode( $list );
 	echo '<br>';
-	echo $i;
+
+	//echo json_encode( $list2 );
+	echo '<br>';
+
+//
+//	foreach ( $sub2s as $ah ) {
+//
+//		//echo $ah['ID'];
+//		$bah = new Component( $ah['ID'] );
+//
+//		$sid = $bah->getSubList();
+//
+//		foreach ( $sid as $s ) {
+//			$bah2 = new Component( $ah['ID'] );
+//
+//			$sidd  = $bah2->getSubList();
+//			$var[] = $bah2->getPartList();
+//
+//		}
+//		$var[] = $bah->getPartList();
+//
+//	}
+//
+//	echo json_encode( $var );
+//	//	echo json_encode( $p2s );
+//	echo '<br>';
+//	echo $i;
 }
 
 add_action( 'plugins_loaded', 'Netraa\\WPB\\init' );

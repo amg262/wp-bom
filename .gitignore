@@ -4,3 +4,4 @@ $ cat .gitignore
 
 # exclude built js
 /vendor/
+composer.lock

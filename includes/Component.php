@@ -15,6 +15,7 @@ namespace Netraa\WPB;
  */
 class Component {
 
+
 	/**
 	 * @var
 	 */
@@ -141,7 +142,7 @@ class Component {
 	private $item_type;
 	private $item_qty;
 	private $item_post = [];
-
+	private $item_tiers;
 
 	/**
 	 * Component constructor.
@@ -151,6 +152,28 @@ class Component {
 		$this->post_id = $post_id;
 		$this->setPost( $this->getPostId() );
 		$this->setItems( $this->getPostId() );
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getPostId() {
+
+		return $this->post_id;
+	}
+
+	/**
+	 * @param mixed $post_id
+	 *
+	 * @return Component
+	 */
+	public function setPostId(
+		$post_id
+	) {
+
+		$this->post_id = $post_id;
+
+		return $this;
 	}
 
 	/**
@@ -201,10 +224,109 @@ class Component {
 	 *
 	 * @return Component
 	 */
-	public function setAssemblyItemList( $assembly_item_list ) {
-		$this->assembly_item_list = $assembly_item_list;
+	public function setAssemblyItemList( $post_id = 0, $index = 0 ) {
 
-		return $this;
+		if ( $post_id === 0 ) {
+			$post_id = $this->getPostId();
+		}
+
+		if ( have_rows( 'items', $post_id ) ) {
+
+			while ( have_rows( 'items', $post_id ) ) : the_row();
+
+				$type     = get_sub_field( 'type' );
+				$level    = get_sub_field( 'level' );
+				$quantity = get_sub_field( 'quantity' );
+				$item     = get_sub_field( 'item' );
+
+				$obj       = get_post( $item );
+				$item_type = $obj->post_type;
+
+				$sub = $this->setSub( $obj->ID );
+				if ( is_array( $sub ) ) {
+					$j = count( $sub );
+				} else {
+					$j = 0;
+				}
+
+				$this->item_tiers[ $index ] = [
+
+					'ID'    => $obj->ID,
+					'title' => $obj->post_title,
+					'type'  => $obj->post_type,
+					'qty'   => $quantity,
+					'j'     => $j,
+					'sub'   => $sub,
+
+				];
+
+				$index ++;
+
+			endwhile;
+
+		}
+
+
+		return $this->item_tiers;
+	}
+
+	public function setSub( $post_id ) {
+
+		$post = get_post( $post_id );
+
+		if ( $post->post_type === 'assembly' ) {
+
+			if ( have_rows( 'items', $post->ID ) ) {
+
+				while ( have_rows( 'items', $post->ID ) ) : the_row();
+
+					$type     = get_sub_field( 'type' );
+					$level    = get_sub_field( 'level' );
+					$quantity = get_sub_field( 'quantity' );
+					$item     = get_sub_field( 'item' );
+
+					$obj       = get_post( $item );
+					$item_type = $obj->post_type;
+
+
+					if ( $item_type === 'assembly' ) {
+						$sub[] = [
+							'ID'    => $obj->ID,
+							'title' => $obj->post_title,
+							'type'  => $obj->post_type,
+							'qty'   => $quantity,
+							'sub2'  => $this->setSub( $obj->ID ),
+						];
+					} else {
+						$sub[] = [
+							'ID'    => $obj->ID,
+							'title' => $obj->post_title,
+							'type'  => $obj->post_type,
+							'qty'   => $quantity,
+						];
+					}
+				endwhile;
+
+			}
+		}
+
+		return $sub;
+
+	}
+
+	public function parse_sub( $sub ) {
+
+		foreach ( $sub as $s ) {
+
+			$post = get_post( $s['ID'] );
+
+
+		}
+	}
+
+	public function parse_tiers() {
+
+
 	}
 
 	/**
@@ -423,29 +545,6 @@ class Component {
 	 */
 	public function setAssemblyPartList( $assembly_part_list ) {
 
-
-		return $this;
-	}
-
-
-	/**
-	 * @return mixed
-	 */
-	public function getPostId() {
-
-		return $this->post_id;
-	}
-
-	/**
-	 * @param mixed $post_id
-	 *
-	 * @return Component
-	 */
-	public function setPostId(
-		$post_id
-	) {
-
-		$this->post_id = $post_id;
 
 		return $this;
 	}
