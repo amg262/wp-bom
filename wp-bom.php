@@ -117,75 +117,64 @@ function init() {
 		$wpb_settings = new Settings();
 
 		$module = new Module();
-		$args = [
-			'posts_per_page' => - 1,
-			'post_type'      => 'assembly',
-		];
-		$posts_array = get_posts( $args );
 
 
-		//$a    = new BOM( 5640 );
-		$i = 0;
-		foreach ( $posts_array as $obj ) {
-
-			$post  = new \WP_Post( $obj );
-			$comp  = new Component( $post->ID );
-			$items = $comp->setItems( $post->ID );
-			$parts = $comp->getItemsPart( $post->ID );
-			$sub   = $comp->getItemsAssembly();
-			$i ++;
-		}
-
-//		$post  = new \WP_Post( $obj );
-		$comp2 = new Component( 5640 );
-		$p2s   = $comp2->getPartList();
-		$sub2s = $comp2->getSubList();
-
-
-		foreach ( $sub2s as $ah ) {
-
-			//echo $ah['ID'];
-			$bah = new Component( $ah['ID'] );
-
-			$sid = $bah->getSubList();
-
-			foreach ($sid as $s) {
-				$bah2 = new Component( $ah['ID'] );
-
-				$sidd = $bah2->getSubList();
-				$var[] = $bah2->getPartList();
-
-			}
-			$var[] = $bah->getPartList();
-
-		}
-
-		echo json_encode($var);
-	//	echo json_encode( $p2s );
-		echo '<br>';
-		//echo json_encode( $sub2s );
-		//echo json_encode( $sub );
-//		$one  = $a->get_ai();
-//		$sub  = $a->get_asi();
-//		$part = $a->get_asp();
-		//	$two  = $a->get_comp( $one );
-
-		echo $i;
-//		echo json_encode( $items );
-
-//		echo json_encode( $sub );
-//		echo json_encode( $sub );
-//
-//		file_put_contents( __DIR__ . '/data.json', json_encode( $one ) );
-//		file_put_contents( __DIR__ . '/data2.json', json_encode( $oene ) );
-		//var_dump( $one );
-		//var_dump( $two );
 	} else {
 		echo '<h1>ENTER YO KEY BRUH</h1>';
 	}
 	//echo json_encode( $a->get_asi() );
 	//	var_dump( $a->get_comp() );
 
+}
+
+function run_assem() {
+	$args        = [
+		'posts_per_page' => - 1,
+		'post_type'      => 'assembly',
+	];
+	$posts_array = get_posts( $args );
+
+
+	//$a    = new BOM( 5640 );
+	$i = 0;
+	foreach ( $posts_array as $obj ) {
+
+		$post  = new \WP_Post( $obj );
+		$comp  = new Component( $post->ID );
+		$items = $comp->setItems( $post->ID );
+		$parts = $comp->getItemsPart( $post->ID );
+		$sub   = $comp->getItemsAssembly();
+		$i ++;
+	}
+
+//		$post  = new \WP_Post( $obj );
+	$comp2 = new Component( 5640 );
+	$p2s   = $comp2->getPartList();
+	$sub2s = $comp2->getSubList();
+
+
+	foreach ( $sub2s as $ah ) {
+
+		//echo $ah['ID'];
+		$bah = new Component( $ah['ID'] );
+
+		$sid = $bah->getSubList();
+
+		foreach ( $sid as $s ) {
+			$bah2 = new Component( $ah['ID'] );
+
+			$sidd  = $bah2->getSubList();
+			$var[] = $bah2->getPartList();
+
+		}
+		$var[] = $bah->getPartList();
+
+	}
+
+	echo json_encode( $var );
+	//	echo json_encode( $p2s );
+	echo '<br>';
+	echo $i;
 }
 
 add_action( 'plugins_loaded', 'Netraa\\WPB\\init' );
