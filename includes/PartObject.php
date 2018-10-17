@@ -8,9 +8,6 @@
 
 namespace Netraa\WPB;
 
-use Netraa\WPB\PostObject;
-use WP_Post;
-
 class PartObject extends PostObject {
 
 
@@ -64,61 +61,20 @@ class PartObject extends PostObject {
 	private $value;
 
 
-
 	private $meta;
-
-	
 
 
 	/**
 	 * PartObject constructor.
 	 */
-	public function __construct() {
-		$post = PostObject::__construct();
+	public function __construct( $post_id ) {
 
-	}
+		PostObject::__construct( $post_id );
+		$this->post_id = $this->setPostId($post_id);
+		$this->post = $this->setPost($post_id);
 
+		$this->post = PostObject::__construct( $post_id );
 
-	/**
-	 * @return mixed
-	 */
-	public function getPostId() {
-		return $this->post_id;
-	}
-
-	public function setPostId( $post_id ) {
-		$this->post_id = $post_id;
-
-		return $this->post_id;
-	}
-
-	public function getMeta() {
-		return $this->meta;
-	}
-
-	public function setMeta( $key, $post_id ) {
-		$this->meta = get_field( $key, $post_id );
-
-		return $this->meta;
-	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getPost() {
-		return $this->post;
-	}
-
-
-	public function setPost( $post ) {
-
-		if ( is_int( $post ) ) {
-			$this->post = get_post( $post );
-		} else {
-			$this->post = new WP_Post( $post );
-		}
-
-		return $this->post;
 	}
 
 

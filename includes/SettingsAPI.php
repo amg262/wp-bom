@@ -12,7 +12,7 @@
 
 namespace Netraa\WPB;
 
-class SettingsAPI implements INT_SettingsAPI {
+class SettingsAPI {
 
 	/**
 	 * settings sections array

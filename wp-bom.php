@@ -119,7 +119,12 @@ function init() {
 		$module = new Module();
 
 
-		run_assem();
+		$po = new PostObject( 5640 );
+		$po->setItems();
+		echo json_encode( $po->getItems() );
+//		var_dump( $po );
+
+		//run_assem();
 
 	} else {
 		echo '<h1>ENTER YO KEY BRUH</h1>';

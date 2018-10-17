@@ -13,7 +13,7 @@ namespace Netraa\WPB;
  *
  * @package Netraa\WPB
  */
-class Component implements INT_Component {
+class Component {
 
 
 	/**
