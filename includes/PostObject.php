@@ -8,58 +8,28 @@
 
 namespace Netraa\WPB;
 
-use WP_Post;
-
 class PostObject {
 
 
-	/**
-	 * @var
-	 */
-	private $part_no;
-	/**
-	 * @var
-	 */
-	private $cost;
-	/**
-	 * @var
-	 */
 	private $post;
 	private $post_id;
-	/**
-	 * @var
-	 */
+
 	private $part_name;
-	/**
-	 * @var
-	 */
+
 	private $vendor;
-	/**
-	 * @var array
-	 */
+
 	private $cats = [];
-	/**
-	 * @var array
-	 */
+
 	private $tags = [];
-	/**
-	 * @var
-	 */
+
 	private $sku;
-	/**
-	 * @var
-	 */
+
 	private $weight;
-	/**
-	 * @var
-	 */
+
 	private $dimensions;
 
-
 	private $key;
-	/**
-	 * @var
-	 */
+
 	private $value;
 
 
@@ -70,31 +40,30 @@ class PostObject {
 
 	private $post_meta;
 
+	private $item;
+
 	private $items;
 
 	private $item_object;
 
 	private $item_fields = [];
 
+	private $post_parent;
+
+	private $item_parent;
+	private $item_post;
+	private $item_list;
+	private $item_qty;
+	private $item_type;
+	private $item_level;
+
 
 	public function __construct( $post_id ) {
-		$this->post_id = $post_id;
-		$this->setPost( $this->getPostId() );
+
+		$this->setPost( $post_id );
+
+
 	}
-
-	/**
-	 * @return mixed
-	 */
-	public function getPostId() {
-		return $this->post_id;
-	}
-
-	public function setPostId( $post_id ) {
-		$this->post_id = $post_id;
-
-		return $this->post_id;
-	}
-
 
 	public function getMeta() {
 
@@ -107,7 +76,6 @@ class PostObject {
 
 		return $this->meta;
 	}
-
 
 	public function updateMeta( $key, $value, $post_id ) {
 		$this->meta = update_field( $key, $value, $post_id );
@@ -122,7 +90,6 @@ class PostObject {
 		return $this->post_type;
 	}
 
-
 	public function setPostType( $post_type ) {
 		$this->post_type = $post_type;
 
@@ -136,17 +103,12 @@ class PostObject {
 		return $this->post;
 	}
 
+	public function setPost( $post_id ) {
 
-	public function setPost( $post ) {
+		$this->setPostId( $post_id );
+		$this->post = get_post( $this->getPostId() );
+		$this->setPostType( $this->getPost()->post_type );
 
-		if ( is_int( $post ) ) {
-			$this->post = get_post( $post );
-
-		} else {
-			$this->post = new WP_Post( $post );
-		}
-
-		$this->setPostType( $this->post->post_type );
 
 		return $this->post;
 	}
@@ -176,12 +138,6 @@ class PostObject {
 				$obj       = get_post( $item );
 				$item_type = $obj->post_type;
 
-				$sub = $this->setSub( $obj->ID );
-				if ( is_array( $sub ) ) {
-					$j = count( $sub );
-				} else {
-					$j = 0;
-				}
 
 				$data = [
 
@@ -189,30 +145,35 @@ class PostObject {
 					'title' => $obj->post_title,
 					'type'  => $obj->post_type,
 					'qty'   => $quantity,
-					'j'     => $j,
-					'sub'   => $sub,
+					'sub'   => $this->setSub( $obj->ID ),
 
 				];
 
-				if ( $item_type === 'assembly' ) {
-					$subitems[] = $data;
-				}
 
-				$this->items['parts'][] = $data
+				$this->items['parts'][ $index ] = $data;
 
-					$index ++;
+				$index ++;
 
 			endwhile;
 
-
-			foreach ( $subitems as $it ) {
-
-			}
 
 		}
 
 
 		return $this->items;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getPostId() {
+		return $this->post_id;
+	}
+
+	public function setPostId( $post_id ) {
+		$this->post_id = $post_id;
+
+		return $this->post_id;
 	}
 
 	public function setSub( $post_id ) {
@@ -234,22 +195,15 @@ class PostObject {
 					$item_type = $obj->post_type;
 
 
-					if ( $item_type === 'assembly' ) {
-						$sub['subassem'][] = [
-							'ID'    => $obj->ID,
-							'title' => $obj->post_title,
-							'type'  => $obj->post_type,
-							'qty'   => $quantity,
+					$sub[] = [
+						'sub' => [
+							'id'   => $obj->ID,
+							'type' => $obj->post_type,
+							'qty'  => $quantity,
 							//'sub2'  => $this->setSub( $obj->ID ),
-						];
-					} else {
-						$sub[] = [
-							'ID'    => $obj->ID,
-							'title' => $obj->post_title,
-							'type'  => $obj->post_type,
-							'qty'   => $quantity,
-						];
-					}
+						],
+					];
+
 				endwhile;
 
 			}
@@ -259,12 +213,11 @@ class PostObject {
 
 	}
 
-
-	
-	public function setItemData() {
+	public function setSub2( $post_id ) {
 
 
 		if ( have_rows( 'items', $post_id ) ) {
+			$count = 0;
 
 			while ( have_rows( 'items', $post_id ) ) : the_row();
 
@@ -272,8 +225,140 @@ class PostObject {
 				$level    = get_sub_field( 'level' );
 				$quantity = get_sub_field( 'quantity' );
 				$item     = get_sub_field( 'item' );
+				$obj      = get_post( $item );
+
+				if ( have_rows( 'items', $obj->ID ) ) {
+					$count = 0;
+					$sub2  = [];
+
+					while ( have_rows( 'items', $obj->ID ) ) : the_row();
+						$type     = get_sub_field( 'type' );
+						$level    = get_sub_field( 'level' );
+						$quantity = get_sub_field( 'quantity' );
+						$item     = get_sub_field( 'item' );
+						$obj      = get_post( $item );
+
+						$sub2[] = [
+							'id'   => $obj->ID,
+							'type' => $obj->post_type,
+							'qty'  => $quantity,
+							//'sub2'  => $this->setSub( $obj->ID ),
+						];
+					endwhile;
+				}
+
+				$sub[] = [
+					'id'   => $obj->ID,
+					'type' => $obj->post_type,
+					'qty'  => $quantity,
+					'sub'  => $sub2,
+				];
+			endwhile;
+
+
+		}
+
+		return $sub;
+
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public
+	function getPostMeta() {
+		return $this->post_meta;
+	}
+
+	/**
+	 * @param mixed $post_meta
+	 *
+	 * @return PostObject
+	 */
+	public
+	function setPostMeta(
+		$post_meta
+	) {
+		$this->post_meta = $post_meta;
+
+		return $this;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public
+	function getItemObject() {
+		return $this->item_object;
+	}
+
+	/**
+	 * @param mixed $item_object
+	 *
+	 * @return PostObject
+	 */
+	public
+	function setItemObject(
+		$item_object
+	) {
+		$this->item_object = $item_object;
+
+		return $this;
+	}
+
+	/**
+	 * @return array
+	 */
+	public
+	function getItemFields() {
+		return $this->item_fields;
+	}
+
+	/**
+	 */
+	public
+	function setItemFields(
+		$post_id
+	) {
+
+		if ( have_rows( 'items', $post_id ) ) {
+
+			while ( have_rows( 'items', $post_id ) ) : the_row();
+				$type     = get_sub_field( 'type' );
+				$level    = get_sub_field( 'level' );
+				$quantity = get_sub_field( 'quantity' );
+				$item     = get_sub_field( 'item' );
+
+				$post                = get_post( $item );
+				$this->item_fields[] = [ 'id' => $item, 'qty' => $quantity, 'type' => $type ];
 
 			endwhile;
 		}
+
+		return $this->item_fields;
 	}
+
+	/**
+	 * @return mixed
+	 */
+	public
+	function getItem() {
+		return $this->item;
+	}
+
+	/**
+	 * @param mixed $item
+	 *
+	 * @return PostObject
+	 */
+	public
+	function setItem(
+		$item
+	) {
+		$this->item = $item;
+
+		return $this;
+	}
+
+
 }
