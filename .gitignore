@@ -4,4 +4,8 @@ $ cat .gitignore
 
 # exclude built js
 /vendor/
-composer.lock
+
+.github
+npm-debug.log
+*.lock
+native
