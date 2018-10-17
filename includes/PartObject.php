@@ -9,6 +9,7 @@
 namespace Netraa\WPB;
 
 use Netraa\WPB\PostObject;
+use WP_Post;
 
 class PartObject extends PostObject {
 
@@ -65,6 +66,8 @@ class PartObject extends PostObject {
 
 
 	private $meta;
+
+	
 
 
 	/**
