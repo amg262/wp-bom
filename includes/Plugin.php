@@ -18,6 +18,14 @@ namespace Netraa\WPB;
 class Plugin {
 
 	/**
+	 * Instance of this class.
+	 *
+	 * @since    1.0.0
+	 *
+	 * @var      object
+	 */
+	protected static $instance = null;
+	/**
 	 * The variable name is used as the text domain when internationalizing strings
 	 * of text. Its value should match the Text Domain file header in the main
 	 * plugin file.
@@ -29,15 +37,6 @@ class Plugin {
 	protected $plugin_slug = 'wp-bom';
 
 	/**
-	 * Instance of this class.
-	 *
-	 * @since    1.0.0
-	 *
-	 * @var      object
-	 */
-	protected static $instance = null;
-
-	/**
 	 * Setup instance attributes
 	 *
 	 * @since     1.0.0
@@ -47,11 +46,28 @@ class Plugin {
 	}
 
 	/**
+	 * Return an instance of this class.
+	 *
+	 * @since     1.0.0
+	 *
+	 * @return    object    A single instance of this class.
+	 */
+	public static function get_instance() {
+
+		// If the single instance hasn't been set, set it now.
+		if ( null == self::$instance ) {
+			self::$instance = new self;
+		}
+
+		return self::$instance;
+	}
+
+	/**
 	 * Return the plugin slug.
 	 *
 	 * @since    1.0.0
 	 *
-	 * @return    Plugin slug variable.
+	 * @return string
 	 */
 	public function get_plugin_slug() {
 		return $this->plugin_slug;
@@ -118,7 +134,6 @@ class Plugin {
 		return true;
 	}
 
-
 	public function delete_options() {
 		$sections = [
 			'wpb_settings',
@@ -136,31 +151,28 @@ class Plugin {
 		}
 	}
 
-	public function delete_posts() {
+	public function delete_posts( $options ) {
 
 		$i = 0;
 		$j = 0;
 
-		$types = [ 'page' ];
+		$defaults = [
+			'on'    => true,
+			'types' => [ 'part', 'assembly', 'requisition' ],
+			//'taxs'  => [ 'item-category', 'item-tag', 'vendor', 'requisition-type' ],
+		];
+		$args = wp_parse_args( $options, $defaults );
+		$types = $args['types'];
+
 		foreach ( $types as $type ) {
 
-			$args        = [
-				'posts_per_page'   => - 1,
-				'post_type'        => $type,
-				//'post_status'      => 'publish',
-				'suppress_filters' => true,
-			];
-			$posts_array = get_posts( $args );
+			$posts_array = get_posts( [ 'posts_per_page' => - 1, 'post_type' => $type, ] );
 
 			foreach ( $posts_array as $post ) {
-
-				if ( $post->post_title === 'CRA App Page' ) {
-					wp_delete_post( $post->ID );
-					$i ++;
-				}
+				wp_delete_post( $post->ID );
+				$i ++;
 			}
 		}
-
 		return $i;
 	}
 
@@ -170,7 +182,7 @@ class Plugin {
 	public function install_data() {
 		global $wpdb;
 
-		$table_name = $wpdb->prefix . WCB_TBL;
+		$table_name = $wpdb->prefix . WP_BOM_VERSION;
 
 		$wpdb->insert( $table_name, [
 			'post_id' => 3,
@@ -181,33 +193,15 @@ class Plugin {
 		] );
 	}
 
-
 	/**
 	 *
 	 */
 	public function delete_db() {
 		global $wpdb;
 
-		$table_name = $wpdb->prefix . WCB_TBL;
+		$table_name = $wpdb->prefix . WP_BOM_VERSION;
 
 		//$q = "SELECT * FROM " . $table_name . " WHERE id > 0  ;";
 		$wpdb->query( "DROP TABLE IF EXISTS $table_name ;" );
-	}
-
-	/**
-	 * Return an instance of this class.
-	 *
-	 * @since     1.0.0
-	 *
-	 * @return    object    A single instance of this class.
-	 */
-	public static function get_instance() {
-
-		// If the single instance hasn't been set, set it now.
-		if ( null == self::$instance ) {
-			self::$instance = new self;
-		}
-
-		return self::$instance;
 	}
 }

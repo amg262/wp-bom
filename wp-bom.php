@@ -120,8 +120,11 @@ function init() {
 
 
 		$po = new PostObject( 5640 );
-		$po->setItems();
-		echo json_encode( $po->getItems() );
+		//$po->setItems();
+
+
+		file_put_contents( __DIR__ . '/zap.json', json_encode( $po->setItems() ) );
+		//echo json_encode( $po->getItems() );
 //		var_dump( $po );
 
 		//run_assem();

@@ -21,6 +21,8 @@ class PostObject {
 	private $cats = [];
 
 	private $tags = [];
+	private $part_meta_keys = [ 'part_no', 'sku', 'cost', 'weight', 'vendor', 'category', 'tags' ];
+	private $part_meta_val = [ 'part_no', 'sku', 'cost', 'weight', 'vendor', 'category', 'tags' ];
 
 	private $sku;
 
@@ -34,6 +36,7 @@ class PostObject {
 
 
 	private $meta;
+	private $meta_fields;
 
 
 	private $post_type;
@@ -57,12 +60,47 @@ class PostObject {
 	private $item_type;
 	private $item_level;
 
-
 	public function __construct( $post_id ) {
 
 		$this->setPost( $post_id );
 
 
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getPartMetaVal(): array {
+		return $this->part_meta_val;
+	}
+
+	/**
+	 * @param array $part_meta_val
+	 *
+	 * @return PostObject
+	 */
+	public function setPartMetaVal() {
+
+		foreach ( $this->part_meta_keys as $lbl ) {
+
+			$this->meta_fields[] = [ 'key' => $lbl, 'value' => get_field( $lbl, $this->getPostId() ) ];
+
+		}
+
+		return $this;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getPostId() {
+		return $this->post_id;
+	}
+
+	public function setPostId( $post_id ) {
+		$this->post_id = $post_id;
+
+		return $this->post_id;
 	}
 
 	public function getMeta() {
@@ -150,7 +188,7 @@ class PostObject {
 				];
 
 
-				$this->items['parts'][ $index ] = $data;
+				$this->items[ $obj->post_title ][ $index ] = $data;
 
 				$index ++;
 
@@ -163,20 +201,72 @@ class PostObject {
 		return $this->items;
 	}
 
-	/**
-	 * @return mixed
-	 */
-	public function getPostId() {
-		return $this->post_id;
-	}
-
-	public function setPostId( $post_id ) {
-		$this->post_id = $post_id;
-
-		return $this->post_id;
-	}
-
 	public function setSub( $post_id ) {
+
+		$post = get_post( $post_id );
+
+		if ( $post->post_type === 'assembly' ) {
+
+			if ( have_rows( 'items', $post->ID ) ) {
+
+				while ( have_rows( 'items', $post->ID ) ) : the_row();
+
+					$type     = get_sub_field( 'type' );
+					$level    = get_sub_field( 'level' );
+					$quantity = get_sub_field( 'quantity' );
+					$item     = get_sub_field( 'item' );
+
+					$obj       = get_post( $item );
+					$item_type = $obj->post_type;
+
+					$sub2 = [];
+					$next = [];
+					$sub3 = [];
+
+					if ( get_field( 'items', $obj->ID ) !== null ) {
+
+						$sub2 = get_field( 'items', $obj->ID );
+//						var_dump($sub2);
+
+						foreach ( $sub2 as $s ) {
+
+							$id   = $s['item'];
+							$type = $s['type'];
+
+							if ( $type === 'assembly' ) {
+
+
+								if ( have_rows( 'items', $id ) ) {
+									$next = get_field( 'items', $id );
+								}
+
+								$sub3[] = [ $next['item'], $next['type'], $next['quantity'] ];
+							}
+						}
+					}
+
+					//var_dump($next);
+					$sub[ $obj->post_title ] = [
+						'sub' => [
+							'id'    => $obj->ID,
+							'title' => $obj->post_title,
+							'type'  => $obj->post_type,
+							'qty'   => $quantity,
+							'sub2'  => $sub2,
+							'sub3'  => $sub3,
+						],
+					];
+
+				endwhile;
+
+			}
+		}
+
+		return $sub;
+
+	}
+
+	public function setSubb( $post_id ) {
 
 		$post = get_post( $post_id );
 
@@ -200,7 +290,8 @@ class PostObject {
 							'id'   => $obj->ID,
 							'type' => $obj->post_type,
 							'qty'  => $quantity,
-							//'sub2'  => $this->setSub( $obj->ID ),
+							'sub2' => get_field( 'items', $obj->ID
+							),
 						],
 					];
 

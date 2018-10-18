@@ -275,6 +275,25 @@ class Admin {
                            value="<?php echo $wcb_options[ $key ]; ?>"/>
                 </td>
             </tr>
+            <tr><?php $label = 'Key';
+	            $key         = $this->format_key( $label );
+	            $id          = $key; ?>
+
+                <th scope="row"><label for="<?php _e( $id ); ?>"><?php _e( $label ); ?></label></th>
+                <td>
+                    <input type="password"
+                           title="<?php _e( $id ); ?>"
+                           id="<?php _e( $id ); ?>"
+                           placeholder="<?php if ( ! isset( $wcb_options[ $key ] ) ) {
+			                   $user = new WP_User( get_current_user_id() );
+			                   echo $user->user_email;
+		                   } else {
+			                   echo $wcb_options[ $key ];
+		                   } ?>"
+                           name="wcb_options[<?php _e( $key ); ?>]"
+                           value="<?php echo $wcb_options[ $key ]; ?>"/>
+                </td>
+            </tr>
             <tr>
 				<?php
 

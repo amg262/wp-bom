@@ -17,6 +17,7 @@ jQuery(document).ready(function ($) {
 	console.log('ajax_object');
 
 
+	alert("bitch");
 	$('select').on('change', function (event, params) {
 
 		$('select > span.selection').innerHTML;
