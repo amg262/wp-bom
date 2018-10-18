@@ -228,21 +228,21 @@ class PostObject {
 						$sub2 = get_field( 'items', $obj->ID );
 //						var_dump($sub2);
 
-						foreach ( $sub2 as $s ) {
-
-							$id   = $s['item'];
-							$type = $s['type'];
-
-							if ( $type === 'assembly' ) {
-
-
-								if ( have_rows( 'items', $id ) ) {
-									$next = get_field( 'items', $id );
-								}
-
-								$sub3[] = [ $next['item'], $next['type'], $next['quantity'] ];
-							}
-						}
+//						foreach ( $sub2 as $s ) {
+//
+//							$id   = $s['item'];
+//							$type = $s['type'];
+//
+//							if ( $type === 'assembly' ) {
+//
+//
+//								if ( have_rows( 'items', $id ) ) {
+//									$next = get_field( 'items', $id );
+//								}
+//
+//								$sub3[] = [ $next['item'], $next['type'], $next['quantity'] ];
+//							}
+//						}
 					}
 
 					//var_dump($next);
@@ -253,7 +253,7 @@ class PostObject {
 							'type'  => $obj->post_type,
 							'qty'   => $quantity,
 							'sub2'  => $sub2,
-							'sub3'  => $sub3,
+//							'sub3'  => $sub3,
 						],
 					];
 

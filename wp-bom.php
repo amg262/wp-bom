@@ -98,6 +98,94 @@ try {
 }
 
 
+function yeahs( $post_id ) {
+
+	$items = [];
+	$parts = [];
+	$subs  = [];
+	if ( have_rows( 'items', $post_id ) ) {
+
+
+		while ( have_rows( 'items', $post_id ) ) : the_row();
+
+			$type     = get_sub_field( 'type' );
+			$level    = get_sub_field( 'level' );
+			$quantity = get_sub_field( 'quantity' );
+			$item     = get_sub_field( 'item' );
+
+			$obj = get_post( $item );
+
+			if ( $obj->post_type === 'part' ) {
+				$parts[] = [
+					'id'    => $obj->ID,
+					'title' => $obj->post_title,
+					'type'  => $obj->post_type,
+					'qty'   => $quantity,
+				];
+			} else {
+				$subs[] = [
+					'id'    => $obj->ID,
+					'title' => $obj->post_title,
+					'type'  => $obj->post_type,
+					'qty'   => $quantity,
+				];
+			}
+		endwhile;
+
+		$items[] = $parts;
+		$items[] = $subs;
+
+		return $subs;
+	}
+}
+
+function yeahhs( $subitems ) {
+
+	$items = [];
+	$parts = [];
+	$subs  = [];
+	foreach ( $subitems as $sub ) {
+
+		$id = $sub['id'];
+		if ( have_rows( 'items', $id ) ) {
+
+
+			while ( have_rows( 'items', $id ) ) : the_row();
+
+				$type     = get_sub_field( 'type' );
+				$level    = get_sub_field( 'level' );
+				$quantity = get_sub_field( 'quantity' );
+				$item     = get_sub_field( 'item' );
+
+				$obj = get_post( $item );
+
+				if ( $obj->post_type === 'part' ) {
+					$parts[] = [
+						'id'    => $obj->ID,
+						'title' => $obj->post_title,
+						'type'  => $obj->post_type,
+						'qty'   => $quantity,
+					];
+				} else {
+					$subs[] = [
+						'id'    => $obj->ID,
+						'title' => $obj->post_title,
+						'type'  => $obj->post_type,
+						'qty'   => $quantity,
+					];
+				}
+			endwhile;
+
+
+		}
+
+	}
+
+	//var_dump( $parts );
+	var_dump( $subs );
+
+}
+
 /**
  * Initialize Plugin
  *
@@ -123,7 +211,11 @@ function init() {
 		//$po->setItems();
 
 
-		file_put_contents( __DIR__ . '/zap.json', json_encode( $po->setItems() ) );
+		$ah = yeahs( 5640 );
+		yeahhs( $ah );
+
+
+		//file_put_contents( __DIR__ . '/zap.json', json_encode( $po->setItems() ) );
 		//echo json_encode( $po->getItems() );
 //		var_dump( $po );
 
