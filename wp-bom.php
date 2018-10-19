@@ -121,64 +121,58 @@ function init() {
 	$post          = Post::get_instance();
 	$wpb_shortcode = Shortcode::get_instance();
 	$wpb_rest      = Endpoint\Example::get_instance();
+	$wpb_settings  = new Settings();
+	$wpb_admin     = Admin::get_instance();
 
-	$a  = get_cache( 'part' );
-	$aa = get_cache( 'assembly' );
-
-
-	//var_dump( $aa );
-	$wpb_settings = new Settings();
-	$wpb_admin    = Admin::get_instance();
-
-	$module = new Module();
-	$data   = Data::get_instance();
-
-	$po = new PostObject( 5667 );
-	//var_dump( $po->set_levels2( 5640 ) );
-	$one = $po->set_levels2( 5667 );
-
-
-//	var_dump( $one );
-
-
-	$html .= '<strong><i>' . $po->getPostId() . '</i></strong><strong>Assembly: </strong>' . $po->getPost()->post_title . ' ';
-	$html .= '<table class="form-table" style="margin: 0 auto;
-    width: 60%;">
-            <tbody>';
-	$html .= '<tr><th scope="row">' . $po->getPostId() . '</th><hr></tr><hr>';
-
-	foreach ( $one as $o ) {
-
-
-		$html .= '<th scope="row"><u>' . $o['i'] . '</u>  :  ' . $po->getPost()->post_title . '</th>';
-		$html .= '<td>' . $o['n'] . '</td>' . '<td>' . $o['t'] . '</td><td>' . $o['c'] . '</td></tr>';
-		if ( $o['t'] === 'assembly' ) {
-
-			$aa    = new PostObject( $o['i'] );
-			$two[] = $aa->set_levels2( $aa->getPostId() );
-
-			foreach ( $two as $oo ) {
-				$html .= '<tr><th scope="row">' . $aa->getPostId() . '</th><td>two</td><hr></tr>';
-
-				foreach ( $oo as $ooo ) {
-
-					$html .= '<th scope="row"><u>' . $ooo['i'] . '</u>  :  ' . $po->getPost()->post_title . '</th>';
-					$html .= '<td>' . $ooo['n'] . '</td>' . '<td>' . $ooo['t'] . '</td><td>' . $ooo['c'] . '</td></tr>';
-					//echo $o;
-					if ( $ooo['t'] === 'assembly' ) {
-
-						$aaa    = new PostObject( $ooo['i'] );
-						$two2[] = $aaa->set_levels2( $aaa->getPostId() );
-
-
-					}
-				}
-
-			}
-		}
-
-
-	}
+//	$module = new Module();
+//	$data   = Data::get_instance();
+//
+//	$po = new PostObject( 5667 );
+//	//var_dump( $po->set_levels2( 5640 ) );
+//	$one = $po->set_levels2( 5667 );
+//
+//
+////	var_dump( $one );
+//
+//
+//	$html .= '<strong><i>' . $po->getPostId() . '</i></strong><strong>Assembly: </strong>' . $po->getPost()->post_title . ' ';
+//	$html .= '<table class="form-table" style="margin: 0 auto;
+//    width: 60%;">
+//            <tbody>';
+//	$html .= '<tr><th scope="row">' . $po->getPostId() . '</th><hr></tr><hr>';
+//
+//	foreach ( $one as $o ) {
+//
+//
+//		$html .= '<th scope="row"><u>' . $o['i'] . '</u>  :  ' . $po->getPost()->post_title . '</th>';
+//		$html .= '<td>' . $o['n'] . '</td>' . '<td>' . $o['t'] . '</td><td>' . $o['c'] . '</td></tr>';
+//		if ( $o['t'] === 'assembly' ) {
+//
+//			$aa    = new PostObject( $o['i'] );
+//			$two[] = $aa->set_levels2( $aa->getPostId() );
+//
+//			foreach ( $two as $oo ) {
+//				$html .= '<tr><th scope="row">' . $aa->getPostId() . '</th><td>two</td><hr></tr>';
+//
+//				foreach ( $oo as $ooo ) {
+//
+//					$html .= '<th scope="row"><u>' . $ooo['i'] . '</u>  :  ' . $po->getPost()->post_title . '</th>';
+//					$html .= '<td>' . $ooo['n'] . '</td>' . '<td>' . $ooo['t'] . '</td><td>' . $ooo['c'] . '</td></tr>';
+//					//echo $o;
+//					if ( $ooo['t'] === 'assembly' ) {
+//
+//						$aaa    = new PostObject( $ooo['i'] );
+//						$two2[] = $aaa->set_levels2( $aaa->getPostId() );
+//
+//
+//					}
+//				}
+//
+//			}
+//		}
+//
+//
+//	}
 //
 //	foreach ( $two as $oo ) {
 //		$html .= '<tr><th scope="row">' . $aa->getPostId() . '</th><td>two</td><hr></tr>';
@@ -277,7 +271,7 @@ function load_assets() {
 	wp_enqueue_style( 'sweetalert_css', 'https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css' );
 
 	wp_enqueue_script( 'select2js', plugins_url( 'node_modules/select2/dist/js/select2.full.js', __FILE__ ) );
-	wp_enqueue_script( 'chartjs', plugins_url( 'node_modules/chartjs/chartjs.js', __FILE__ ) );
+//	wp_enqueue_script( 'chartjs', plugins_url( 'node_modules/chartjs/chartjs.js', __FILE__ ) );
 	wp_enqueue_style( 'select2css', plugins_url( 'node_modules/select2/dist/css/select2.css', __FILE__ ) );
 
 
@@ -295,7 +289,7 @@ function load_assets() {
 
 
 	if ( WP_BOM === WP_BOM_PROD ) {
-//		wp_enqueue_script( 'wp_bom_js' );
+		wp_enqueue_script( 'wp_bom_js' );
 		wp_enqueue_style( 'wp_bom_css' );
 
 	} else {
