@@ -126,7 +126,7 @@ class Settings {
 					],
 				],
 				[
-					'name'    => 'multicheck',
+					'name'    => 'activecpt',
 					'label'   => __( 'Post Types', 'wedevs' ),
 					'desc'    => __( 'Multi checkbox description', 'wedevs' ),
 					'type'    => 'multicheck',
