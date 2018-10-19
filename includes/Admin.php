@@ -46,6 +46,19 @@ class Admin {
 	 */
 	protected $plugin_screen_hook_suffix = null;
 
+	/**
+	 * Initialize the plugin by loading admin scripts & styles and adding a
+	 * settings page and menu.
+	 *
+	 * @since     1.0.0
+	 */
+	private function __construct() {
+		$plugin            = Plugin::get_instance();
+		$this->plugin_slug = $plugin->get_plugin_slug();
+		$this->version     = $plugin->get_plugin_version();
+
+		$this->plugin_basename = plugin_basename( plugin_dir_path( realpath( dirname( __FILE__ ) ) ) . $this->plugin_slug . '.php' );
+	}
 
 	/**
 	 * Return an instance of this class.
@@ -64,21 +77,6 @@ class Admin {
 
 		return self::$instance;
 	}
-
-	/**
-	 * Initialize the plugin by loading admin scripts & styles and adding a
-	 * settings page and menu.
-	 *
-	 * @since     1.0.0
-	 */
-	private function __construct() {
-		$plugin            = Plugin::get_instance();
-		$this->plugin_slug = $plugin->get_plugin_slug();
-		$this->version     = $plugin->get_plugin_version();
-
-		$this->plugin_basename = plugin_basename( plugin_dir_path( realpath( dirname( __FILE__ ) ) ) . $this->plugin_slug . '.php' );
-	}
-
 
 	/**
 	 * Handle WP actions and filters.
@@ -180,6 +178,11 @@ class Admin {
 			$this,
 			'display_plugin_admin_page',
 		], 'dashicons-schedule', 60 );
+
+
+		add_submenu_page( $this->plugin_slug, 'Parts', 'Parts', 'manage_options', 'edit.php?post_type=part' );
+		add_submenu_page( $this->plugin_slug, 'Assembly', 'Assembly', 'manage_options', 'edit.php?post_type=assembly' );
+		add_submenu_page( $this->plugin_slug, 'Requisition', 'Requisition', 'manage_options', 'edit.php?post_type=requisition' );
 	}
 
 	/**
@@ -275,23 +278,20 @@ class Admin {
                            value="<?php echo $wcb_options[ $key ]; ?>"/>
                 </td>
             </tr>
-            <tr><?php $label = 'Key';
-	            $key         = $this->format_key( $label );
-	            $id          = $key; ?>
+            <tr><?php $label = 'admin select';
+				$key         = $this->format_key( $label );
+				$id          = $key; ?>
 
                 <th scope="row"><label for="<?php _e( $id ); ?>"><?php _e( $label ); ?></label></th>
                 <td>
-                    <input type="password"
-                           title="<?php _e( $id ); ?>"
-                           id="<?php _e( $id ); ?>"
-                           placeholder="<?php if ( ! isset( $wcb_options[ $key ] ) ) {
-			                   $user = new WP_User( get_current_user_id() );
-			                   echo $user->user_email;
-		                   } else {
-			                   echo $wcb_options[ $key ];
-		                   } ?>"
-                           name="wcb_options[<?php _e( $key ); ?>]"
-                           value="<?php echo $wcb_options[ $key ]; ?>"/>
+
+                    <select class="select2"
+                            title="<?php _e( $id ); ?>"
+                            id="<?php _e( $id ); ?>"
+                            name="wcb_options[<?php _e( $key ); ?>]">
+                        <option value="one">One</option>
+                        <option value="one2">One2</option>
+                    </select>
                 </td>
             </tr>
             <tr>
@@ -313,6 +313,14 @@ class Admin {
         </table>
 	<?php }
 
+	/**
+	 * @param $text
+	 *
+	 * @return string
+	 */
+	protected function format_key( $text ) {
+		return strtolower( str_replace( [ '-', ' ' ], '_', $text ) );
+	}
 
 	public function setting_element( $args ) {
 
@@ -371,15 +379,6 @@ class Admin {
             </form>
         </div>
 	<?php }
-
-	/**
-	 * @param $text
-	 *
-	 * @return string
-	 */
-	protected function format_key( $text ) {
-		return strtolower( str_replace( [ '-', ' ' ], '_', $text ) );
-	}
 
 	/**
 	 * @param $data

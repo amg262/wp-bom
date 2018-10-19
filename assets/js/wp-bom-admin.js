@@ -34,22 +34,22 @@ jQuery(document).ready(function ($) {
 	 }, function() {
 */
 	// We can also pass the url value separately from ajaxurl for front end AJAX implementations
-
-	$('#wpb_admin_ajax').click(function (e) {
-		swal('hey');
-
-		console.log(e);
-		// We can also pass the url value separately from ajaxurl for front end AJAX implementations
-		jQuery.post(ajax_object.ajax_url, data, function (response) {
-
-			$('#wpb_ajax_io').html(response);
-			setTimeout(function () {
-				swal('Finished');
-			});
-			alert('seRespon ' + response);
-		});
-
-	});
+//
+//	$('#wpb_admin_ajax').click(function (e) {
+//		swal('hey');
+//
+//		console.log(e);
+//		// We can also pass the url value separately from ajaxurl for front end AJAX implementations
+//		jQuery.post(ajax_object.ajax_url, data, function (response) {
+//
+//			$('#wpb_ajax_io').html(response);
+//			setTimeout(function () {
+//				swal('Finished');
+//			});
+//			alert('seRespon ' + response);
+//		});
+//
+//	});
 });
 
 /*

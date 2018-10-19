@@ -37,13 +37,9 @@ define( 'WCB_TBL', 'wp_bom_data' );
 define( 'WCB_VER', '1' );
 
 
-const WP_BOM_BUILD = 'build';
-const WP_BOM_PROD  = 'prod';
-
-const WP_BOM = WP_BOM_BUILD;
-
-//const WP_BOM_DIST = plugins_url( '/dist/license/license-key/test.php', __FILE__ );
-
+const WP_BOM_BUILD         = 'build';
+const WP_BOM_PROD          = 'prod';
+const WP_BOM               = WP_BOM_BUILD;
 const WP_BOM_JS            = '/assets/js/wp-bom.js';
 const WP_BOM_MIN_JS        = '/dist/js/wp-bom.min.js';
 const WP_BOM_ADMIN_JS      = '/assets/js/wp-bom-admin.js';
@@ -55,6 +51,7 @@ const WP_BOM_ADMIN_MIN_CSS = '/dist/css/wp-bom-admin.min.css';
 
 
 global $wp_bom_data;
+global $cache;
 
 
 /*
@@ -97,94 +94,19 @@ try {
 } catch ( \Exception $e ) {
 }
 
+/**
+ * Register activation and deactivation hooks
+ */
+register_activation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'activate' ] );
+register_activation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'upgrade_data' ] );
+register_activation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'create_options' ] );
+register_deactivation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'deactivate' ] );
+//register_deactivation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'delete_posts' ] );
+add_action( 'plugins_loaded', 'Netraa\\WPB\\init' );
+add_action( 'init', 'Netraa\\WPB\\load_assets' );
+add_action( 'init', 'Netraa\\WPB\\load_admin_assets' );
+add_action( 'widgets_init', 'Netraa\\WPB\\widget_init' );
 
-function yeahs( $post_id ) {
-
-	$items = [];
-	$parts = [];
-	$subs  = [];
-	if ( have_rows( 'items', $post_id ) ) {
-
-
-		while ( have_rows( 'items', $post_id ) ) : the_row();
-
-			$type     = get_sub_field( 'type' );
-			$level    = get_sub_field( 'level' );
-			$quantity = get_sub_field( 'quantity' );
-			$item     = get_sub_field( 'item' );
-
-			$obj = get_post( $item );
-
-			if ( $obj->post_type === 'part' ) {
-				$parts[] = [
-					'id'    => $obj->ID,
-					'title' => $obj->post_title,
-					'type'  => $obj->post_type,
-					'qty'   => $quantity,
-				];
-			} else {
-				$subs[] = [
-					'id'    => $obj->ID,
-					'title' => $obj->post_title,
-					'type'  => $obj->post_type,
-					'qty'   => $quantity,
-				];
-			}
-		endwhile;
-
-		$items[] = $parts;
-		$items[] = $subs;
-
-		return $subs;
-	}
-}
-
-function yeahhs( $subitems ) {
-
-	$items = [];
-	$parts = [];
-	$subs  = [];
-	foreach ( $subitems as $sub ) {
-
-		$id = $sub['id'];
-		if ( have_rows( 'items', $id ) ) {
-
-
-			while ( have_rows( 'items', $id ) ) : the_row();
-
-				$type     = get_sub_field( 'type' );
-				$level    = get_sub_field( 'level' );
-				$quantity = get_sub_field( 'quantity' );
-				$item     = get_sub_field( 'item' );
-
-				$obj = get_post( $item );
-
-				if ( $obj->post_type === 'part' ) {
-					$parts[] = [
-						'id'    => $obj->ID,
-						'title' => $obj->post_title,
-						'type'  => $obj->post_type,
-						'qty'   => $quantity,
-					];
-				} else {
-					$subs[] = [
-						'id'    => $obj->ID,
-						'title' => $obj->post_title,
-						'type'  => $obj->post_type,
-						'qty'   => $quantity,
-					];
-				}
-			endwhile;
-
-
-		}
-
-	}
-
-	//var_dump( $parts );
-	var_dump( $subs );
-
-}
 
 /**
  * Initialize Plugin
@@ -197,108 +119,75 @@ function init() {
 	$wpb       = Plugin::get_instance();
 	$wpb_admin = Admin::get_instance();
 
-	if ( file_exists( __DIR__ . '/app.key' ) ) {
-		$post          = Post::get_instance();
-		$wpb_shortcode = Shortcode::get_instance();
-		$wpb_rest      = Endpoint\Example::get_instance();
+	$post          = Post::get_instance();
+	$wpb_shortcode = Shortcode::get_instance();
+	$wpb_rest      = Endpoint\Example::get_instance();
 
-		$wpb_settings = new Settings();
+	$wpb_settings = new Settings();
 
-		$module = new Module();
+	$module = new Module();
+	$data   = Data::get_instance();
 
-
-		$po = new PostObject( 5640 );
-		//$po->setItems();
-
-
-		$ah = yeahs( 5640 );
-		yeahhs( $ah );
+	$po = new PostObject( 5640 );
+	//var_dump( $po->set_levels2( 5640 ) );
+	$one = $po->set_levels2( 5640 );
 
 
-		//file_put_contents( __DIR__ . '/zap.json', json_encode( $po->setItems() ) );
-		//echo json_encode( $po->getItems() );
-//		var_dump( $po );
-
-		//run_assem();
-
-	} else {
-		echo '<h1>ENTER YO KEY BRUH</h1>';
-	}
-	//echo json_encode( $a->get_asi() );
-	//	var_dump( $a->get_comp() );
-
-}
-
-function run_assem() {
-	$args        = [
-		'posts_per_page' => - 1,
-		'post_type'      => 'assembly',
-	];
-	$posts_array = get_posts( $args );
+	var_dump( $one );
 
 
-	//$a    = new BOM( 5640 );
-	$i = 0;
-	foreach ( $posts_array as $obj ) {
+	$html .= '<strong><i>' . $po->getPostId() . '</i></strong><strong>Assembly: </strong>' . $po->getPost()->post_title . ' ';
+	$html .= '<table class="form-table" style="margin: 0 auto;
+    width: 60%;">
+            <tbody>';
+	$html .= '<tr><th scope="row">' . $po->getPostId() . '</th>';
 
-		$post  = new \WP_Post( $obj );
-		$comp  = new Component( $post->ID );
-		$items = $comp->setItems( $post->ID );
-		$parts = $comp->getItemsPart( $post->ID );
-		$sub   = $comp->getItemsAssembly();
-		$i ++;
+	foreach ( $one as $o ) {
+
+
+		$html .= '<th scope="row">' . $o['i'] . '  ' . $o['n'] . '</th>';
+		$html .= '<td>' . $o['t'] . '</td><td>' . $o['c'] . '</td></tr>';
+		if ( $o['t'] === 'assembly' ) {
+
+			$aa    = new PostObject( $o['i'] );
+			$two[] = $aa->set_levels2( $aa->getPostId() );
+		}
+
+
 	}
 
-//		$post  = new \WP_Post( $obj );
-	$comp2 = new Component( 5638 );
-	$p2s   = $comp2->getPartList();
-	$sub2s = $comp2->getSubList();
-	$list  = $comp2->setAssemblyItemList();
-//
-//	foreach ( $list as $item ) {
-//
-//		//	echo $item[1];
-//
-//		//$list2[] = $comp2->setAssemblyItemList( $item[1] );
-//
-//
-//	}
+	foreach ( $two as $oo ) {
+		$html .= '<tr><th scope="row">' . $aa->getPostId() . '</th></tr>';
+
+		foreach ( $oo as $o ) {
+
+			$html .= '<tr><th>' . $o['i'] . '  ' . $o['n'] . '</th>';
+			$html .= '<td>' . $o['t'] . '</td><td>' . $o['c'] . '</td></tr>';
+
+			echo $o;
+			if ( $o['t'] === 'assembly' ) {
+
+				$aaa    = new PostObject( $o['i'] );
+				$two2[] = $aaa->set_levels2( $aaa->getPostId() );
 
 
-	file_put_contents( __DIR__ . '/data.json', json_encode( $list ) );
+			}
+		}
 
-	echo json_encode( $list );
-	echo '<br>';
+	}
 
-	//echo json_encode( $list2 );
-	echo '<br>';
+	$html .= '</tbody></table>';
 
-//
-//	foreach ( $sub2s as $ah ) {
-//
-//		//echo $ah['ID'];
-//		$bah = new Component( $ah['ID'] );
-//
-//		$sid = $bah->getSubList();
-//
-//		foreach ( $sid as $s ) {
-//			$bah2 = new Component( $ah['ID'] );
-//
-//			$sidd  = $bah2->getSubList();
-//			$var[] = $bah2->getPartList();
-//
-//		}
-//		$var[] = $bah->getPartList();
-//
-//	}
-//
-//	echo json_encode( $var );
-//	//	echo json_encode( $p2s );
-//	echo '<br>';
-//	echo $i;
+
+	echo $html;
+	//var_dump( $one );
+
+	var_dump( $two );
+	var_dump( $two2 );
+
+	//var_dump( $to );
+
 }
-
-add_action( 'plugins_loaded', 'Netraa\\WPB\\init' );
 
 
 /**
@@ -311,12 +200,57 @@ function widget_init() {
 	return register_widget( new Widget );
 }
 
-add_action( 'widgets_init', 'Netraa\\WPB\\widget_init' );
+function setOptions() {
+
+	$settings = [
+		'wpb_settings',
+		'wpb_advanced',
+		'wpb_others',
+		'wpb_io',
+		'wpb_support',
+		'wp_bom_data',
+		'wp_bom',
+	];
+
+	foreach ( $settings as $setting ) {
+		$opt       = get_option( $setting['id'] );
+		$options[] = [ $setting['id'] => $opt ];
+	}
+
+
+	return $options;
+}
+
+
+function get_cache( $post = 'part' ) {
+
+	if ( in_array( $post, get_post_types() ) ) {
+
+		if ( wp_cache_get( $post ) === false ) {
+			wp_cache_set( $post, get_posts( [ 'posts_per_page' => - 1, 'post_type' => $post ] ) );
+		}
+	}
+
+	return wp_cache_get( $post );
+}
+
 function load_assets() {
+	wp_enqueue_script( 'sweetalertjs', 'https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js' );
+	wp_enqueue_style( 'sweetalert_css', 'https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css' );
+
+//	wp_enqueue_script( 'select2js', plugins_url( 'node_modules/select2/dist/js/select2.full.js', __FILE__ ) );
+//	//wp_enqueue_script( 'chartjs', plugins_url( 'node_modules/chartjs/chartjs.js', __FILE__ ) );
+//	wp_enqueue_style( 'select2css', plugins_url( 'node_modules/select2/dist/css/select2.css', __FILE__ ) );
+
 
 	wp_enqueue_script( 'sweetalertjs', 'https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js' );
 	wp_enqueue_style( 'sweetalert_css', 'https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css' );
+
+	wp_enqueue_script( 'handsontablejs' );
+	wp_enqueue_style( 'handsontablecss' );
 	wp_register_script( 'wp_bom_js', plugins_url( WP_BOM_JS, __FILE__ ), [ 'jquery' ] );
+	wp_register_script( 'handsontablejs', plugins_url( 'node_modules/handsontable/dist/handsontable.full.min.js', __FILE__ ), [ 'jquery' ] );
+	wp_register_style( 'handsontablecss', plugins_url( 'node_modules/handsontable/dist/handsontable.full.min.css', __FILE__ ) );
 	wp_register_script( 'wp_bom_min_js', plugins_url( WP_BOM_MIN_JS, __FILE__ ), [ 'jquery' ] );
 	wp_register_style( 'wp_bom_css', plugins_url( WP_BOM_CSS, __FILE__ ) );
 	wp_register_style( 'wp_bom_min_css', plugins_url( WP_BOM_MIN_CSS, __FILE__ ) );
@@ -331,9 +265,6 @@ function load_assets() {
 		wp_enqueue_style( 'wp_bom_min_css' );
 	}
 }
-
-add_action( 'init', 'Netraa\\WPB\\load_assets' );
-add_action( 'init', 'Netraa\\WPB\\load_admin_assets' );
 
 
 function load_admin_assets() {
@@ -354,13 +285,6 @@ function load_admin_assets() {
 	}
 }
 
-/**
- * Register activation and deactivation hooks
- */
-register_activation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'activate' ] );
-register_activation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'upgrade_data' ] );
-register_activation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'create_options' ] );
-register_deactivation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'deactivate' ] );
-//register_deactivation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'delete_posts' ] );
+
 
 //require __DIR__ . '/api.php';

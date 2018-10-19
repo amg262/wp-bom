@@ -83,24 +83,6 @@ class Settings {
 	 */
 	function get_settings_fields() {
 
-		foreach ( get_post_types() as $type ) {
-
-			//echo json_encode( $type );
-		}
-
-		$args = [
-			'posts_per_page'   => - 1,
-			'post_type'        => 'part',
-			'post_status'      => 'publish',
-			'suppress_filters' => true,
-		];
-
-		$posts_array = get_posts( $args );
-
-		foreach ( $posts_array as $post ) {
-			$post  = new WP_Post( $post );
-			$arr[] = [ $post->post_title => $post->post_title ];
-		}
 
 
 		$settings_fields = [
@@ -156,16 +138,16 @@ class Settings {
 					],
 				],
 				[
-					'name'    => 'multicheck2',
+					'name'    => 'activetaxs',
 					'label'   => __( 'Taxonomy', 'wedevs' ),
 					'desc'    => __( 'Multi checkbox description', 'wedevs' ),
 					'type'    => 'multicheck',
 					'options' => [
-						'Part Category' => 'Part Category',
-						'Part Tag'      => 'Part Tag',
+						'Part Category' => 'Item Category',
+						'Part Tag'      => 'Item Tag',
 						'Vendor'        => 'Vendor',
+						'Location'        => 'Location',
 						'Req Type'      => 'Req Type',
-						'Req Category'  => 'Req Category',
 					],
 				],
 				[
@@ -196,6 +178,64 @@ class Settings {
 					'options' => [
 						'button_label' => 'Choose Image',
 					],
+				],
+				[
+					'name'    => 'color',
+					'label'   => __( 'Color', 'wedevs' ),
+					'desc'    => __( 'Color description', 'wedevs' ),
+					'type'    => 'color',
+					'default' => '',
+				],
+				[
+					'name'    => 'password',
+					'label'   => __( 'Password', 'wedevs' ),
+					'desc'    => __( 'Password description', 'wedevs' ),
+					'type'    => 'password',
+					'default' => '',
+				],
+				[
+					'name'    => 'wysiwyg',
+					'label'   => __( 'Advanced Editor', 'wedevs' ),
+					'desc'    => __( 'WP_Editor description', 'wedevs' ),
+					'type'    => 'wysiwyg',
+					'default' => '',
+				],
+				[
+					'name'    => 'multicheck',
+					'label'   => __( 'Multile checkbox', 'wedevs' ),
+					'desc'    => __( 'Multi checkbox description', 'wedevs' ),
+					'type'    => 'multicheck',
+					'default' => [ 'one' => 'one', 'four' => 'four' ],
+					'options' => [
+						'one'   => 'One',
+						'two'   => 'Two',
+						'three' => 'Three',
+						'four'  => 'Four',
+					],
+				],
+				[
+					'name'    => 'selectbox',
+					'label'   => __( 'A Dropdown', 'wedevs' ),
+					'desc'    => __( 'Dropdown description', 'wedevs' ),
+					'type'    => 'select',
+					'options' => [
+						'yes' => 'Yes',
+						'no'  => 'No',
+					],
+				],
+				[
+					'name'    => 'password',
+					'label'   => __( 'Password', 'wedevs' ),
+					'desc'    => __( 'Password description', 'wedevs' ),
+					'type'    => 'password',
+					'default' => '',
+				],
+				[
+					'name'    => 'file',
+					'label'   => __( 'File', 'wedevs' ),
+					'desc'    => __( 'File description', 'wedevs' ),
+					'type'    => 'file',
+					'default' => '',
 				],
 			],
 			'wpb_advanced' => [

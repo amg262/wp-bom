@@ -148,6 +148,50 @@ class Post {
 
 		register_post_type( 'part', $args );
 	}
+	public function register_ecn() {
+
+		$labels = [
+			'name'          => __( 'Engineer Change Notice', 'wc-bom' ),
+			'singular_name' => __( 'Engineer Change Notice', 'wc-bom' ),
+			'menu_name'     => __( 'ECN', 'wc-bom' ),
+			'all_items'     => __( 'All Parts', 'wc-bom' ),
+
+		];
+
+		$args = [
+			'label'                 => __( 'Engineer Change Notice', 'wc-bom' ),
+			'labels'                => $labels,
+			//'description'         => 'Materials post type that will be combined to make subassemblies and assemblies portion of BOM.',
+			'public'                => true,
+			'publicly_queryable'    => true,
+			'show_ui'               => true,
+			'show_in_rest'          => true,
+			'show_in_menu'          => true,
+			'rest_base'             => 'ecn-api',
+			'rest_controller_class' => 'WP_REST_Posts_Controller',
+			//'show_in_menu_string' => 'wc-bom-admin',
+			'exclude_from_search'   => false,
+			'capability_type'       => 'post',
+			'map_meta_cap'          => true,
+			'hierarchical'          => true,
+			'query_var'             => true,
+			'menu_icon'             => 'dashicons-hammer',
+			'has_archive'         => 'ecns',
+
+			'supports'              => [
+				'title',
+				'editor',
+				'thumbnail',
+				//'excerpt',
+				'comments',
+				'revisions',
+				'author',
+				'page-attributes',
+			],
+		];
+
+		register_post_type( 'ecn', $args );
+	}
 
 
 	/**
@@ -174,7 +218,7 @@ class Post {
 			'show_admin_column'     => true,
 			'show_in_rest'          => true,
 			'show_in_quick_edit'    => true,
-			'rest_base'             => 'item-category',
+			'rest_base'             => 'category',
 			'rest_controller_class' => 'WP_REST_Terms_Controller',
 		];
 		register_taxonomy( 'item-category', [ 'part', 'assembly','requisition' ], $args );
@@ -212,6 +256,35 @@ class Post {
 
 	}
 
+	/**
+	 *
+	 */
+	public function register_location() {
+
+		$labels = [
+			'name'          => __( 'Locations', 'wc-bom' ),
+			'singular_name' => __( 'Location', 'wc-bom' ),
+			'menu_name'     => __( 'Locations', 'wc-bom' ),
+		];
+
+		$args = [
+			'label'              => __( 'Locations', 'wc-bom' ),
+			'labels'             => $labels,
+			'public'             => true,
+			'hierarchical'       => true,
+			//'label' => 'Inventory Types',
+			'show_ui'            => true,
+			'show_in_menu'       => true,
+			'show_in_nav_menus'  => true,
+			'query_var'          => true,
+			'show_admin_column'  => true,
+			'show_in_rest'       => true,
+			'show_in_quick_edit' => true,
+		];
+		register_taxonomy( 'location', [ 'part', 'assembly', 'requisition' ], $args );
+
+
+	}
 	/**
 	 * @return bool
 	 */
@@ -258,13 +331,13 @@ class Post {
 	public function register_assembly_cat() {
 
 		$labels = [
-			'name'          => __( 'Requisition Type', 'wp-bom' ),
-			'singular_name' => __( 'Requisition Type', 'wp-bom' ),
-			'menu_name'     => __( 'Req Type', 'wp-bom' ),
+			'name'          => __( 'Item Group', 'wp-bom' ),
+			'singular_name' => __( 'Item Group', 'wp-bom' ),
+			'menu_name'     => __( 'Item Group', 'wp-bom' ),
 		];
 
 		$args = [
-			'label'              => __( 'Req Type', 'wp-bom' ),
+			'label'              => __( 'Item Group', 'wp-bom' ),
 			'labels'             => $labels,
 			'public'             => true,
 			'hierarchical'       => true,
@@ -277,7 +350,7 @@ class Post {
 			'show_in_rest'       => true,
 			'show_in_quick_edit' => true,
 		];
-		register_taxonomy( 'requisition-type', [ 'part', 'assembly', 'requisition' ], $args );
+		register_taxonomy( 'group', [ 'part', 'assembly', 'requisition' ], $args );
 
 
 	}
@@ -342,7 +415,7 @@ class Post {
 			"show_in_menu"       => true,
 			"show_in_nav_menus"  => true,
 			"query_var"          => true,
-			"rewrite"            => [ 'slug' => 'req-type', 'with_front' => true, 'hierarchical' => true, ],
+			"rewrite"            => [ 'slug' => 'type', 'with_front' => true, 'hierarchical' => true, ],
 			"show_admin_column"  => true,
 			"show_in_rest"       => true,
 			"rest_base"          => "req-type",
@@ -373,7 +446,7 @@ class Post {
 			"show_in_menu"       => true,
 			"show_in_nav_menus"  => true,
 			"query_var"          => true,
-			"rewrite"            => [ 'slug' => 'item_tag', 'with_front' => true, 'hierarchical' => true, ],
+			"rewrite"            => [ 'slug' => 'tag', 'with_front' => true, 'hierarchical' => true, ],
 			"show_admin_column"  => true,
 			"show_in_rest"       => true,
 			"rest_base"          => "item-tag",
@@ -388,6 +461,7 @@ class Post {
 		$this->register_part();
 		$this->register_assembly();
 		$this->register_requisition();
+		$this->register_ecn();
 
 	}
 
@@ -398,9 +472,10 @@ class Post {
 	public function register_taxonomy() {
 
 		$this->register_part_cat();
-		$this->register_assembly_cat();
+		//$this->register_assembly_cat();
 		$this->register_vendor();
-		$this->register_requisition_type();
+		$this->register_location();
+		//$this->register_requisition_type();
 		$this->register_item_tag();
 
 
