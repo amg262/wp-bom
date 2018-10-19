@@ -117,12 +117,14 @@ function init() {
 
 	require __DIR__ . '/includes/acfload.php';
 	$wpb = Plugin::get_instance();
-
 	$post          = Post::get_instance();
+
+
+	$wpb_admin     = Admin::get_instance();
+
 	$wpb_shortcode = Shortcode::get_instance();
 	$wpb_rest      = Endpoint\Example::get_instance();
 	$wpb_settings  = new Settings();
-	$wpb_admin     = Admin::get_instance();
 
 //	$module = new Module();
 //	$data   = Data::get_instance();

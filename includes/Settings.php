@@ -35,7 +35,7 @@ class Settings {
 	}
 
 	function admin_menu() {
-		add_submenu_page( 'wp-bom', 'Settings API', 'Settings API', 'manage_options', 'wp-bom-settingssss', [
+		add_submenu_page( 'wp-bom', 'Settings API', 'Settings API', 'manage_options', 'wp-bom-settings', [
 			$this,
 			'plugin_page',
 		] );

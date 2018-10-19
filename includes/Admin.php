@@ -95,12 +95,8 @@ class Admin {
 		// Add plugin action link point to settings page
 		add_filter( 'plugin_action_links_' . $this->plugin_basename, [ $this, 'plugin_links' ] );
 		//add_filter( 'plugin_action_links', [ $this, 'plugin_links' ], 10, 5 );
-		add_action( 'admin_enqueue_scripts', [ $this, 'wco_admin' ] );
-
-		add_action( 'admin_enqueue_scripts', [ $this, 'wco_admin' ] );
 		add_action( 'wp_ajax_wco_ajax', [ $this, 'wco_ajax' ] );
-
-		//add_action( 'wp_ajax_nopriv_wco_ajax', [ $this, 'wco_ajax' ] );
+		add_action( 'wp_ajax_nopriv_wco_ajax', [ $this, 'wco_ajax' ] );
 
 	}
 
@@ -163,22 +159,11 @@ class Admin {
 	 * @since    1.0.0
 	 */
 	public function add_plugin_admin_menu() {
-		/*
-		 * Add a settings page for this plugin to the Settings menu.
-		 */
-//		$this->plugin_screen_hook_suffix = add_options_page(
-//			__( 'WP Reactivate', $this->plugin_slug ),
-//			__( 'WP Reactivate', $this->plugin_slug ),
-//			'manage_options',
-//			$this->plugin_slug,
-//			[ $this, 'display_plugin_admin_page' ]
-//		);
 
 		$this->plugin_screen_hook_suffix = add_menu_page( 'WP BOM', 'WP BOM', 'manage_options', $this->plugin_slug, [
 			$this,
 			'display_plugin_admin_page',
 		], 'dashicons-schedule', 60 );
-
 
 		add_submenu_page( $this->plugin_slug, 'Parts', 'Parts', 'manage_options', 'edit.php?post_type=part' );
 		add_submenu_page( $this->plugin_slug, 'Assembly', 'Assembly', 'manage_options', 'edit.php?post_type=assembly' );
@@ -289,6 +274,8 @@ class Admin {
                             title="<?php _e( $id ); ?>"
                             id="<?php _e( $id ); ?>"
                             name="wcb_options[<?php _e( $key ); ?>]">
+
+						<?php echo $this->build_select_options(); ?>
                         <option value="5666">5666</option>
                         <option value="5667">5667</option>
                     </select>
@@ -322,30 +309,25 @@ class Admin {
 		return strtolower( str_replace( [ '-', ' ' ], '_', $text ) );
 	}
 
-	public function setting_element( $args ) {
+	/**
+	 * @param $data
+	 *
+	 * @return string
+	 */
+	public function build_select_options() {
 
+		$option = '';
 
-		$defaults = [
-			'type'  => 'text',
-			'label' => "",
-			'key'   => "",
-			'id'    => "",
-			'value' => "",
-		];
+		$posts = get_posts( [ 'posts_per_page' => - 1, 'post_type' => 'assembly' ] );
 
-		/**
-		 * Parse incoming $args into an array and merge it with $defaults
-		 */
-		$args = wp_parse_args( $args, $defaults );
-	}
+		//  $option .= '<strong><option>'. strtoupper($type).'</option></strong>';
+		foreach ( $posts as $arr ) {
+			$post     = $arr;
+			$selected = '';
+			$option   .= '<option id="' . $post->ID . '" value="' . $post->ID . '" ' . $selected . '">' . $post->ID . '</option>';
+		}
 
-	public function html_elements() {
-
-		$settings = [
-
-
-		];
-
+		return $option;
 	}
 
 	public function sanitize( $input ) {
@@ -381,59 +363,6 @@ class Admin {
 	<?php }
 
 	/**
-	 * @param $data
-	 *
-	 * @return string
-	 */
-	public function build_select_options( $data, $post_type ) {
-
-//		$option = '';
-//
-//		echo $post_type;
-//
-//
-//		//var_dump( $data );
-//		foreach ( $post_type as $type ) {
-//
-//			//  $option .= '<strong><option>'. strtoupper($type).'</option></strong>';
-//			foreach ( $this->get_data( $type ) as $arr ) {
-//
-//				//var_dump( $arr );
-//				if ( $data == $arr['id'] ) {
-//					$selected = 'selected="selected"';
-//				} else {
-//					$selected = '';
-//				}
-//				$option .= '<option id="' . $arr['id'] . '" value="' . $arr['id'] . '" ' . $selected . '">' . substr( $arr['text'], 0, 40 ) . '</option>';
-//			}
-//		}
-//
-//		return $option;
-	}
-
-	/**
-	 *
-	 */
-	public function wco_admin() {
-
-		$opts = get_option( 'wcb_options' );
-		//$ajax_data = $this->get_data( 'product' );
-
-
-		$ajax_object = [
-			'ajax_url' => admin_url( 'admin-ajax.php' ),
-			'nonce'    => wp_create_nonce( 'wp_bom_admin' ),
-			'product'  => $opts['select2'],
-			'action'   => [ $this, 'wco_ajax' ], //'options'  => 'wc_bom_option[opt]',
-		];
-
-		wp_enqueue_script( $this->plugin_slug . '-admin-js', plugins_url( 'assets/js/wp-bom-admin.js', dirname( __FILE__ ) ), [ 'jquery' ], $this->version );
-
-
-		wp_localize_script( $this->plugin_slug . '-admin-js', 'wp_bom_admin', $ajax_object );
-	}
-
-	/**
 	 *
 	 */
 	public function wco_ajax() {
@@ -445,28 +374,14 @@ class Admin {
 
 		$product = $_POST['product'];
 
-		$po = get_post( (int) $product);
+		$po = get_post( (int) $product );
 
-		echo json_encode($po->post_title);
+		echo json_encode( $po->post_title );
 
 
 		wp_die( 'Ajax finished.' );
 	}
 
-	/**
-	 * Add settings action link to the plugins page.
-	 *
-	 * @since    1.0.0
-	 */
-	public function add_action_links( $links ) {
-		return array_merge(
-			[
-				'settings' => '<a href="' . admin_url( 'options-general.php?page=' . $this->plugin_slug ) . '">' . __( 'Settings',
-						$this->plugin_slug ) . '</a>',
-			],
-			$links
-		);
-	}
 
 	/**
 	 * @param $actions
