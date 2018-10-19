@@ -10,6 +10,9 @@
  *
  * JavaScript triggering the post-load evendort after posts have been inserted via Ajax:
  */
+
+var select2_id = 0;
+
 jQuery(document).ready(function ($) {
 
 	//$('.chosen-select').chosen();
@@ -23,7 +26,22 @@ jQuery(document).ready(function ($) {
 //
 //	console.log(rel_text);
 //
-	$('#wc_bom_form select').select2();
+	$('#wp-bom-admin-form select').select2();
+
+	$('#wp-bom-admin-form select').on('change', function(event, params) {
+
+
+		console.log(event);
+		console.log(params);
+
+
+		select2_id = $(this).attr('value');
+
+
+
+	});
+
+
 //
 //	var data = {
 //		'url': ajax_object.ajax_url,

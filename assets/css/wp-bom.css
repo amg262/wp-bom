@@ -23,36 +23,46 @@
 }
 
 .wp-bom {
-    text-align: left;
+	text-align: left;
 }
 
 .wp-bom-settings .fa {
-    font: 'Lato', sans-serif;
+	font: 'Lato', sans-serif;
 
 }
 
 .wp-bom.settings-page {
-    width: 100%;
+	width: 100%;
 }
 
 .wp-bom.settings-page.sidebar {
-    float: right;
-    max-width: 30%;
-    width: 100%;
+	float: right;
+	max-width: 30%;
+	width: 100%;
 }
 
 .wp-bom-settings .wc-label {
-    width: 33%;
-    display: inline-block;
+	width: 33%;
+	display: inline-block;
 }
 
 .wp-bom-settings .wc-field {
 
-    display: inline-block;
+	display: inline-block;
 }
 
 .form_update_ouput {
-    display: block;
-    font-size: 2em;
-    color: #00ff00;
+	display: block;
+	font-size: 2em;
+	color: #00FF00;
 }
+
+/*************** WP BOM ADMIN SETTINGS PAGE ****************/
+#wp-bom-admin-wrap, div#wp-bom-admin, form#wp-bom-admin-form {
+}
+
+.select2 {
+	width: 100px;
+}
+
+ 

@@ -104,6 +104,7 @@ register_deactivation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'deactivate' ] );
 //register_deactivation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'delete_posts' ] );
 add_action( 'plugins_loaded', 'Netraa\\WPB\\init' );
 add_action( 'admin_enqueue_scripts', 'Netraa\\WPB\\load_assets' );
+add_action( 'init', 'Netraa\\WPB\\load_assets' );
 //add_action( 'init', 'Netraa\\WPB\\load_admin_assets' );
 add_action( 'widgets_init', 'Netraa\\WPB\\widget_init' );
 
@@ -116,11 +117,11 @@ add_action( 'widgets_init', 'Netraa\\WPB\\widget_init' );
 function init() {
 
 	require __DIR__ . '/includes/acfload.php';
-	$wpb = Plugin::get_instance();
-	$post          = Post::get_instance();
+	$wpb  = Plugin::get_instance();
+	$post = Post::get_instance();
 
 
-	$wpb_admin     = Admin::get_instance();
+	$wpb_admin = Admin::get_instance();
 
 	$wpb_shortcode = Shortcode::get_instance();
 	$wpb_rest      = Endpoint\Example::get_instance();
@@ -289,6 +290,8 @@ function load_assets() {
 	wp_register_style( 'wp_bom_css', plugins_url( WP_BOM_CSS, __FILE__ ) );
 	wp_register_style( 'wp_bom_min_css', plugins_url( WP_BOM_MIN_CSS, __FILE__ ) );
 
+	wp_enqueue_script( 'wp_bom_js' );
+	wp_enqueue_style( 'wp_bom_css' );
 
 	if ( WP_BOM === WP_BOM_PROD ) {
 		wp_enqueue_script( 'wp_bom_js' );

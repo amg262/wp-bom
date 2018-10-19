@@ -209,6 +209,7 @@ class Admin {
 	public function settings_callback() {
 		$wcb_options = get_option( 'wcb_options' );
 
+		var_dump( $wcb_options );
 		?>
         <table class="form-table">
             <tbody>
@@ -320,11 +321,19 @@ class Admin {
 
 		$posts = get_posts( [ 'posts_per_page' => - 1, 'post_type' => 'assembly' ] );
 
+		$opts = get_option( 'wcb_options' );
+
+
 		//  $option .= '<strong><option>'. strtoupper($type).'</option></strong>';
 		foreach ( $posts as $arr ) {
 			$post     = $arr;
-			$selected = '';
-			$option   .= '<option id="' . $post->ID . '" value="' . $post->ID . '" ' . $selected . '">' . $post->ID . '</option>';
+			$selected = 'false';
+
+			if ( $opts['select2'] == $post->ID ) {
+				$selected = 'true ';
+			}
+
+			$option .= '<option id="' . $post->ID . '" value="' . $post->ID . '" aria-selected="' . $selected . '">' . $post->post_title . '</option>';
 		}
 
 		return $option;
@@ -350,9 +359,9 @@ class Admin {
 	 * @since    1.0.0
 	 */
 	public function display_plugin_admin_page() { ?>
-        <div class="wrap">
-            <div id="wp-reactivate-admin"><h1>Hello</h1></div>
-            <form method="post" id="wc_bom_form" action="options.php">
+        <div id="wp-bom-admin-wrap" class="wrap">
+            <div id="wp-bom-admin"><h1>Hello</h1></div>
+            <form method="post" id="wp-bom-admin-form" name="wp-bom-admin-form" action="options.php">
 				<?php
 				settings_fields( 'wcb_options_group' );
 				do_settings_sections( 'wcb-options-admin' );

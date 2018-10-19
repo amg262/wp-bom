@@ -37,7 +37,7 @@ jQuery(document).ready(function ($) {
 //
 //	console.log(rel_text);
 //
-	$('#wc_bom_form select').select2();
+	$('#wp-bom-admin-form select').select2();
 //
 //	var data = {
 //		'url': ajax_object.ajax_url,
