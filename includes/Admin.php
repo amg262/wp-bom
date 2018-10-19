@@ -278,7 +278,7 @@ class Admin {
                            value="<?php echo $wcb_options[ $key ]; ?>"/>
                 </td>
             </tr>
-            <tr><?php $label = 'admin select';
+            <tr><?php $label = 'select2';
 				$key         = $this->format_key( $label );
 				$id          = $key; ?>
 
@@ -289,8 +289,8 @@ class Admin {
                             title="<?php _e( $id ); ?>"
                             id="<?php _e( $id ); ?>"
                             name="wcb_options[<?php _e( $key ); ?>]">
-                        <option value="one">One</option>
-                        <option value="one2">One2</option>
+                        <option value="5666">5666</option>
+                        <option value="5667">5667</option>
                     </select>
                 </td>
             </tr>
@@ -423,7 +423,7 @@ class Admin {
 		$ajax_object = [
 			'ajax_url' => admin_url( 'admin-ajax.php' ),
 			'nonce'    => wp_create_nonce( 'wp_bom_admin' ),
-			'product'  => get_option( 'wcb_options' ),
+			'product'  => $opts['select2'],
 			'action'   => [ $this, 'wco_ajax' ], //'options'  => 'wc_bom_option[opt]',
 		];
 
@@ -444,6 +444,10 @@ class Admin {
 		}
 
 		$product = $_POST['product'];
+
+		$po = get_post( (int) $product);
+
+		echo json_encode($po->post_title);
 
 
 		wp_die( 'Ajax finished.' );

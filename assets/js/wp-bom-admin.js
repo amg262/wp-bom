@@ -33,23 +33,42 @@ jQuery(document).ready(function ($) {
 	   showLoaderOnConfirm: true,
 	 }, function() {
 */
+	rel_text = $('#select2').val();
+
+	console.log(rel_text);
+
+	$('#wc_bom_form select').select2();
+
+	var data = {
+		'url': ajax_object.ajax_url,
+		'action': 'wco_ajax',
+		'security': ajax_object.nonce,
+		'product': rel_text,
+	};
 	// We can also pass the url value separately from ajaxurl for front end AJAX implementations
-//
-//	$('#wpb_admin_ajax').click(function (e) {
-//		swal('hey');
-//
-//		console.log(e);
-//		// We can also pass the url value separately from ajaxurl for front end AJAX implementations
-//		jQuery.post(ajax_object.ajax_url, data, function (response) {
-//
-//			$('#wpb_ajax_io').html(response);
-//			setTimeout(function () {
-//				swal('Finished');
-//			});
-//			alert('seRespon ' + response);
-//		});
-//
-//	});
+
+	$('#wpb_admin_ajax').click(function (e) {
+		//swal();
+
+
+		var data = {
+			'url': ajax_object.ajax_url,
+			'action': 'wco_ajax',
+			'security': ajax_object.nonce,
+			'product': rel_text,
+		};
+		console.log(data);
+		// We can also pass the url value separately from ajaxurl for front end AJAX implementations
+		jQuery.post(ajax_object.ajax_url, data, function (response) {
+
+			$('#wpb_ajax_io').html(response);
+			setTimeout(function () {
+				swal('Finished');
+			});
+			alert('seRespon ' + response);
+		});
+
+	});
 });
 
 /*
