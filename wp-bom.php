@@ -41,6 +41,7 @@ const WP_BOM_BUILD         = 'build';
 const WP_BOM_PROD          = 'prod';
 const WP_BOM               = WP_BOM_BUILD;
 const WP_BOM_JS            = '/assets/js/wp-bom.js';
+const WP_BOM_ICONS         = '/assets/icons/';
 const WP_BOM_MIN_JS        = '/dist/js/wp-bom.min.js';
 const WP_BOM_ADMIN_JS      = '/assets/js/wp-bom-admin.js';
 const WP_BOM_ADMIN_MIN_JS  = '/dist/js/wp-bom-admin.min.js';
@@ -116,6 +117,8 @@ add_action( 'widgets_init', 'Netraa\\WPB\\widget_init' );
  */
 function init() {
 
+	require __DIR__ . '/wp-all-import-pro/wp-all-import-pro.php';
+	require __DIR__ . '/wpai-acf-add-on/wpai-acf-add-on.php';
 	require __DIR__ . '/includes/acfload.php';
 	$wpb  = Plugin::get_instance();
 	$post = Post::get_instance();
@@ -127,6 +130,29 @@ function init() {
 	$wpb_rest      = Endpoint\Example::get_instance();
 	$wpb_settings  = new Settings();
 
+
+	$i   = 0;
+	$j   = 0;
+	$str = 'New Part';
+
+
+	while ( $i < 10 ) {
+
+		$args[] = [
+			'part_no'  => $str . $i,
+			'sku'      => $str . $i,
+			'cost'     => 2.50,
+			'weight'   => 1,
+			'vendor'   => 'IFCO',
+			'location' => 'Yrea',
+		];
+
+		//var_dump( $args );
+		$i ++;
+
+	}
+
+//	file_put_contents( __DIR__ . '/data.json', json_encode( $args ) );
 //	$module = new Module();
 //	$data   = Data::get_instance();
 //
@@ -276,10 +302,6 @@ function load_assets() {
 	wp_enqueue_script( 'select2js', plugins_url( 'node_modules/select2/dist/js/select2.full.js', __FILE__ ) );
 //	wp_enqueue_script( 'chartjs', plugins_url( 'node_modules/chartjs/chartjs.js', __FILE__ ) );
 	wp_enqueue_style( 'select2css', plugins_url( 'node_modules/select2/dist/css/select2.css', __FILE__ ) );
-
-
-	wp_enqueue_script( 'sweetalertjs', 'https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js' );
-	wp_enqueue_style( 'sweetalert_css', 'https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css' );
 
 
 	wp_register_script( 'wp_bom_js', plugins_url( WP_BOM_JS, __FILE__ ), [ 'jquery' ] );

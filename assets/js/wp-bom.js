@@ -26,9 +26,9 @@ jQuery(document).ready(function ($) {
 //
 //	console.log(rel_text);
 //
-	$('#wp-bom-admin-form select').select2();
+	$('select').select2();
 
-	$('#wp-bom-admin-form select').on('change', function(event, params) {
+	$('#wp-bom-admin-form select').on('change', function (event, params) {
 
 
 		console.log(event);
@@ -36,7 +36,6 @@ jQuery(document).ready(function ($) {
 
 
 		select2_id = $(this).attr('value');
-
 
 
 	});

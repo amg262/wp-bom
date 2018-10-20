@@ -9,3 +9,12 @@ $ cat .gitignore
 npm-debug.log
 *.lock
 native
+/assets/icons/512px/
+/assets/icons/16px/
+/assets/icons/32px/
+/assets/icons/*.ai
+/assets/icons/*.psd
+
+/wp-all-import-pro/
+wpai-acf-add-on
+

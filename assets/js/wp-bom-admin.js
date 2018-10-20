@@ -44,6 +44,7 @@ jQuery(document).ready(function ($) {
 //	console.log(rel_text);
 //	$('#wp-bom-admin-form select').select2();
 //	$('select').select2();
+	$('select').select2();
 
 //
 	var data = {

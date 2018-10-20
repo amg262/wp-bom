@@ -29,19 +29,20 @@ class SettingsAPI {
 	protected $settings_fields = [];
 
 
-	private $nonce;
+	protected $options = [];
+
+	protected $nonce;
 
 	public function __construct() {
 
+
+		$this->nonce = ( ! isset( $this->nonce ) ) ? wp_create_nonce( 'wp_bom_admin' ) : $this->nonce;
+
 		//	add_action( 'admin_enqueue_scripts', [ $this, 'wco_admin' ] );
-		//add_action( 'wp_ajax_wco_ajax', [ $this, 'wco_ajax' ] );
+		add_action( 'wp_ajax_wco_ajax', [ $this, 'wco_ajax' ] );
+		add_action( 'wp_ajax_nopriv_wco_ajax', [ $this, 'wco_ajax' ] );
 
-		//add_action( 'wp_ajax_nopriv_wco_ajax', [ $this, 'wco_ajax' ] );
-		if ( ! isset( $this->nonce ) ) {
-			$this->nonce = wp_create_nonce( 'wp_bom_admin' );
-		}
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
-
 	}
 
 	/**
@@ -50,13 +51,11 @@ class SettingsAPI {
 	function admin_enqueue_scripts() {
 
 		wp_enqueue_style( 'wp-color-picker' );
-
 		wp_enqueue_media();
 		wp_enqueue_script( 'wp-color-picker' );
 		wp_enqueue_script( 'jquery' );
 
 		$opts = get_option( 'wpb_settings' );
-
 
 		$ajax_object = [
 			'ajax_url' => admin_url( 'admin-ajax.php' ),
@@ -64,7 +63,6 @@ class SettingsAPI {
 			'ajaxid'   => $opts['ajaxid'],
 			'action'   => [ $this, 'wco_ajax' ], //'options'  => 'wc_bom_option[opt]',
 		];
-
 
 		wp_enqueue_script( 'wp-bom-admin-js', plugins_url( 'assets/js/wp-bom-admin.js', dirname( __FILE__ ) ), [ 'jquery' ] );
 		wp_localize_script( 'wp-bom-admin-js', 'ajax_object', $ajax_object );
@@ -411,6 +409,14 @@ class SettingsAPI {
 		$html = sprintf( '<input type="text" class="%1$s-text wpsa-url" id="%2$s[%3$s]" name="%2$s[%3$s]" value="%4$s"/>', $size, $args['section'], $args['id'], $value );
 		$html .= '<input type="button" class="button wpsa-browse" value="' . $label . '" />';
 		$html .= $this->get_field_description( $args );
+
+
+		var_dump( $value );
+
+
+		$icon = plugins_url( WP_BOM_ICONS . '/48px/ai.png', dirname( __FILE__ ) );
+		echo '<img src="' . $icon . '"  alt="' . $label . '" />';
+		echo '<img src="' . $value . '" width="128" height="128" alt="' . $label . '" />';
 
 		echo $html;
 	}
