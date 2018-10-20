@@ -10,8 +10,10 @@
  *
  * JavaScript triggering the post-load evendort after posts have been inserted via Ajax:
  */
+
 jQuery(document).ready(function ($) {
 
+	//var rel_text = $('#wpb_settings[ajaxid]').val();
 
 	//$('.chosen-select').chosen();
 
@@ -37,40 +39,43 @@ jQuery(document).ready(function ($) {
 //
 //	console.log(rel_text);
 //
-	$('#wp-bom-admin-form select').select2();
+
+//
+//	console.log(rel_text);
+//	$('#wp-bom-admin-form select').select2();
 //	$('select').select2();
 
 //
-//	var data = {
-//		'url': ajax_object.ajax_url,
-//		'action': 'wco_ajax',
-//		'security': ajax_object.nonce,
-//		'product': rel_text,
-//	};
-//	// We can also pass the url value separately from ajaxurl for front end AJAX implementations
-//
-//	$('#wpb_admin_ajax').click(function (e) {
-//		//swal();
-//
-//
-//		var data = {
-//			'url': ajax_object.ajax_url,
-//			'action': 'wco_ajax',
-//			'security': ajax_object.nonce,
-//			'product': rel_text,
-//		};
-//		console.log(data);
-//		// We can also pass the url value separately from ajaxurl for front end AJAX implementations
-//		jQuery.post(ajax_object.ajax_url, data, function (response) {
-//
-//			$('#wpb_ajax_io').html(response);
-//			setTimeout(function () {
-//				swal('Finished');
-//			});
-//			alert('seRespon ' + response);
-//		});
-//
-//	});
+	var data = {
+		'url': ajax_object.ajax_url,
+		'action': 'wco_ajax',
+		'security': ajax_object.nonce,
+
+	};
+	// We can also pass the url value separately from ajaxurl for front end AJAX implementations
+	// We can also pass the url value separately from ajaxurl for front end AJAX implementations
+
+	$('#wpb_admin_ajax').click(function (e) {
+		//swal();
+
+
+		var data = {
+			'url': ajax_object.ajax_url,
+			'action': 'wco_ajax',
+			'security': ajax_object.nonce,
+		};
+		console.log(data);
+		// We can also pass the url value separately from ajaxurl for front end AJAX implementations
+		jQuery.post(ajax_object.ajax_url, data, function (response) {
+
+			$('#wpb_ajax_io').html(response);
+			setTimeout(function () {
+				swal('Finished');
+			});
+			alert('seRespon ' + response);
+		});
+
+	});
 });
 
 /*

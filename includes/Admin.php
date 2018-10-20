@@ -58,6 +58,8 @@ class Admin {
 		$this->version     = $plugin->get_plugin_version();
 
 		$this->plugin_basename = plugin_basename( plugin_dir_path( realpath( dirname( __FILE__ ) ) ) . $this->plugin_slug . '.php' );
+
+
 	}
 
 	/**

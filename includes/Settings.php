@@ -8,8 +8,6 @@
 
 namespace Netraa\WPB;
 
-use WP_Post;
-
 class Settings {
 
 	private $settings_api;
@@ -22,6 +20,12 @@ class Settings {
 		add_action( 'admin_menu', [ $this, 'admin_menu' ] );
 	}
 
+	function show() {
+		$this->admin_init();
+		$this->tab_nav();
+		$this->form();
+	}
+
 	function admin_init() {
 
 		//set the settings
@@ -32,19 +36,6 @@ class Settings {
 		$this->settings_api->admin_init();
 
 		//var_dump( get_option( 'wedevs_basics' ) );
-	}
-
-	function admin_menu() {
-		add_submenu_page( 'wp-bom', 'Settings API', 'Settings API', 'manage_options', 'wp-bom-settings', [
-			$this,
-			'plugin_page',
-		] );
-
-		echo '';
-		add_options_page( 'Settings API', 'Settings API', 'manage_options', 'wp-bom-settings', [
-			$this,
-			'plugin_page',
-		] );
 	}
 
 	function get_settings_sections() {
@@ -84,7 +75,6 @@ class Settings {
 	function get_settings_fields() {
 
 
-
 		$settings_fields = [
 			'wpb_settings' => [
 				[
@@ -103,28 +93,28 @@ class Settings {
 					'default'           => 'Title',
 					'sanitize_callback' => 'intval',
 				],
-				[
-					'name'  => 'textarea',
-					'label' => __( 'Textarea Input', 'wedevs' ),
-					'desc'  => __( 'Textarea description', 'wedevs' ),
-					'type'  => 'textarea',
-				],
-				[
-					'name'  => 'checkbox',
-					'label' => __( 'Checkbox', 'wedevs' ),
-					'desc'  => __( 'Checkbox Label', 'wedevs' ),
-					'type'  => 'checkbox',
-				],
-				[
-					'name'    => 'radio',
-					'label'   => __( 'Radio Button', 'wedevs' ),
-					'desc'    => __( 'A radio button', 'wedevs' ),
-					'type'    => 'radio',
-					'options' => [
-						'yes' => 'Yes',
-						'no'  => 'No',
-					],
-				],
+//				[
+//					'name'  => 'textarea',
+//					'label' => __( 'Textarea Input', 'wedevs' ),
+//					'desc'  => __( 'Textarea description', 'wedevs' ),
+//					'type'  => 'textarea',
+//				],
+//				[
+//					'name'  => 'checkbox',
+//					'label' => __( 'Checkbox', 'wedevs' ),
+//					'desc'  => __( 'Checkbox Label', 'wedevs' ),
+//					'type'  => 'checkbox',
+//				],
+//				[
+//					'name'    => 'radio',
+//					'label'   => __( 'Radio Button', 'wedevs' ),
+//					'desc'    => __( 'A radio button', 'wedevs' ),
+//					'type'    => 'radio',
+//					'options' => [
+//						'yes' => 'Yes',
+//						'no'  => 'No',
+//					],
+//				],
 				[
 					'name'    => 'activecpt',
 					'label'   => __( 'Post Types', 'wedevs' ),
@@ -146,20 +136,20 @@ class Settings {
 						'Part Category' => 'Item Category',
 						'Part Tag'      => 'Item Tag',
 						'Vendor'        => 'Vendor',
-						'Location'        => 'Location',
+						'Location'      => 'Location',
 						'Req Type'      => 'Req Type',
 					],
 				],
 				[
-					'name'    => 'selectbox',
+					'name'    => 'ajaxid',
 					'label'   => __( 'A Dropdown', 'wedevs' ),
 					'desc'    => __( 'Dropdown description', 'wedevs' ),
 					'type'    => 'select',
-					'default' => 'no',
+					'default' => '5666',
 					'options' => [
 						//json_encode( $arr )
-						'yes' => 'Yes',
-						'no'  => 'No',
+						'5666' => '5666',
+						'5667' => '5667',
 					],
 				],
 				[
@@ -466,6 +456,37 @@ class Settings {
 		];
 
 		return $settings_fields;
+	}
+
+	function tab_nav() {
+
+		$this->settings_api->show_navigation();
+
+	}
+
+	function form() {
+
+		$this->settings_api->show_forms();
+
+	}
+
+	function admin_menu() {
+
+		add_menu_page( 'Settings API', 'Settings API', 'manage_options', 'wp-bom-settings', [
+			$this,
+			'plugin_page',
+		] , 'dashicons-schedule',62);
+
+//		add_submenu_page( 'wp-bom', 'Settings API', 'Settings API', 'manage_options', 'wp-bom-settings', [
+//			$this,
+//			'plugin_page',
+//		] );
+//
+//		echo '';
+//		add_options_page( 'Settings API', 'Settings API', 'manage_options', 'wp-bom-settings', [
+//			$this,
+//			'plugin_page',
+//		] );
 	}
 
 	function plugin_page() {

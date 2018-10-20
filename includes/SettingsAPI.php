@@ -35,6 +35,7 @@ class SettingsAPI {
 
 		//add_action( 'wp_ajax_nopriv_wco_ajax', [ $this, 'wco_ajax' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
+
 	}
 
 	/**
@@ -47,6 +48,21 @@ class SettingsAPI {
 		wp_enqueue_media();
 		wp_enqueue_script( 'wp-color-picker' );
 		wp_enqueue_script( 'jquery' );
+
+		$opts = get_option( 'wpb_settings' );
+
+
+		$ajax_object = [
+			'ajax_url' => admin_url( 'admin-ajax.php' ),
+			'nonce'    => wp_create_nonce( 'wp_bom_admin' ),
+			'product'  => get_option( 'wpb_settings' ),
+			'ajaxid'   => $opts['ajaxid'],
+			'action'   => [ $this, 'wco_ajax' ], //'options'  => 'wc_bom_option[opt]',
+		];
+
+
+		wp_enqueue_script( 'wp-bom-admin-js', plugins_url( 'assets/js/wp-bom-admin.js', dirname( __FILE__ ) ), [ 'jquery' ] );
+		wp_localize_script( 'wp-bom-admin-js', 'ajax_object', $ajax_object );
 	}
 
 	/**
@@ -161,19 +177,13 @@ class SettingsAPI {
 	}
 
 	/**
-	 * Get field description for display
+	 * Displays a url field for a settings field
 	 *
 	 * @param array $args settings field args
 	 */
-	public function get_field_description( $args ) {
+	function callback_url( $args ) {
 
-		if ( ! empty( $args['desc'] ) ) {
-			$desc = sprintf( '<p class="description">%s</p>', $args['desc'] );
-		} else {
-			$desc = '';
-		}
-
-		return $desc;
+		$this->callback_text( $args );
 	}
 
 	/**
@@ -194,13 +204,39 @@ class SettingsAPI {
 	}
 
 	/**
-	 * Displays a url field for a settings field
+	 * Get the value of a settings field
+	 *
+	 * @param string $option  settings field name
+	 * @param string $section the section name this field belongs to
+	 * @param string $default default text if it's not found
+	 *
+	 * @return string
+	 */
+	function get_option( $option, $section, $default = '' ) {
+
+		$options = get_option( $section );
+
+		if ( isset( $options[ $option ] ) ) {
+			return $options[ $option ];
+		}
+
+		return $default;
+	}
+
+	/**
+	 * Get field description for display
 	 *
 	 * @param array $args settings field args
 	 */
-	function callback_url( $args ) {
+	public function get_field_description( $args ) {
 
-		$this->callback_text( $args );
+		if ( ! empty( $args['desc'] ) ) {
+			$desc = sprintf( '<p class="description">%s</p>', $args['desc'] );
+		} else {
+			$desc = '';
+		}
+
+		return $desc;
 	}
 
 	/**
@@ -406,6 +442,24 @@ class SettingsAPI {
 		echo $html;
 	}
 
+
+	function wco_ajax() {
+
+		//global $wpdb;
+		check_ajax_referer( 'ajax_nonce', 'security' );
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+		}
+
+		$product = $_POST['ajaxid'];
+
+		$po = get_post( $product );
+
+		echo json_encode( $po->post_title );
+
+
+		wp_die( 'Ajax finished.' );
+	}
+
 	/**
 	 * Sanitize callback for Settings API
 	 */
@@ -453,26 +507,6 @@ class SettingsAPI {
 	}
 
 	/**
-	 * Get the value of a settings field
-	 *
-	 * @param string $option  settings field name
-	 * @param string $section the section name this field belongs to
-	 * @param string $default default text if it's not found
-	 *
-	 * @return string
-	 */
-	function get_option( $option, $section, $default = '' ) {
-
-		$options = get_option( $section );
-
-		if ( isset( $options[ $option ] ) ) {
-			return $options[ $option ];
-		}
-
-		return $default;
-	}
-
-	/**
 	 * Show navigations as tab
 	 *
 	 * Shows all the settings section labels as tab
@@ -514,6 +548,8 @@ class SettingsAPI {
                         <div style="padding-left: 10px">
 
 							<?php submit_button(); ?>
+                            <span id="wpb_admin_ajax" name="wpb_admin_ajax" class="button-primary">Button</span>
+                            <span id="wpb_ajax_io" name="wpb_ajax_io">Heyo</span>
                         </div>
                     </form>
                 </div>

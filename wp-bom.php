@@ -121,7 +121,7 @@ function init() {
 	$post = Post::get_instance();
 
 	add_option( 'wpr_example_setting' );
-	$wpb_admin = Admin::get_instance();
+	//$wpb_admin = Admin::get_instance();
 
 	$wpb_shortcode = Shortcode::get_instance();
 	$wpb_rest      = Endpoint\Example::get_instance();
