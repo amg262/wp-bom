@@ -36,6 +36,17 @@ class Plugin {
 	 */
 	protected $plugin_slug = 'wp-bom';
 
+
+	protected $settings = [];
+
+	protected  $wpb_settings = [];
+
+	protected $parts = [];
+	protected $asm = [];
+	protected $req = [];
+	protected $ecn = [];
+	protected $bom = [];
+	protected $prod = [];
 	/**
 	 * Setup instance attributes
 	 *
@@ -141,8 +152,6 @@ class Plugin {
 			'wpb_others',
 			'wpb_io',
 			'wpb_support',
-			'wp_bom',
-			'wp_bom_data',
 		];
 
 		foreach ( $sections as $val ) {

@@ -34,7 +34,8 @@ class Post {
 	 * @since     1.0.0
 	 */
 	private function __construct() {
-		add_action( 'init', [ $this, 'register_post_types' ] );
+		//add_action( 'init', [ $this, 'register_post_types' ] );
+		add_action( 'init', [ $this, 'register_post_types2' ] );
 		//	add_action( 'init', [ $this, 'register_taxonomy' ] );
 		//add_action( 'init', [ $this, 'add_acf_post_groups' ] );
 		//add_action( 'save_post', [ $this, 'save_post' ], 10, 2 );
@@ -58,6 +59,301 @@ class Post {
 		return self::$instance;
 	}
 
+	public function register_post_types2() {
+		$labels = [
+			'name'          => __( 'Parts', 'wc-bom' ),
+			'singular_name' => __( 'Part', 'wc-bom' ),
+			'menu_name'     => __( 'Parts', 'wc-bom' ),
+			'all_items'     => __( 'All Parts', 'wc-bom' ),
+			'id'            => 'part',
+
+		];
+		$args   = [
+			'label'                 => __( 'Parts', 'wc-bom' ),
+			"labels"                => $labels,
+			"description"           => "",
+			"public"                => true,
+			"publicly_queryable"    => true,
+			"show_ui"               => true,
+			"show_in_rest"          => true,
+			'rest_base'             => 'parts-api',
+			'rest_controller_class' => 'WP_REST_Posts_Controller',
+			"has_archive"           => true,
+			"show_in_menu"          => true,
+			"show_in_nav_menus"     => true,
+			"exclude_from_search"   => false,
+			'capability_type'       => 'post',
+			"map_meta_cap"          => true,
+			"hierarchical"          => true,
+			"rewrite"               => [ "slug" => 'part', "with_front" => true ],
+			"query_var"             => true,
+			'menu_icon'             => 'dashicons-hammer',
+			"supports"              => [
+				"title",
+				"editor",
+				"thumbnail",
+				"excerpt",
+				"trackbacks",
+				"custom-fields",
+				"comments",
+				"revisions",
+				"author",
+				"page-attributes",
+				"post-formats",
+			],
+		];
+
+
+		$this->gen_cpt( $labels, $args );
+
+		$labels = [
+			'name'          => __( 'Assembly', 'wc-bom' ),
+			'singular_name' => __( 'Assembly', 'wc-bom' ),
+			'menu_name'     => __( 'Assembly', 'wc-bom' ),
+			'id'            => 'assembly',
+
+		];
+		$args   = [
+			'label'                 => __( 'Assembly', 'wc-bom' ),
+			"labels"                => $labels,
+			"description"           => "",
+			"public"                => true,
+			"publicly_queryable"    => true,
+			"show_ui"               => true,
+			"show_in_rest"          => true,
+			'rest_base'             => 'assembly-api',
+			'rest_controller_class' => 'WP_REST_Posts_Controller',
+			"has_archive"           => true,
+			"show_in_menu"          => true,
+			"show_in_nav_menus"     => true,
+			"exclude_from_search"   => false,
+			'capability_type'       => 'post',
+			"map_meta_cap"          => true,
+			"hierarchical"          => true,
+			"rewrite"               => [ "slug" => 'assembly', "with_front" => true ],
+			"query_var"             => true,
+			'menu_icon'             => 'dashicons-hammer',
+			"supports"              => [
+				"title",
+				"editor",
+				"thumbnail",
+				"excerpt",
+				"trackbacks",
+				"custom-fields",
+				"comments",
+				"revisions",
+				"author",
+				"page-attributes",
+				"post-formats",
+			],
+		];
+
+
+		$this->gen_cpt( $labels, $args );
+
+
+		$labels = [
+			'name'          => __( 'Requisition', 'wc-bom' ),
+			'singular_name' => __( 'Requisition', 'wc-bom' ),
+			'menu_name'     => __( 'Requisition', 'wc-bom' ),
+			'id'            => 'requisition',
+
+		];
+		$args   = [
+			'label'                 => __( 'Requisition', 'wc-bom' ),
+			"labels"                => $labels,
+			"description"           => "",
+			"public"                => true,
+			"publicly_queryable"    => true,
+			"show_ui"               => true,
+			"show_in_rest"          => true,
+			'rest_base'             => 'req-api',
+			'rest_controller_class' => 'WP_REST_Posts_Controller',
+			"has_archive"           => true,
+			"show_in_menu"          => true,
+			"show_in_nav_menus"     => true,
+			"exclude_from_search"   => false,
+			'capability_type'       => 'post',
+			"map_meta_cap"          => true,
+			"hierarchical"          => true,
+			"rewrite"               => [ "slug" => 'req', "with_front" => true ],
+			"query_var"             => true,
+			'menu_icon'             => 'dashicons-hammer',
+			"supports"              => [
+				"title",
+				"editor",
+				"thumbnail",
+				"excerpt",
+				"trackbacks",
+				"custom-fields",
+				"comments",
+				"revisions",
+				"author",
+				"page-attributes",
+				"post-formats",
+			],
+		];
+
+
+		$this->gen_cpt( $labels, $args );
+
+
+		$labels = [
+			'name'          => __( 'BOM', 'wc-bom' ),
+			'singular_name' => __( 'BOM', 'wc-bom' ),
+			'menu_name'     => __( 'BOM', 'wc-bom' ),
+			'id'            => 'bom',
+
+		];
+		$args   = [
+			'label'                 => __( 'Bill of Materials', 'wc-bom' ),
+			"labels"                => $labels,
+			"description"           => "",
+			"public"                => true,
+			"publicly_queryable"    => true,
+			"show_ui"               => true,
+			"show_in_rest"          => true,
+			'rest_base'             => 'bom-api',
+			'rest_controller_class' => 'WP_REST_Posts_Controller',
+			"has_archive"           => true,
+			"show_in_menu"          => true,
+			"show_in_nav_menus"     => true,
+			"exclude_from_search"   => false,
+			'capability_type'       => 'post',
+			"map_meta_cap"          => true,
+			"hierarchical"          => true,
+			"rewrite"               => [ "slug" => 'bom', "with_front" => true ],
+			"query_var"             => true,
+			'menu_icon'             => 'dashicons-hammer',
+			"supports"              => [
+				"title",
+				"editor",
+				"thumbnail",
+				"excerpt",
+				"trackbacks",
+				"custom-fields",
+				"comments",
+				"revisions",
+				"author",
+				"page-attributes",
+				"post-formats",
+			],
+		];
+
+
+		$this->gen_cpt( $labels, $args );
+
+
+		$labels = [
+			'name'          => __( 'ECN', 'wc-bom' ),
+			'singular_name' => __( 'ECN', 'wc-bom' ),
+			'menu_name'     => __( 'ECN', 'wc-bom' ),
+			'id'            => 'ecn',
+
+		];
+		$args   = [
+			'label'                 => __( 'Engineer Change Notice', 'wc-bom' ),
+			"labels"                => $labels,
+			"description"           => "",
+			"public"                => true,
+			"publicly_queryable"    => true,
+			"show_ui"               => true,
+			"show_in_rest"          => true,
+			'rest_base'             => 'ecn-api',
+			'rest_controller_class' => 'WP_REST_Posts_Controller',
+			"has_archive"           => true,
+			"show_in_menu"          => true,
+			"show_in_nav_menus"     => true,
+			"exclude_from_search"   => false,
+			'capability_type'       => 'post',
+			"map_meta_cap"          => true,
+			"hierarchical"          => true,
+			"rewrite"               => [ "slug" => 'ecn', "with_front" => true ],
+			"query_var"             => true,
+			'menu_icon'             => 'dashicons-hammer',
+			"supports"              => [
+				"title",
+				"editor",
+				"thumbnail",
+				"excerpt",
+				"trackbacks",
+				"custom-fields",
+				"comments",
+				"revisions",
+				"author",
+				"page-attributes",
+				"post-formats",
+			],
+		];
+
+
+		$this->gen_cpt( $labels, $args );
+	}
+
+	public function gen_cpt( $labels, $args ) {
+
+		$default_lbl = [
+			'name'          => __( 'Parts', 'wc-bom' ),
+			'singular_name' => __( 'Part', 'wc-bom' ),
+			'menu_name'     => __( 'Parts', 'wc-bom' ),
+			'all_items'     => __( 'All Parts', 'wc-bom' ),
+			'id'            => 'part',
+
+		];
+
+		$labels = wp_parse_args( $labels, $default_lbl );
+
+
+		$default_args = [
+			'label'                 => __( 'Parts', 'wc-bom' ),
+			"labels"                => $labels,
+			"description"           => "",
+			"public"                => true,
+			"publicly_queryable"    => true,
+			"show_ui"               => true,
+			"show_in_rest"          => true,
+			'rest_base'             => 'parts-api',
+			'rest_controller_class' => 'WP_REST_Posts_Controller',
+			"has_archive"           => true,
+			"show_in_menu"          => true,
+			"show_in_nav_menus"     => true,
+			"exclude_from_search"   => false,
+			'capability_type'       => 'post',
+			"map_meta_cap"          => true,
+			"hierarchical"          => true,
+			"rewrite"               => [ "slug" => 'part', "with_front" => true ],
+			"query_var"             => true,
+			'menu_icon'             => 'dashicons-hammer',
+			"supports"              => [
+				"title",
+				"editor",
+				"thumbnail",
+				"excerpt",
+				"trackbacks",
+				"custom-fields",
+				"comments",
+				"revisions",
+				"author",
+				"page-attributes",
+				"post-formats",
+			],
+		];
+
+		$args = wp_parse_args( $args, $default_args );
+
+
+		$options = get_option( 'wpb_settings' );
+
+		if ( isset( $options['activecpt'] ) ) {
+
+
+		}
+
+		if ( in_array( $labels['singular_name'], $options['activecpt'] ) ) {
+
+			register_post_type( $labels['id'], $args );
+		}
+	}
 
 	/**
 	 *
@@ -106,8 +402,8 @@ class Post {
 		$this->generate_post_type( $labels );
 
 		$labels = [
-			'name'          => 'ECN',
-			'singular_name' => 'ECN',
+			'name'          => 'Engineer Change Notices',
+			'singular_name' => 'Engineer Change Notice',
 			'menu_name'     => 'ECN',
 			'slug'          => 'ecn',
 			'icon'          => "dashicons-clipboard",
@@ -116,10 +412,10 @@ class Post {
 		$this->generate_post_type( $labels );
 
 		$labels = [
-			'name'          => 'Requisitions',
-			'singular_name' => 'Requisition',
-			'menu_name'     => 'Requisition',
-			'slug'          => 'req',
+			'name'          => 'Bill of Materials',
+			'singular_name' => 'Bill of Material',
+			'menu_name'     => 'BOM',
+			'slug'          => 'bom',
 			'icon'          => "dashicons-clipboard",
 
 		];
@@ -195,11 +491,11 @@ class Post {
 			],
 		];
 
-		if ( in_array( $data['singular_name'], $options['activecpt'] ) ) {
-			register_post_type( $data['slug'], $fields );
-		} else {
-			echo 'no';
-		}
+		//if ( in_array( $data['singular_name'], $options['activecpt'] ) ) {
+		register_post_type( $data['slug'], $fields );
+		//} else {
+		echo 'no';
+		//}
 	}
 
 

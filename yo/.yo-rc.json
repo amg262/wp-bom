@@ -1,0 +1,20 @@
+{
+  "generator-plugin-wp": {
+    "name": "Yo",
+    "homepage": "http://netraa.net",
+    "description": "A radical new plugin for WordPress!",
+    "version": "0.0.0",
+    "author": "amg26",
+    "authoremail": "andrewmgunn26@gmail.com",
+    "authorurl": "https://webdevstudios.com",
+    "license": "GPLv2",
+    "slug": "yo",
+    "classname": "Yo",
+    "mainclassname": "Yo",
+    "classprefix": "Y_",
+    "prefix": "yo",
+    "year": 2018,
+    "currentVersionWP": "4.8.1",
+    "plugingenversion": "0.20.2"
+  }
+}
