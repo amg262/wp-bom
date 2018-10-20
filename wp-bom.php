@@ -105,7 +105,7 @@ register_deactivation_hook( __FILE__, [ 'Netraa\\WPB\\Plugin', 'deactivate' ] );
 add_action( 'plugins_loaded', 'Netraa\\WPB\\init' );
 add_action( 'admin_enqueue_scripts', 'Netraa\\WPB\\load_assets' );
 add_action( 'init', 'Netraa\\WPB\\load_assets' );
-//add_action( 'init', 'Netraa\\WPB\\load_admin_assets' );
+add_action( 'init', 'Netraa\\WPB\\load_admin_assets' );
 add_action( 'widgets_init', 'Netraa\\WPB\\widget_init' );
 
 
@@ -120,7 +120,7 @@ function init() {
 	$wpb  = Plugin::get_instance();
 	$post = Post::get_instance();
 
-
+	add_option( 'wpr_example_setting' );
 	$wpb_admin = Admin::get_instance();
 
 	$wpb_shortcode = Shortcode::get_instance();
@@ -281,15 +281,15 @@ function load_assets() {
 	wp_enqueue_script( 'sweetalertjs', 'https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js' );
 	wp_enqueue_style( 'sweetalert_css', 'https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css' );
 
-	wp_enqueue_script( 'handsontablejs' );
-	wp_enqueue_style( 'handsontablecss' );
+
 	wp_register_script( 'wp_bom_js', plugins_url( WP_BOM_JS, __FILE__ ), [ 'jquery' ] );
-	wp_register_script( 'handsontablejs', plugins_url( 'node_modules/handsontable/dist/handsontable.full.min.js', __FILE__ ), [ 'jquery' ] );
-	wp_register_style( 'handsontablecss', plugins_url( 'node_modules/handsontable/dist/handsontable.full.min.css', __FILE__ ) );
+//	wp_register_script( 'handsontablejs', plugins_url( 'node_modules/handsontable/dist/handsontable.full.min.js', __FILE__ ), [ 'jquery' ] );
+//	wp_register_style( 'handsontablecss', plugins_url( 'node_modules/handsontable/dist/handsontable.full.min.css', __FILE__ ) );
 	wp_register_script( 'wp_bom_min_js', plugins_url( WP_BOM_MIN_JS, __FILE__ ), [ 'jquery' ] );
 	wp_register_style( 'wp_bom_css', plugins_url( WP_BOM_CSS, __FILE__ ) );
 	wp_register_style( 'wp_bom_min_css', plugins_url( WP_BOM_MIN_CSS, __FILE__ ) );
-
+//	wp_enqueue_script( 'handsontablejs' );
+//	wp_enqueue_style( 'handsontablecss' );
 	wp_enqueue_script( 'wp_bom_js' );
 	wp_enqueue_style( 'wp_bom_css' );
 
@@ -311,6 +311,7 @@ function load_admin_assets() {
 	wp_register_style( 'wp_bom_admin_css', plugins_url( WP_BOM_ADMIN_CSS, __FILE__ ) );
 	wp_register_style( 'wp_bom_admin_min_css', plugins_url( WP_BOM_ADMIN_MIN_CSS, __FILE__ ) );
 
+	wp_enqueue_script( 'wp_bom_admin_js' );
 
 	if ( WP_BOM === WP_BOM_PROD ) {
 		wp_enqueue_script( 'wp_bom_admin_js' );

@@ -20,7 +20,7 @@ jQuery(document).ready(function ($) {
 	console.log('ajax_object');
 //
 //
-	$('#admin_select').select2();
+//	$('select').select2();
 //
 //	rel_text = $('#select2').val();
 //

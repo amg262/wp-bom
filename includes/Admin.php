@@ -137,20 +137,20 @@ class Admin {
 
 
 		$screen = get_current_screen();
-		if ( $this->plugin_screen_hook_suffix == $screen->id ) {
+		//if ( $this->plugin_screen_hook_suffix == $screen->id ) {
 
-			wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'assets/js/admin.js', dirname( __FILE__ ) ), [ 'jquery' ], $this->version );
-			wp_enqueue_script( $this->plugin_slug . '-admin-js', plugins_url( 'assets/js/wp-bom-admin.js', dirname( __FILE__ ) ), [ 'jquery' ], $this->version );
+		wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'assets/js/admin.js', dirname( __FILE__ ) ), [ 'jquery' ], $this->version );
+		wp_enqueue_script( $this->plugin_slug . '-admin-js', plugins_url( 'assets/js/wp-bom-admin.js', dirname( __FILE__ ) ), [ 'jquery' ], $this->version );
 
 
-			wp_localize_script( $this->plugin_slug . '-admin-js', 'wp_bom_admin', $ajax_object );
+		wp_localize_script( $this->plugin_slug . '-admin-js', 'wp_bom_admin', $ajax_object );
 
-			wp_localize_script( $this->plugin_slug . '-admin-script', 'wpb_object', [
-					'api_nonce' => wp_create_nonce( 'wp_rest' ),
-					'api_url'   => rest_url( $this->plugin_slug . '/v1/' ),
-				]
-			);
-		}
+		wp_localize_script( $this->plugin_slug . '-admin-script', 'wpr_object', [
+				'api_nonce' => wp_create_nonce( 'wp_rest' ),
+				'api_url'   => rest_url( $this->plugin_slug . '/v1/' ),
+			]
+		);
+		//}
 	}
 
 	/**
@@ -165,6 +165,10 @@ class Admin {
 			'display_plugin_admin_page',
 		], 'dashicons-schedule', 60 );
 
+		add_menu_page( 'WP BOM 2', 'WP BOM 2', 'manage_options', $this->plugin_slug . '-2', [
+			$this,
+			'display_plugin_admin_page2',
+		], 'dashicons-schedule', 61 );
 		add_submenu_page( $this->plugin_slug, 'Parts', 'Parts', 'manage_options', 'edit.php?post_type=part' );
 		add_submenu_page( $this->plugin_slug, 'Assembly', 'Assembly', 'manage_options', 'edit.php?post_type=assembly' );
 		add_submenu_page( $this->plugin_slug, 'Requisition', 'Requisition', 'manage_options', 'edit.php?post_type=requisition' );
@@ -201,6 +205,7 @@ class Admin {
         <div id="plugin-info-header" class="plugin-info header">
             <div class="plugin-info content">
                 <h2>WP Bom</h2>
+
             </div>
         </div>
 	<?php }
@@ -359,9 +364,30 @@ class Admin {
 	 * @since    1.0.0
 	 */
 	public function display_plugin_admin_page() { ?>
-        <div id="wp-bom-admin-wrap" class="wrap">
-            <div id="wp-bom-admin"><h1>Hello</h1></div>
-            <form method="post" id="wp-bom-admin-form" name="wp-bom-admin-form" action="options.php">
+        <div id="wp-bom-page" class="wrap">
+            <div id="wp-bom-admin">
+                <h1><?php echo $this->plugin_basename; ?></h1>
+                <form method="post" id="wp-bom-form" name="wp-bom-form" action="options.php">
+					<?php
+					settings_fields( 'wcb_options_group' );
+					do_settings_sections( 'wcb-options-admin' );
+					submit_button( 'Save Settings' );
+					?>
+                </form>
+            </div>
+        </div>
+	<?php }
+
+	/**
+	 * Render the settings page for this plugin.
+	 *
+	 * @since    1.0.0
+	 */
+	public function display_plugin_admin_page2() { ?>
+        <div id="wp-bom" class="wrap">
+
+            <h1><?php echo $this->plugin_basename; ?></h1>
+            <form method="post" id="wp-bom-form" name="wp-bom-form" action="options.php">
 				<?php
 				settings_fields( 'wcb_options_group' );
 				do_settings_sections( 'wcb-options-admin' );
