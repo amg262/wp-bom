@@ -28,12 +28,18 @@ class SettingsAPI {
 	 */
 	protected $settings_fields = [];
 
+
+	private $nonce;
+
 	public function __construct() {
 
 		//	add_action( 'admin_enqueue_scripts', [ $this, 'wco_admin' ] );
 		//add_action( 'wp_ajax_wco_ajax', [ $this, 'wco_ajax' ] );
 
 		//add_action( 'wp_ajax_nopriv_wco_ajax', [ $this, 'wco_ajax' ] );
+		if ( ! isset( $this->nonce ) ) {
+			$this->nonce = wp_create_nonce( 'wp_bom_admin' );
+		}
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
 
 	}
@@ -54,8 +60,7 @@ class SettingsAPI {
 
 		$ajax_object = [
 			'ajax_url' => admin_url( 'admin-ajax.php' ),
-			'nonce'    => wp_create_nonce( 'wp_bom_admin' ),
-			'product'  => get_option( 'wpb_settings' ),
+			'nonce'    => $this->nonce,
 			'ajaxid'   => $opts['ajaxid'],
 			'action'   => [ $this, 'wco_ajax' ], //'options'  => 'wc_bom_option[opt]',
 		];
@@ -446,18 +451,20 @@ class SettingsAPI {
 	function wco_ajax() {
 
 		//global $wpdb;
-		check_ajax_referer( 'ajax_nonce', 'security' );
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-		}
+//		check_ajax_referer( 'ajax_nonce', 'security' );
+//		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+//		}
 
-		$product = $_POST['ajaxid'];
-
-		$po = get_post( $product );
-
-		echo json_encode( $po->post_title );
+		$product = $_POST['id'];
 
 
-		wp_die( 'Ajax finished.' );
+		echo $_POST['id'];
+		//$po = get_post( $product );
+
+		//echo json_encode( $po->post_title );
+
+
+		//wp_die( 'Ajax finished.' );
 	}
 
 	/**
@@ -536,6 +543,8 @@ class SettingsAPI {
 	 */
 	function show_forms() { ?>
         <div class="metabox-holder">
+
+			<?php $i = 0; ?>
 			<?php foreach ( $this->settings_sections as $form ) { ?>
                 <div id="<?php echo $form['id']; ?>" class="group" style="display: none;">
                     <form method="post" action="options.php">
@@ -547,7 +556,14 @@ class SettingsAPI {
 						?>
                         <div style="padding-left: 10px">
 
-							<?php submit_button(); ?>
+							<?php
+							$atts = [ 'id' => 'save_settings_' . $i ];
+
+							submit_button( 'Save Settings', 'primary', $atts['id'], true, $atts );
+
+
+							$i ++;
+							?>
                             <span id="wpb_admin_ajax" name="wpb_admin_ajax" class="button-primary">Button</span>
                             <span id="wpb_ajax_io" name="wpb_ajax_io">Heyo</span>
                         </div>

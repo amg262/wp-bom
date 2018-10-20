@@ -20,11 +20,6 @@ class Settings {
 		add_action( 'admin_menu', [ $this, 'admin_menu' ] );
 	}
 
-	function show() {
-		$this->admin_init();
-		$this->tab_nav();
-		$this->form();
-	}
 
 	function admin_init() {
 
@@ -456,18 +451,6 @@ class Settings {
 		];
 
 		return $settings_fields;
-	}
-
-	function tab_nav() {
-
-		$this->settings_api->show_navigation();
-
-	}
-
-	function form() {
-
-		$this->settings_api->show_forms();
-
 	}
 
 	function admin_menu() {

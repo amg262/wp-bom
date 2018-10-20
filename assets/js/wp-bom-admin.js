@@ -50,6 +50,7 @@ jQuery(document).ready(function ($) {
 		'url': ajax_object.ajax_url,
 		'action': 'wco_ajax',
 		'security': ajax_object.nonce,
+		'id': ajax_object.ajaxid
 
 	};
 	// We can also pass the url value separately from ajaxurl for front end AJAX implementations
@@ -63,6 +64,8 @@ jQuery(document).ready(function ($) {
 			'url': ajax_object.ajax_url,
 			'action': 'wco_ajax',
 			'security': ajax_object.nonce,
+			'id': ajax_object.ajaxid
+
 		};
 		console.log(data);
 		// We can also pass the url value separately from ajaxurl for front end AJAX implementations
