@@ -1,0 +1,261 @@
+/**
+ * WP BOM admin styles.
+ */
+
+/* ---- Field grid ---- */
+
+.wpbom-grid {
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( 220px, 1fr ) );
+	gap: 16px;
+	margin: 12px 0;
+}
+
+.wpbom-field label {
+	display: block;
+	font-weight: 600;
+	margin-bottom: 4px;
+}
+
+.wpbom-field .description {
+	margin: 4px 0 0;
+}
+
+.wpbom-field-wide {
+	margin-top: 16px;
+}
+
+.wpbom-input-group {
+	display: flex;
+	align-items: stretch;
+}
+
+.wpbom-prefix {
+	display: inline-flex;
+	align-items: center;
+	padding: 0 8px;
+	background: #f0f0f1;
+	border: 1px solid #8c8f94;
+	border-right: 0;
+	border-radius: 4px 0 0 4px;
+	color: #50575e;
+}
+
+.wpbom-input-group input {
+	border-radius: 0 4px 4px 0;
+}
+
+.wpbom-help {
+	color: #50575e;
+	margin-top: 0;
+}
+
+/* ---- Line items ---- */
+
+.wpbom-items-table {
+	margin-bottom: 12px;
+}
+
+.wpbom-items-table th,
+.wpbom-items-table td {
+	vertical-align: middle;
+}
+
+.wpbom-col-handle {
+	width: 28px;
+}
+
+.wpbom-col-qty {
+	width: 90px;
+}
+
+.wpbom-col-ref,
+.wpbom-col-note {
+	width: 18%;
+}
+
+.wpbom-col-actions {
+	width: 80px;
+	text-align: right;
+}
+
+.wpbom-col-item select {
+	width: 100%;
+	max-width: 100%;
+}
+
+.wpbom-col-ref input,
+.wpbom-col-note input {
+	width: 100%;
+}
+
+.wpbom-handle {
+	cursor: grab;
+	color: #a7aaad;
+}
+
+.wpbom-handle:active {
+	cursor: grabbing;
+}
+
+.wpbom-dragging {
+	opacity: 0.5;
+	background: #f6f7f7;
+}
+
+.wpbom-remove {
+	color: #b32d2e;
+	text-decoration: none;
+}
+
+.wpbom-remove:hover {
+	color: #8a2424;
+}
+
+.wpbom-empty {
+	color: #646970;
+	font-style: italic;
+	text-align: center;
+	padding: 16px;
+}
+
+.wpbom-actions {
+	margin: 12px 0 0;
+}
+
+/* ---- Totals strip ---- */
+
+.wpbom-totals {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 12px 0 20px;
+	padding: 0;
+	list-style: none;
+}
+
+.wpbom-totals li {
+	flex: 1 1 130px;
+	margin: 0;
+	padding: 10px 12px;
+	background: #f6f7f7;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+}
+
+.wpbom-totals-label {
+	display: block;
+	font-size: 11px;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: #646970;
+}
+
+.wpbom-totals-value {
+	display: block;
+	font-size: 18px;
+	font-weight: 600;
+	line-height: 1.3;
+}
+
+/* ---- Explosion tables ---- */
+
+.wpbom-table {
+	margin-bottom: 24px;
+}
+
+.wpbom-table .wpbom-num {
+	text-align: right;
+	white-space: nowrap;
+}
+
+.wpbom-indent {
+	display: inline-block;
+	width: 20px;
+	border-left: 1px dotted #c3c4c7;
+	margin-left: 4px;
+	height: 1em;
+	vertical-align: middle;
+}
+
+.wpbom-item-cell {
+	white-space: nowrap;
+}
+
+.wpbom-row-assembly .wpbom-item-cell a {
+	font-weight: 600;
+}
+
+.wpbom-row-cycle,
+.wpbom-row-missing {
+	background: #fcf0f1 !important;
+}
+
+.wpbom-flag {
+	display: inline-block;
+	margin-left: 6px;
+	padding: 1px 6px;
+	font-size: 11px;
+	border-radius: 9px;
+	background: #f0f0f1;
+	color: #50575e;
+}
+
+.wpbom-flag-error {
+	background: #b32d2e;
+	color: #fff;
+}
+
+.wpbom-flag-type {
+	background: #dbe9f7;
+	color: #1d4f7c;
+}
+
+/* ---- List table columns ---- */
+
+.wpbom-badge {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 9px;
+	font-size: 11px;
+	background: #f0f0f1;
+	color: #50575e;
+}
+
+.wpbom-badge-active {
+	background: #d5e8d4;
+	color: #1e4620;
+}
+
+.wpbom-badge-prototype {
+	background: #dbe9f7;
+	color: #1d4f7c;
+}
+
+.wpbom-badge-hold {
+	background: #fcf0d4;
+	color: #6b4e00;
+}
+
+.wpbom-badge-obsolete {
+	background: #f0f0f1;
+	color: #757575;
+	text-decoration: line-through;
+}
+
+.wpbom-low-stock {
+	color: #b32d2e;
+	font-weight: 600;
+}
+
+.wpbom-muted {
+	color: #a7aaad;
+}
+
+.wpbom-where-used {
+	margin: 0;
+}
+
+.wpbom-where-used li {
+	margin: 0 0 6px;
+}

@@ -1,281 +1,139 @@
-![alt text](https://github.com/amg262/wp-bom/blob/master/dist/images/woobom500.png?raw=true "Logo")
+# WP BOM
 
+Bill of Materials for WordPress. Track parts and assemblies, nest assemblies to
+any depth, and explode a multi-level BOM with quantity, cost and weight roll-up.
 
-![alt-text](https://cloud.githubusercontent.com/assets/1805604/26199709/55c91bda-3bcb-11e7-871e-94b7a022cfa9.jpg "WP Reactivate - WordPress React Boilerplate")
-# WP Reactivate
-WP Reactivate is a React boilerplate built specifically for WordPress, allowing you to quickly and easily integrate React into your WordPress plugins.
+No Advanced Custom Fields. No page builder. No build step. Drop it in
+`wp-content/plugins`, activate, and it works.
 
-<!-- TOC -->
+**Requires:** WordPress 6.0+, PHP 8.0+
 
-- [WP Reactivate](#wp-reactivate)
-    - [Setup and installation](#setup-and-installation)
-    - [Usage](#usage)
-    - [Quick Start](#quick-start)
-        -$ [Introduction](#introduction)
-        - [Using the Shortcode](#using-the-shortcode)
-        - [Using the Widget](#using-the-widget)
-        - [Using REST Controllers](#using-rest-controllers)
-        - [Using the Settings Page](#using-the-settings-page)
-        - [Using fetchWP](#using-fetchwp)
-    - [Technologies](#technologies)
-    - [Tutorials](#tutorials)
-    - [Credits](#credits)
+---
 
-<!-- /TOC -->
+## The model
 
-## Setup and installation
-* **Install [Node 4.0.0 or greater](https://nodejs.org)**
-* **Install [Yarn](https://yarnpkg.com/en/docs/install)** (Or use npm if you prefer)
+Two content types carry everything:
 
-## Usage
-* Install required modules: `yarn` (or `npm install`)
-* Build development version of app and watch for changes: `yarn build` (or `npm run build`)
-* Build production version of app:`yarn prod` (or `npm run prod`)
+| Type | Means | Holds |
+|------|-------|-------|
+| **Part** | Something you buy | Part number, revision, UOM, unit cost, weight, stock on hand, reorder point, lead time, manufacturer part number, status |
+| **Assembly** | Something you build | The same header fields, plus a labor/overhead cost and a list of **line items** |
 
-## Quick Start
-### Introduction
-This boilerplate plugin provides three different WordPress views in which an independant React app can be rendered:
+A line item points at a part **or at another assembly**, with a quantity, a
+reference designator and a note. That single rule is what makes the structure
+recursive: an assembly containing an assembly containing a part is just three
+rows of data, and the plugin walks it.
 
-- Shortcode
-- Widget
-- Settings page in the backend (wp-admin)
+A third type, **BOM**, is a saved document: it points at one assembly and a build
+quantity, so you can keep "500 × Chassis, as quoted in March" as a permanent,
+shareable record.
 
-Each JavaScript root file will correspond to the independant React app to be bundled by Webpack.
+## What you get from the structure
 
-*webpack.config.js*
-```javascript =6
-entry: {
-  'js/admin': path.resolve(__dirname, 'app/admin.js'),
-  'js/shortcode': path.resolve(__dirname, 'app/shortcode.js'),
-  'js/widget': path.resolve(__dirname, 'app/widget.js'),
-},
-```
-  
-### Using the Shortcode
-In order to get the shortcode attributes into our Javascript we need to pass them to an object which will be made available to the *shortcode.js* app via ```wp_localize_script```. Be careful with the security of data you pass here as this will be output in a ```<script>``` tag in the rendered html.
+**Indented explosion.** Every level of the tree with quantity-per-parent and
+extended quantity for the whole build.
 
-*includes/Shortcode.php*
-```php =81
-public function shortcode( $atts ) {
-  wp_enqueue_script( $this->plugin_slug . '-shortcode-script' );
-  wp_enqueue_style( $this->plugin_slug . '-shortcode-style' );
+**Flat part list.** The same tree summed per distinct part. A bolt used in three
+different sub-assemblies appears once with the total — this is the list you hand
+to purchasing.
 
-  $object_name = 'wpr_object_' . uniqid();
+**Cost and weight roll-up.** An assembly's unit cost is its labor cost plus the
+extended cost of everything inside it, computed recursively. Change one part's
+price and every product containing it reprices.
 
-  $object = shortcode_atts( array(
-    'title'       => 'Hello world',
-    'api_nonce'   => wp_create_nonce( 'wp_rest' ),
-    'api_url'	  => rest_url( 'wp-reactivate/v1/' ),
-  ), $atts, 'wp-reactivate' );
+**Where used.** The reverse lookup: every assembly that consumes a given part,
+backed by an indexed meta query rather than a table scan.
 
-  wp_localize_script( $this->plugin_slug . '-shortcode-script', $object_name, $object );
+**CSV export.** The flat list with quantities, costs and reference designators.
+UTF-8 with a byte order mark, so Excel opens it correctly.
 
-  $shortcode = '<div class="wp-reactivate-shortcode" data-object-id="' . $object_name . '"></div>';
-  return $shortcode;
-}
-```
+## Circular references
 
-You can access the shortcode attributes via the ```wpObject``` prop which is passed into your React container component.
+If assembly A contains B and B contains A, the walk stops where the loop closes,
+marks that row in the tree, excludes it from the totals, and shows a warning. It
+does not hang and it does not exhaust memory.
 
-*app/containers/Shortcode.jsx* 
-```javascript =1
-import React, { Component } from 'react';
+Self-references are rejected at save time, before they can be stored.
 
-export default class Shortcode extends Component {
-  render() {
-    return (
-      <div className="wrap">
-        <h1>WP Reactivate Frontend</h1>
-        <p>Title: {this.props.wpObject.title}</p>
-      </div>
-    );
-  }
-}
-```
-
-### Using the Widget
-In order to get the widget options into our Javascript we need to pass them to an object which will be made available to the *widget.js* app via ```wp_localize_script```. Be careful with the security of data you pass here as this will be output in a ```<script>``` tag in the rendered html.
-
-
-*includes/Widget.php*
-```php =43
-public function widget( $args, $instance ) {
-  wp_enqueue_script( $this->plugin_slug . '-widget-script', plugins_url( 'assets/js/widget.js', dirname( __FILE__ ) ), array( 'jquery' ), $this->version );
-  wp_enqueue_style( $this->plugin_slug . '-widget-style', plugins_url( 'assets/css/widget.css', dirname( __FILE__ ) ), $this->version );
-
-  $object_name = 'wpr_object_' . uniqid();
-
-  $object = array(
-    'title'       => $instance['title'],
-    'api_nonce'   => wp_create_nonce( 'wp_rest' ),
-    'api_url'	  => rest_url( 'wp-reactivate/v1/' ),
-  );
-
-  wp_localize_script( $this->plugin_slug . '-widget-script', $object_name, $object );
-
-  echo $args['before_widget'];
-
-  ?><div class="wp-reactivate-widget" data-object-id="<?php echo $object_name ?>"></div><?php
-
-  echo $args['after_widget'];
-}
-```
-You can access the widget options via the ```wpObject``` prop which is passed into your React container component.
-
-*app/containers/Widget.jsx* 
-```javascript =1
-import React, { Component } from 'react';
-
-export default class Widget extends Component {
-  render() {
-    return (
-      <div className="wrap">
-        <h1>WP Reactivate Widget</h1>
-        <p>Title: {this.props.wpObject.title}</p>
-      </div>
-    );
-  }
-}
+## Shortcode
 
 ```
-
-### Using REST Controllers
-
-We have included a single base REST controller class in the plugin. You will need to use this controller to create endpoints to interact with your React components. Depending on the complexity of your plugin you may need to have multiple controllers or may want to extend default WordPress REST API endpoints. 
-
-We have chosen the custom controller approach for its control and flexibility. Please see the WordPress developer documentation on adding [custom endpoints](https://developer.wordpress.org/rest-api/extending-the-rest-api/adding-custom-endpoints/) and specifically the [controller pattern](https://developer.wordpress.org/rest-api/extending-the-rest-api/adding-custom-endpoints/#the-controller-pattern) to familiarise your with our choice of implementation.
-
-It is important to become well versed in using the [WordPress REST API](https://developer.wordpress.org/rest-api/) as this is how you will be passing data to and from your React applications.
-### Using the Settings Page
-In our admin class we add a sub menu page to the Settings menu using ```add_options_page``` and render the React Admin container onto the root DOM node.
-
-*includes/Admin.php*
-``` php =163
-public function display_plugin_admin_page() {
- ?><div id="wp-reactivate-admin"></div><?php
-}
+[wp_bom id="123"]                           Indented tree
+[wp_bom id="123" view="flat" qty="10"]      Summed part list for a build of ten
+[wp_bom id="123" view="both" totals="no"]   Both tables, no totals strip
+[wp_bom id="123" depth="3"]                 Stop after three levels
 ```
 
+Omit `id` inside a part, assembly or BOM to use the current post. Pass a **BOM**
+post ID and it resolves to that document's assembly and stored build quantity.
 
+## REST API
 
+Both routes are read-only and permission-checked.
 
-### Using fetchWP
-
-We have provided a utility class called fetchWP which is a simple abstraction over the [Fetch API](https://developer.mozilla.org/en/docs/Web/API/Fetch_API) which allows you to easily make requests to the WordPress REST API.
-
-In the React container component we show how to retrieve and update this setting via the example [REST controller](#using-rest-controllers) included in the boilerplate.
-
-First we initialise fetchWP in the ES6 class constructor of our container component. It requires two parameters being the REST URL and the REST nonce which can be supplied from our wpObject.
-
-*app/containers/Admin.jsx*
-```javascript =7
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      example_setting: '',
-    };
-
-    this.fetchWP = new fetchWP({
-      restURL: this.props.wpObject.api_url,
-      restNonce: this.props.wpObject.api_nonce,
-    });
-
-    this.getSetting();
-  }
+```
+GET /wp-json/wp-bom/v1/items?search=bolt&type=part
+GET /wp-json/wp-bom/v1/bom/123?qty=5
 ```
 
-In the getSetting call you can now see how we use the utility to perform a GET request on the 'example' endpoint.
+`/items` requires `edit_posts`. `/bom/<id>` requires read access to the post, or
+public visibility if the public-shortcode setting is on.
 
-*app/containers/Admin.jsx*
-```javascript =22
-  getSetting = () => {
-    this.fetchWP.get( 'example' )
-    .then(
-      (json) => this.setState({
-        example_setting: json.value,
-        saved_example_setting: json.value
-      }),
-      (err) => console.log( 'error', err )
-    );
-  };
+## Settings
+
+Under **Parts → Settings**: currency symbol, cost decimal places, maximum
+explosion depth (1–25, default 12), and whether logged-out visitors can see
+shortcode output.
+
+## Layout
+
+```
+wp-bom.php              Bootstrap: constants, autoloader, activation hooks
+includes/
+  Plugin.php            Boots every subsystem on plugins_loaded
+  PostTypes.php         Post types and taxonomies
+  Meta.php              Meta schema, sanitising, line-item read/write, where-used
+  MetaBoxes.php         All editing UI and the single save handler
+  Explosion.php         Recursive walk, cycle detection, cost and weight roll-up
+  Render.php            Tree and flat tables, shared by admin, shortcode and CSV
+  AdminColumns.php      List-table columns
+  Settings.php          Options page on the core Settings API
+  Rest.php              REST routes
+  Shortcode.php         [wp_bom]
+  Export.php            CSV download
+  Assets.php            CSS and JS loading
+  Install.php           Activation, deactivation, upgrades
+assets/
+  css/wpbom-admin.css   Admin styles
+  css/wpbom.css         Front-end styles
+  js/wpbom-admin.js     Line-item repeater: add, remove, drag-reorder
+tests/
+  bootstrap.php         In-memory WordPress stubs
+  run.php               Test suite
 ```
 
-We have found this utility covers most of our use cases. If you are looking for something more full featured (especially if you are working with standard WP endpoints) then have a look at [node-wpapi](http://wp-api.org/node-wpapi/).
+## Tests
 
-## Technologies
-| **Tech** | **Description** |
-|----------|-------|
-|  [React](https://facebook.github.io/react/)  |   A JavaScript library for building user interfaces. |
-|  [Babel](http://babeljs.io) |  Compiles next generation JS features to ES5. Enjoy the new version of JavaScript, today. |
-| [Webpack](http://webpack.js.org) | For bundling our JavaScript assets. |
-| [ESLint](http://eslint.org/)| Pluggable linting utility for JavaScript and JSX  |
+The engine is testable without a WordPress install, composer or PHPUnit:
 
-The boilerplate has been updated to use PHP **namespaces and autoloading**. Please see Tom McFarlin's [article](https://tommcfarlin.com/namespaces-and-autoloading-2017/) on the subject if you are not familiar.
+```
+php tests/run.php
+```
 
-## Tutorials
+63 assertions covering roll-up arithmetic, nested multiplication, labor cost,
+cycle detection, self-reference rejection, invalid-input filtering, missing
+items, depth truncation, the where-used index, input sanitising, output
+escaping, the meta box save path (including nonce rejection), and the shortcode.
 
-Building a WordPress plugin with React - [Part 1](https://gopangolin.com/building-wordpress-plugin-with-react-part-1/)
+## History
 
-## Credits
-*Made by [Pangolin](https://gopangolin.com)*
+Version 1.x could not be activated on any supported PHP version. Its activation
+hooks called instance methods statically, it required a vendored copy of a
+commercial import plugin on every page load, and post type registration was
+gated on an option key that does not exist on a fresh install — so no post type
+was ever registered. Version 2.0.0 is a rewrite. See `readme.txt` for the full
+changelog.
 
+## License
 
-## WooCommerce Bill of Materials
-
-##WooCommerce Bill of Materials with WooBOM™
-
-
-WooCommerce Bill of Materials designed for Manufacturing
-Creating a Bill of Materials (BOM) is a very valuable asset for any company that
-uses raw materials and parts to manufacture products. Any business using
-WooCommerce have had no way to add inventory and material usage tracking, until
-now.
-
-WooBOM™ is the first plugin that takes a step towards achieving Material
-Requirements Planning (MRP) to create a way to easily and automatically track
-inventory and materials used to make their products. Unlike many other software
-solutions on the market, WooBOM is user friendly, easy to use, customizable, and
-lightweight.
-
-##Modular and Multilevel in nature
-Many companies have unique processes and do things their own way. There is no
-one-size-fits-all solution for MRP and BOM solutions, and we know that from
-experience. WooBOM lets you customize certain aspects to be flexible and allow you
-to have your own unique way to create a Bill of Materials. This allows you to create
-your own indented BOM that records the raw materials, sub-components,
-components, parts, sub-assemblies, assemblies and their quantities used to create
-the products that are used in their online WooCommerce store.
-Our abstraction of the way materials come in and leave the door lets you have full
-flexibility of things like shipping/receiving, vendors, customers, purchase orders
-(PO), blanket orders, requisitions, work orders, material location, and items that
-are defective, broken, reworked, resold, missing, or whatever the case may be. We
-also allow the specific details of materials to be customized like if their use in the
-assembly process is measured in dimensions, rather than just quantity and weight.
-##Engineering Change Notices
-
-Tracking all the information lays the framework for adding even more value to your
-production process. Creating a modular BOM will allow you take utilize the
-Engineering Change Notice (ECN) feature that will allow you to enter when a
-material, component, part, or assembly has changed in someway that effects a
-item assembly or status. This can streamline communication so that a product or
-assembly isn’t continually made the old way it was before the change, providing a
-valuable and timesaving to centralize this information.
-Desktop App and Coming features
-Currently in the latter stages of development are native features for importing,
-exporting and custom, detailed reports that are exportable and beautiful. There is
-also a cross-platform desktop application were developing for Mac, Windows, Linux
-to use the REST API so all your data is available and updateable from a lightweight
-desktop app.
-Beta release is coming soon
-
-
-In order to produce something distributable we need to test and evaluate how our
-platform works when its actually used by a business. This means we are proceeding
-with caution for releasing this product because we know how crucial eCommerce is
-to your business and we don’t take that lightly. With a little time and maturity, this
-can be achieved and it’s not too far away.
-Anyone who would like to help us at this level would be granted a free license and
-be treated as our highest-priority users. Without you, we couldn’t deliver the best
-possible product and we promise to reward you and make it worth your while!
-
+GPL-3.0-or-later. See `LICENSE`.

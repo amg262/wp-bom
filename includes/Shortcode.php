@@ -1,98 +1,119 @@
 <?php
 /**
- * WP-Reactivate
+ * Front-end shortcode.
  *
- *
- * @package   WP-Reactivate
- * @author    Pangolin
- * @license   GPL-3.0
- * @link      https://gopangolin.com
- * @copyright 2017 Pangolin (Pty) Ltd
+ * @package WPBom
  */
 
-namespace Netraa\WPB;
+declare( strict_types=1 );
+
+namespace WPBom;
 
 /**
- * @subpackage Shortcode
+ * [wp_bom] renders an exploded bill of materials on the front end.
+ *
+ * Attributes:
+ *   id      Assembly, part or BOM post ID. Defaults to the current post.
+ *   qty     Build quantity. Defaults to 1, or the BOM's stored quantity.
+ *   view    tree | flat | both. Defaults to tree.
+ *   totals  yes | no. Defaults to yes.
+ *   depth   Override the configured maximum depth.
  */
-class Shortcode {
+final class Shortcode {
+
+	public const TAG = 'wp_bom';
 
 	/**
-	 * Instance of this class.
-	 *
-	 * @since    1.0.0
-	 *
-	 * @var      object
+	 * Hook registration.
 	 */
-	protected static $instance = null;
+	public function register(): void {
+		add_shortcode( self::TAG, [ $this, 'render' ] );
+
+		// The 2018 releases documented the tag with a hyphen. Keep it working.
+		add_shortcode( 'wp-bom', [ $this, 'render' ] );
+	}
 
 	/**
-	 * Return an instance of this class.
+	 * Render the shortcode.
 	 *
-	 * @since     1.0.0
-	 *
-	 * @return    object    A single instance of this class.
+	 * @param array<string, string>|string $atts Shortcode attributes.
 	 */
-	public static function get_instance() {
+	public function render( array|string $atts = [] ): string {
+		$atts = shortcode_atts(
+			[
+				'id'     => 0,
+				'qty'    => 0,
+				'view'   => 'tree',
+				'totals' => 'yes',
+				'depth'  => 0,
+			],
+			is_array( $atts ) ? $atts : [],
+			self::TAG
+		);
 
-		// If the single instance hasn't been set, set it now.
-		if ( null == self::$instance ) {
-			self::$instance = new self;
-			self::$instance->do_hooks();
+		$id = absint( $atts['id'] );
+
+		if ( 0 === $id ) {
+			$id = (int) get_the_ID();
 		}
 
-		return self::$instance;
+		if ( $id <= 0 ) {
+			return '';
+		}
+
+		$target = Rest::resolve_target( $id, (float) $atts['qty'] );
+
+		if ( null === $target ) {
+			return $this->notice( __( 'No bill of materials found for that item.', 'wp-bom' ) );
+		}
+
+		if ( ! $this->can_view( $id ) ) {
+			return $this->notice( __( 'You do not have permission to view this bill of materials.', 'wp-bom' ) );
+		}
+
+		$tree = Explosion::tree( $target['id'], $target['qty'], absint( $atts['depth'] ) );
+
+		if ( null === $tree ) {
+			return $this->notice( __( 'That item cannot be exploded.', 'wp-bom' ) );
+		}
+
+		wp_enqueue_style( 'wpbom' );
+
+		$view   = in_array( $atts['view'], [ 'tree', 'flat', 'both' ], true ) ? $atts['view'] : 'tree';
+		$totals = ! in_array( strtolower( (string) $atts['totals'] ), [ 'no', 'false', '0' ], true );
+
+		$html = '<div class="wpbom-shortcode">';
+
+		if ( $totals ) {
+			$html .= Render::totals( Explosion::summary( $tree ) );
+		}
+
+		if ( 'tree' === $view || 'both' === $view ) {
+			$html .= Render::tree_table( $tree, false );
+		}
+
+		if ( 'flat' === $view || 'both' === $view ) {
+			$html .= Render::flat_table( Explosion::flatten( $tree, false, false ), false );
+		}
+
+		return $html . '</div>';
 	}
 
 	/**
-	 * Initialize the plugin by setting localization and loading public scripts
-	 * and styles.
-	 *
-	 * @since     1.0.0
+	 * Whether the current visitor may see this BOM.
 	 */
-	private function __construct() {
-		$plugin = Plugin::get_instance();
-		$this->plugin_slug = $plugin->get_plugin_slug();
-		$this->version = $plugin->get_plugin_version();
+	private function can_view( int $post_id ): bool {
+		if ( current_user_can( 'read_post', $post_id ) ) {
+			return true;
+		}
 
-		add_shortcode( 'wp-bom', array( $this, 'shortcode' ) );
-	}
-
-
-	/**
-	 * Handle WP actions and filters.
-	 *
-	 * @since 	1.0.0
-	 */
-	private function do_hooks() {
-		add_action( 'wp_enqueue_scripts', array( $this, 'register_frontend_scripts' ) );
+		return Settings::public_bom() && 'publish' === get_post_status( $post_id );
 	}
 
 	/**
-	 * Register frontend-specific javascript
-	 *
-	 * @since     1.0.0
+	 * A small inline message.
 	 */
-	public function register_frontend_scripts() {
-		wp_register_script( $this->plugin_slug . '-shortcode-script', plugins_url( 'assets/js/shortcode.js', dirname( __FILE__ ) ), array( 'jquery' ), $this->version );
-		wp_register_style( $this->plugin_slug . '-shortcode-style', plugins_url( 'assets/css/shortcode.css', dirname( __FILE__ ) ), $this->version );
-	}
-
-	public function shortcode( $atts ) {
-		wp_enqueue_script( $this->plugin_slug . '-shortcode-script' );
-		wp_enqueue_style( $this->plugin_slug . '-shortcode-style' );
-
-		$object_name = 'wpb_object_' . uniqid();
-
-		$object = shortcode_atts( array(
-			'title'       => 'Hello world',
-			'api_nonce'   => wp_create_nonce( 'wp_rest' ),
-			'api_url'	  => rest_url( $this->plugin_slug . '/v1/' ),
-		), $atts, 'wp-bom' );
-
-		wp_localize_script( $this->plugin_slug . '-shortcode-script', $object_name, $object );
-
-		$shortcode = '<div class="wp-bom-shortcode" data-object-id="' . $object_name . '"></div>';
-		return $shortcode;
+	private function notice( string $message ): string {
+		return '<p class="wpbom-notice">' . esc_html( $message ) . '</p>';
 	}
 }

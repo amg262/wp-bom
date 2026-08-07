@@ -1,490 +1,260 @@
 <?php
-
 /**
- * WordPress settings API demo class
+ * Settings screen, built on the core Settings API.
  *
- * @author Tareq Hasan
+ * @package WPBom
  */
 
-namespace Netraa\WPB;
+declare( strict_types=1 );
 
-class Settings {
+namespace WPBom;
 
-	private $settings_api;
+/**
+ * A single options page under the Parts menu.
+ *
+ * Replaces the bundled third-party SettingsAPI class the plugin used to carry,
+ * and every getter here is defensive: a fresh install with no option row still
+ * returns sane defaults instead of fatalling.
+ */
+final class Settings {
 
-	function __construct() {
+	public const OPTION    = 'wpbom_settings';
+	public const PAGE_SLUG = 'wpbom-settings';
 
-		$this->settings_api = new \Netraa\WPB\SettingsAPI();
-
-		add_action( 'admin_init', [ $this, 'admin_init' ] );
-		add_action( 'admin_menu', [ $this, 'admin_menu' ] );
-	}
-
-
-	function admin_init() {
-
-		//set the settings
-		$this->settings_api->set_sections( $this->get_settings_sections() );
-		$this->settings_api->set_fields( $this->get_settings_fields() );
-
-		//initialize settings
-		$this->settings_api->admin_init();
-
-		//var_dump( get_option( 'wedevs_basics' ) );
-	}
-
-	function get_settings_sections() {
-
-
-		$sections = [
-			[
-				'id'    => 'wpb_settings',
-				'title' => __( 'Configure Modules', 'wedevs' ),
-			],
-			[
-				'id'    => 'wpb_advanced',
-				'title' => __( 'Advanced Settings', 'wedevs' ),
-			],
-//			[
-//				'id'    => 'wpb_others',
-//				'title' => __( 'Other Settings', 'wpuf' ),
-//			],
-//			[
-//				'id'    => 'wpb_io',
-//				'title' => __( 'Import / Export', 'wpuf' ),
-//			],
-//			[
-//				'id'    => 'wpb_support',
-//				'title' => __( 'Support', 'wpuf' ),
-//			],
+	/**
+	 * Default option values.
+	 *
+	 * @return array<string, mixed>
+	 */
+	public static function defaults(): array {
+		return [
+			'currency_symbol' => '$',
+			'cost_decimals'   => 2,
+			'max_depth'       => 12,
+			'public_bom'      => 1,
 		];
-
-		return $sections;
 	}
 
 	/**
-	 * Returns all the settings fields
+	 * The stored options merged over the defaults.
 	 *
-	 * @return array settings fields
+	 * @return array<string, mixed>
 	 */
-	function get_settings_fields() {
+	public static function all(): array {
+		$stored = get_option( self::OPTION, [] );
 
+		if ( ! is_array( $stored ) ) {
+			$stored = [];
+		}
 
-		$str = [
-			'name'    => 'text',
-			'label'   => __( 'Text', 'wedevs' ),
-			'desc'    => __( 'Text input description', 'wedevs' ),
-			'type'    => 'text',
-			'default' => '',
-		];
-
-		$settings_fields = [
-			'wpb_settings' => [
-				[
-					'name'              => 'key',
-					'label'             => __( 'Text Input', 'wedevs' ),
-					'desc'              => __( 'Text input description', 'wedevs' ),
-					'type'              => 'text',
-					'default'           => 'Title',
-					'sanitize_callback' => 'intval',
-				],
-				[
-					'name'              => 'number_input',
-					'label'             => __( 'Number Input', 'wedevs' ),
-					'desc'              => __( 'Number field with validation callback `intval`', 'wedevs' ),
-					'type'              => 'number',
-					'default'           => 'Title',
-					'sanitize_callback' => 'intval',
-				],
-//				[
-//					'name'  => 'textarea',
-//					'label' => __( 'Textarea Input', 'wedevs' ),
-//					'desc'  => __( 'Textarea description', 'wedevs' ),
-//					'type'  => 'textarea',
-//				],
-//				[
-//					'name'  => 'checkbox',
-//					'label' => __( 'Checkbox', 'wedevs' ),
-//					'desc'  => __( 'Checkbox Label', 'wedevs' ),
-//					'type'  => 'checkbox',
-//				],
-//				[
-//					'name'    => 'radio',
-//					'label'   => __( 'Radio Button', 'wedevs' ),
-//					'desc'    => __( 'A radio button', 'wedevs' ),
-//					'type'    => 'radio',
-//					'options' => [
-//						'yes' => 'Yes',
-//						'no'  => 'No',
-//					],
-//				],
-				[
-					'name'    => 'activecpt',
-					'label'   => __( 'Post Types', 'wedevs' ),
-					'desc'    => __( 'Multi checkbox description', 'wedevs' ),
-					'type'    => 'multicheck',
-					'options' => [
-						'Part'        => 'Part',
-						'Assembly'    => 'Assembly',
-						'Requisition' => 'Requisition',
-						'ECN'         => 'ECN',
-						'BOM'         => 'BOM',
-						'Product'     => 'Product',
-					],
-				],
-				[
-					'name'    => 'activetaxs',
-					'label'   => __( 'Taxonomy', 'wedevs' ),
-					'desc'    => __( 'Multi checkbox description', 'wedevs' ),
-					'type'    => 'multicheck',
-					'options' => [
-						'Part Category' => 'Item Category',
-						'Part Tag'      => 'Item Tag',
-						'Vendor'        => 'Vendor',
-						'Location'      => 'Location',
-						'Req Type'      => 'Req Type',
-					],
-				],
-				[
-					'name'    => 'ajaxid',
-					'label'   => __( 'A Dropdown', 'wedevs' ),
-					'desc'    => __( 'Dropdown description', 'wedevs' ),
-					'type'    => 'select',
-					'default' => '5666',
-					'options' => [
-						//json_encode( $arr )
-						'5666' => '5666',
-						'5667' => '5667',
-					],
-				],
-				[
-					'name'    => 'password',
-					'label'   => __( 'Password', 'wedevs' ),
-					'desc'    => __( 'Password description', 'wedevs' ),
-					'type'    => 'password',
-					'default' => '',
-				],
-				[
-					'name'    => 'file',
-					'label'   => __( 'File', 'wedevs' ),
-					'desc'    => __( 'File description', 'wedevs' ),
-					'type'    => 'file',
-					'default' => '',
-					'options' => [
-						'button_label' => 'Choose Image',
-					],
-				],
-				[
-					'name'    => 'color',
-					'label'   => __( 'Color', 'wedevs' ),
-					'desc'    => __( 'Color description', 'wedevs' ),
-					'type'    => 'color',
-					'default' => '',
-				],
-				[
-					'name'    => 'wysiwyg',
-					'label'   => __( 'Advanced Editor', 'wedevs' ),
-					'desc'    => __( 'WP_Editor description', 'wedevs' ),
-					'type'    => 'wysiwyg',
-					'default' => '',
-				],
-
-				[
-					'name'    => 'selectbox',
-					'label'   => __( 'A Dropdown', 'wedevs' ),
-					'desc'    => __( 'Dropdown description', 'wedevs' ),
-					'type'    => 'select',
-					'options' => [
-						'yes' => 'Yes',
-						'no'  => 'No',
-					],
-				],
-			],
-			'wpb_advanced' => [
-				[
-					'name'              => 'number_input',
-					'label'             => __( 'Number Input', 'wedevs' ),
-					'desc'              => __( 'Number field with validation callback `intval`', 'wedevs' ),
-					'type'              => 'number',
-					'default'           => '0',
-					'sanitize_callback' => 'intval',
-				],
-			],
-//			'wpb_advanced' => [
-//				[
-//					'name'    => 'color',
-//					'label'   => __( 'Color', 'wedevs' ),
-//					'desc'    => __( 'Color description', 'wedevs' ),
-//					'type'    => 'color',
-//					'default' => '',
-//				],
-//				[
-//					'name'    => 'password',
-//					'label'   => __( 'Password', 'wedevs' ),
-//					'desc'    => __( 'Password description', 'wedevs' ),
-//					'type'    => 'password',
-//					'default' => '',
-//				],
-//				[
-//					'name'    => 'wysiwyg',
-//					'label'   => __( 'Advanced Editor', 'wedevs' ),
-//					'desc'    => __( 'WP_Editor description', 'wedevs' ),
-//					'type'    => 'wysiwyg',
-//					'default' => '',
-//				],
-//				[
-//					'name'    => 'multicheck',
-//					'label'   => __( 'Multile checkbox', 'wedevs' ),
-//					'desc'    => __( 'Multi checkbox description', 'wedevs' ),
-//					'type'    => 'multicheck',
-//					'default' => [ 'one' => 'one', 'four' => 'four' ],
-//					'options' => [
-//						'one'   => 'One',
-//						'two'   => 'Two',
-//						'three' => 'Three',
-//						'four'  => 'Four',
-//					],
-//				],
-//				[
-//					'name'    => 'selectbox',
-//					'label'   => __( 'A Dropdown', 'wedevs' ),
-//					'desc'    => __( 'Dropdown description', 'wedevs' ),
-//					'type'    => 'select',
-//					'options' => [
-//						'yes' => 'Yes',
-//						'no'  => 'No',
-//					],
-//				],
-//				[
-//					'name'    => 'password',
-//					'label'   => __( 'Password', 'wedevs' ),
-//					'desc'    => __( 'Password description', 'wedevs' ),
-//					'type'    => 'password',
-//					'default' => '',
-//				],
-//				[
-//					'name'    => 'file',
-//					'label'   => __( 'File', 'wedevs' ),
-//					'desc'    => __( 'File description', 'wedevs' ),
-//					'type'    => 'file',
-//					'default' => '',
-//				],
-//			],
-//			'wpb_others'   => [
-//				[
-//					'name'    => 'text',
-//					'label'   => __( 'Text Input', 'wedevs' ),
-//					'desc'    => __( 'Text input description', 'wedevs' ),
-//					'type'    => 'text',
-//					'default' => 'Title',
-//				],
-//				[
-//					'name'  => 'textarea',
-//					'label' => __( 'Textarea Input', 'wedevs' ),
-//					'desc'  => __( 'Textarea description', 'wedevs' ),
-//					'type'  => 'textarea',
-//				],
-//				[
-//					'name'  => 'checkbox',
-//					'label' => __( 'Checkbox', 'wedevs' ),
-//					'desc'  => __( 'Checkbox Label', 'wedevs' ),
-//					'type'  => 'checkbox',
-//				],
-//				[
-//					'name'    => 'radio',
-//					'label'   => __( 'Radio Button', 'wedevs' ),
-//					'desc'    => __( 'A radio button', 'wedevs' ),
-//					'type'    => 'radio',
-//					'options' => [
-//						'yes' => 'Yes',
-//						'no'  => 'No',
-//					],
-//				],
-//				[
-//					'name'    => 'multicheck',
-//					'label'   => __( 'Multile checkbox', 'wedevs' ),
-//					'desc'    => __( 'Multi checkbox description', 'wedevs' ),
-//					'type'    => 'multicheck',
-//					'options' => [
-//						'one'   => 'One',
-//						'two'   => 'Two',
-//						'three' => 'Three',
-//						'four'  => 'Four',
-//					],
-//				],
-//				[
-//					'name'    => 'selectbox',
-//					'label'   => __( 'A Dropdown', 'wedevs' ),
-//					'desc'    => __( 'Dropdown description', 'wedevs' ),
-//					'type'    => 'select',
-//					'options' => [
-//						'yes' => 'Yes',
-//						'no'  => 'No',
-//					],
-//				],
-//				[
-//					'name'    => 'password',
-//					'label'   => __( 'Password', 'wedevs' ),
-//					'desc'    => __( 'Password description', 'wedevs' ),
-//					'type'    => 'password',
-//					'default' => '',
-//				],
-//				[
-//					'name'    => 'file',
-//					'label'   => __( 'File', 'wedevs' ),
-//					'desc'    => __( 'File description', 'wedevs' ),
-//					'type'    => 'file',
-//					'default' => '',
-//				],
-//			],
-//			'wpb_io'       => [
-//
-//				[
-//					'name'  => 'textarea',
-//					'label' => __( 'Textarea Input', 'wedevs' ),
-//					'desc'  => __( 'Textarea description', 'wedevs' ),
-//					'type'  => 'textarea',
-//				],
-//				[
-//					'name'  => 'checkbox',
-//					'label' => __( 'Checkbox', 'wedevs' ),
-//					'desc'  => __( 'Checkbox Label', 'wedevs' ),
-//					'type'  => 'checkbox',
-//				],
-//				[
-//					'name'    => 'file',
-//					'label'   => __( 'File', 'wedevs' ),
-//					'desc'    => __( 'File description', 'wedevs' ),
-//					'type'    => 'file',
-//					'default' => '',
-//					'options' => [
-//						'button_label' => 'Choose Image',
-//					],
-//				],
-//				[
-//					'name'    => 'file',
-//					'label'   => __( 'File', 'wedevs' ),
-//					'desc'    => __( 'File description', 'wedevs' ),
-//					'type'    => 'file',
-//					'default' => '',
-//					'options' => [
-//						'button_label' => 'Choose Image',
-//					],
-//				],
-//				[
-//					'name'    => 'multicheck',
-//					'label'   => __( 'Multile checkbox', 'wedevs' ),
-//					'desc'    => __( 'Multi checkbox description', 'wedevs' ),
-//					'type'    => 'multicheck',
-//					'options' => [
-//						'one'   => 'One',
-//						'two'   => 'Two',
-//						'three' => 'Three',
-//						'four'  => 'Four',
-//					],
-//				],
-//				[
-//					'name'    => 'selectbox',
-//					'label'   => __( 'A Dropdown', 'wedevs' ),
-//					'desc'    => __( 'Dropdown description', 'wedevs' ),
-//					'type'    => 'select',
-//					'default' => 'no',
-//					'options' => [
-//						//json_encode( $arr )
-//						'yes' => 'Yes',
-//						'no'  => 'No',
-//					],
-//				],
-//			],
-//			'wpb_support'  => [
-//				[
-//					'name'    => 'text',
-//					'label'   => __( 'Text Input', 'wedevs' ),
-//					'desc'    => __( 'Text input description', 'wedevs' ),
-//					'type'    => 'text',
-//					'default' => '',
-//					//'sanitize_callback' => 'intval',
-//				],
-//				[
-//					'name'    => 'multicheck',
-//					'label'   => __( 'Multile checkbox', 'wedevs' ),
-//					'desc'    => __( 'Multi checkbox description', 'wedevs' ),
-//					'type'    => 'multicheck',
-//					'options' => [
-//						'one'   => 'One',
-//						'two'   => 'Two',
-//						'three' => 'Three',
-//						'four'  => 'Four',
-//					],
-//				],
-//				[
-//					'name'    => 'wysiwyg',
-//					'label'   => __( 'Advanced Editor', 'wedevs' ),
-//					'desc'    => __( 'WP_Editor description', 'wedevs' ),
-//					'type'    => 'wysiwyg',
-//					'default' => '',
-//				],
-//
-//				[
-//					'name'    => 'file',
-//					'label'   => __( 'File', 'wedevs' ),
-//					'desc'    => __( 'File description', 'wedevs' ),
-//					'type'    => 'file',
-//					'default' => '',
-//				],
-//
-//			],
-
-		];
-
-		return $settings_fields;
+		return array_merge( self::defaults(), $stored );
 	}
 
-	function admin_menu() {
+	/**
+	 * One option value.
+	 */
+	public static function get( string $key, mixed $fallback = null ): mixed {
+		$all = self::all();
 
-		add_menu_page( 'Settings API', 'Settings API', 'manage_options', 'wp-bom-settings', [
-			$this,
-			'plugin_page',
-		], 'dashicons-schedule', 62 );
-
-//		add_submenu_page( 'wp-bom', 'Settings API', 'Settings API', 'manage_options', 'wp-bom-settings', [
-//			$this,
-//			'plugin_page',
-//		] );
-//
-//		echo '';
-//		add_options_page( 'Settings API', 'Settings API', 'manage_options', 'wp-bom-settings', [
-//			$this,
-//			'plugin_page',
-//		] );
+		return $all[ $key ] ?? $fallback;
 	}
 
-	function plugin_page() {
+	/**
+	 * Currency symbol used in every money format.
+	 */
+	public static function currency_symbol(): string {
+		$symbol = (string) self::get( 'currency_symbol', '$' );
+
+		return '' !== $symbol ? $symbol : '$';
+	}
+
+	/**
+	 * Decimal places used in every money format.
+	 */
+	public static function cost_decimals(): int {
+		return (int) min( 6, max( 0, (int) self::get( 'cost_decimals', 2 ) ) );
+	}
+
+	/**
+	 * Maximum explosion depth.
+	 */
+	public static function max_depth(): int {
+		return (int) min( Explosion::MAX_DEPTH_LIMIT, max( 1, (int) self::get( 'max_depth', 12 ) ) );
+	}
+
+	/**
+	 * Whether the shortcode renders for visitors who cannot edit posts.
+	 */
+	public static function public_bom(): bool {
+		return (bool) self::get( 'public_bom', 1 );
+	}
+
+	/**
+	 * Hook registration.
+	 */
+	public function register(): void {
+		add_action( 'admin_menu', [ $this, 'add_page' ] );
+		add_action( 'admin_init', [ $this, 'register_settings' ] );
+		add_filter( 'plugin_action_links_' . plugin_basename( WPBOM_FILE ), [ $this, 'action_links' ] );
+	}
+
+	/**
+	 * Add a Settings link on the plugins screen.
+	 *
+	 * @param string[] $links Existing links.
+	 *
+	 * @return string[]
+	 */
+	public function action_links( array $links ): array {
+		$url = admin_url( 'edit.php?post_type=' . PostTypes::PART . '&page=' . self::PAGE_SLUG );
+
+		array_unshift( $links, '<a href="' . esc_url( $url ) . '">' . esc_html__( 'Settings', 'wp-bom' ) . '</a>' );
+
+		return $links;
+	}
+
+	/**
+	 * Register the submenu page.
+	 */
+	public function add_page(): void {
+		add_submenu_page(
+			'edit.php?post_type=' . PostTypes::PART,
+			__( 'WP BOM Settings', 'wp-bom' ),
+			__( 'Settings', 'wp-bom' ),
+			'manage_options',
+			self::PAGE_SLUG,
+			[ $this, 'render_page' ]
+		);
+	}
+
+	/**
+	 * Register the option and its fields.
+	 */
+	public function register_settings(): void {
+		register_setting(
+			self::OPTION,
+			self::OPTION,
+			[
+				'type'              => 'array',
+				'sanitize_callback' => [ $this, 'sanitize' ],
+				'default'           => self::defaults(),
+			]
+		);
+
+		add_settings_section(
+			'wpbom_general',
+			__( 'General', 'wp-bom' ),
+			static function (): void {
+				echo '<p>' . esc_html__( 'How costs are displayed and how deeply assemblies are expanded.', 'wp-bom' ) . '</p>';
+			},
+			self::PAGE_SLUG
+		);
+
+		$options = self::all();
+
+		add_settings_field(
+			'currency_symbol',
+			__( 'Currency Symbol', 'wp-bom' ),
+			static function () use ( $options ): void {
+				printf(
+					'<input type="text" name="%s[currency_symbol]" value="%s" class="small-text" maxlength="6" />',
+					esc_attr( self::OPTION ),
+					esc_attr( (string) $options['currency_symbol'] )
+				);
+			},
+			self::PAGE_SLUG,
+			'wpbom_general'
+		);
+
+		add_settings_field(
+			'cost_decimals',
+			__( 'Cost Decimals', 'wp-bom' ),
+			static function () use ( $options ): void {
+				printf(
+					'<input type="number" min="0" max="6" step="1" name="%s[cost_decimals]" value="%d" class="small-text" />',
+					esc_attr( self::OPTION ),
+					(int) $options['cost_decimals']
+				);
+			},
+			self::PAGE_SLUG,
+			'wpbom_general'
+		);
+
+		add_settings_field(
+			'max_depth',
+			__( 'Maximum Explosion Depth', 'wp-bom' ),
+			static function () use ( $options ): void {
+				printf(
+					'<input type="number" min="1" max="%d" step="1" name="%s[max_depth]" value="%d" class="small-text" />',
+					(int) Explosion::MAX_DEPTH_LIMIT,
+					esc_attr( self::OPTION ),
+					(int) $options['max_depth']
+				);
+				echo '<p class="description">' . esc_html__( 'How many levels of sub-assembly to expand before stopping. Circular references are detected separately and never rely on this limit.', 'wp-bom' ) . '</p>';
+			},
+			self::PAGE_SLUG,
+			'wpbom_general'
+		);
+
+		add_settings_field(
+			'public_bom',
+			__( 'Public Shortcode', 'wp-bom' ),
+			static function () use ( $options ): void {
+				printf(
+					'<label><input type="checkbox" name="%s[public_bom]" value="1" %s /> %s</label>',
+					esc_attr( self::OPTION ),
+					checked( (bool) $options['public_bom'], true, false ),
+					esc_html__( 'Let logged-out visitors see the [wp_bom] shortcode output.', 'wp-bom' )
+				);
+			},
+			self::PAGE_SLUG,
+			'wpbom_general'
+		);
+	}
+
+	/**
+	 * Sanitise the whole option array.
+	 *
+	 * @param mixed $input Raw submitted value.
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function sanitize( mixed $input ): array {
+		$input    = is_array( $input ) ? $input : [];
+		$defaults = self::defaults();
+
+		return [
+			'currency_symbol' => isset( $input['currency_symbol'] ) ? substr( sanitize_text_field( (string) $input['currency_symbol'] ), 0, 6 ) : $defaults['currency_symbol'],
+			'cost_decimals'   => isset( $input['cost_decimals'] ) ? min( 6, max( 0, absint( $input['cost_decimals'] ) ) ) : $defaults['cost_decimals'],
+			'max_depth'       => isset( $input['max_depth'] ) ? min( Explosion::MAX_DEPTH_LIMIT, max( 1, absint( $input['max_depth'] ) ) ) : $defaults['max_depth'],
+			'public_bom'      => empty( $input['public_bom'] ) ? 0 : 1,
+		];
+	}
+
+	/**
+	 * Render the options page.
+	 */
+	public function render_page(): void {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
 
 		echo '<div class="wrap">';
+		echo '<h1>' . esc_html__( 'WP BOM Settings', 'wp-bom' ) . '</h1>';
 
-		$this->settings_api->show_navigation();
-		$this->settings_api->show_forms();
+		echo '<form action="options.php" method="post">';
+		settings_fields( self::OPTION );
+		do_settings_sections( self::PAGE_SLUG );
+		submit_button();
+		echo '</form>';
+
+		echo '<hr />';
+		echo '<h2>' . esc_html__( 'Shortcode', 'wp-bom' ) . '</h2>';
+		echo '<p>' . esc_html__( 'Render any assembly or saved BOM on the front end:', 'wp-bom' ) . '</p>';
+		echo '<p><code>[wp_bom id="123"]</code> — ' . esc_html__( 'indented tree for assembly or BOM 123.', 'wp-bom' ) . '</p>';
+		echo '<p><code>[wp_bom id="123" view="flat" qty="10"]</code> — ' . esc_html__( 'summed part list for a build of ten.', 'wp-bom' ) . '</p>';
+		echo '<p><code>[wp_bom id="123" view="both" totals="no"]</code> — ' . esc_html__( 'tree and flat list, without the totals strip.', 'wp-bom' ) . '</p>';
 
 		echo '</div>';
 	}
-
-	/**
-	 * Get all the pages
-	 *
-	 * @return array page names with key value pairs
-	 */
-	function get_pages() {
-
-		$pages         = get_pages();
-		$pages_options = [];
-		if ( $pages ) {
-			foreach ( $pages as $page ) {
-				$pages_options[ $page->ID ] = $page->post_title;
-			}
-		}
-
-		return $pages_options;
-	}
-
 }

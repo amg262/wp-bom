@@ -1,24 +1,28 @@
 {
-    "name": "mint/wp-bom",
-    "require": {
-        "phing/phing": "^2.16",
-        "behat/behat": "^3.5",
-        "squizlabs/php_codesniffer": "^3.3",
-        "phpmd/phpmd": "^2.6",
-        "pear/pear": "^1.10",
-        "codeception/codeception": "^2.5",
-        "laravel/laravel": "^5.7",
-        "barryvdh/laravel-ide-helper": "^2.5",
-        "phpunit/phpunit": "^7.3",
-        "wp-coding-standards/wpcs": "^1.1",
-        "hearsay/require-js-bundle": "^1.0",
-        "zircote/swagger-php": "^3.0",
-        "swagger-api/swagger-ui": "^3.19"
-    },
+    "name": "amg262/wp-bom",
+    "description": "Bill of Materials for WordPress. Parts, assemblies, multi-level explosion with cost and weight roll-up.",
+    "type": "wordpress-plugin",
+    "license": "GPL-3.0-or-later",
     "authors": [
         {
             "name": "Andrew Gunn",
             "email": "andrewmgunn26@gmail.com"
         }
-    ]
+    ],
+    "require": {
+        "php": ">=8.0"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.9",
+        "wp-coding-standards/wpcs": "^3.1"
+    },
+    "scripts": {
+        "test": "php tests/run.php",
+        "lint": "find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
 }
