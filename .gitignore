@@ -1,20 +1,21 @@
-$ cat .gitignore
-# exclude node_modules 
-/node_modules
-
-# exclude built js
+# Dependencies
 /vendor/
+/node_modules/
 
-.github
+# Composer lock is intentionally not committed: this plugin ships no runtime
+# dependencies, and the dev tools should track their own latest patch releases.
+composer.lock
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~
+
+# Logs and build output
+*.log
 npm-debug.log
-*.lock
-native
-/assets/icons/512px/
-/assets/icons/16px/
-/assets/icons/32px/
-/assets/icons/*.ai
-/assets/icons/*.psd
-
-/wp-all-import-pro/
-wpai-acf-add-on
-
+/build/
+/dist/
